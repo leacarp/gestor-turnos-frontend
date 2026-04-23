@@ -8,6 +8,10 @@ import { RouterView } from 'vue-router'
 
 <style>
 /* Los estilos globales base se cargarán a través de tokens.css desde main.ts */
+html {
+  font-size: 80%; /* Escala la base a 12.8px en lugar de 16px para que toda la UI se achique proporcionalmente sin afectar la grilla líquida */
+}
+
 body {
   margin: 0;
   padding: 0;

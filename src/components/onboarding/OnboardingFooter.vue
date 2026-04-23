@@ -16,7 +16,7 @@ const emit = defineEmits<{
 <template>
   <footer class="onboarding-footer" :class="{ 'onboarding-footer--final': isFinalStep }">
     <button 
-      v-if="showBack && !isFinalStep" 
+      v-if="showBack" 
       type="button" 
       class="onboarding-footer__back-btn" 
       @click="emit('back')"
@@ -25,7 +25,7 @@ const emit = defineEmits<{
       Volver
     </button>
     
-    <div v-else-if="!isFinalStep"></div>
+    <div v-else></div>
 
     <AppButton 
       variant="gradient" 
