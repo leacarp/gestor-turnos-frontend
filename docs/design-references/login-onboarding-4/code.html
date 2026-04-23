@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TurnoPro - Onboarding Finalize</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#001d35",
+                        "primary": "#003256",
+                        "on-primary-fixed-variant": "#00497a",
+                        "on-tertiary-fixed": "#2e1500",
+                        "primary-container": "#00497a",
+                        "secondary-container": "#cbe7f5",
+                        "inverse-primary": "#9ccaff",
+                        "surface-bright": "#f8f9fa",
+                        "background": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "on-secondary-fixed-variant": "#304a55",
+                        "tertiary-fixed": "#ffdcc1",
+                        "on-secondary-container": "#4e6874",
+                        "secondary-fixed": "#cbe7f5",
+                        "secondary-fixed-dim": "#afcbd8",
+                        "primary-fixed": "#d0e4ff",
+                        "outline-variant": "#c0c8cc",
+                        "on-primary-container": "#7bb9fa",
+                        "on-tertiary-container": "#e5a874",
+                        "surface-tint": "#12629d",
+                        "surface-dim": "#d9dadb",
+                        "tertiary-container": "#673c11",
+                        "on-surface-variant": "#40484c",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "outline": "#70787c",
+                        "tertiary-fixed-dim": "#f9b984",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#9ccaff",
+                        "on-secondary-fixed": "#021f29",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#4c2700",
+                        "secondary": "#48626e",
+                        "surface-container-high": "#e7e8e9",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-background": "#191c1d",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface": "#ffffff",
+                        "on-tertiary-fixed-variant": "#683c11"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-primary-gradient {
+            background: linear-gradient(135deg, #003256 0%, #00497a 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- Sidebar Shell (Shared Component: SideNavBar) -->
+<aside class="h-screen w-80 fixed left-0 top-0 bg-[#003256] flex flex-col py-12 px-6 z-50 overflow-hidden shadow-2xl">
+<!-- Brand Identity -->
+<div class="mb-12">
+<h1 class="text-2xl font-black text-white tracking-tighter">TurnoPro</h1>
+<p class="font-headline font-bold text-white/60 text-xs uppercase tracking-widest mt-1">Onboarding Progress</p>
+</div>
+<!-- Stepper Navigation (Updated to match SCREEN_12 structure) -->
+<nav class="flex-grow space-y-4">
+<!-- Step 1: Identity (Completed) -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-4 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">person</span>
+<span>Identity</span>
+<span class="material-symbols-outlined ml-auto text-on-primary-container text-sm">check_circle</span>
+</div>
+<!-- Step 2: Business (Completed) -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-4 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">domain</span>
+<span>Business</span>
+<span class="material-symbols-outlined ml-auto text-on-primary-container text-sm">check_circle</span>
+</div>
+<!-- Step 3: Schedule (Completed) -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-4 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span>Schedule</span>
+<span class="material-symbols-outlined ml-auto text-on-primary-container text-sm">check_circle</span>
+</div>
+<!-- Step 4: Finalize (Active Step) -->
+<div class="flex items-center gap-4 text-white font-bold bg-white/10 rounded-lg p-4 scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span>Finalize</span>
+</div>
+</nav>
+<!-- Progress Indicator (From SCREEN_12) -->
+<div class="mt-auto">
+<div class="p-6 rounded-2xl bg-white/5 backdrop-blur-sm">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-2 h-2 rounded-full bg-on-primary-container"></div>
+<span class="text-xs font-bold text-white uppercase tracking-widest">Paso 4 de 4</span>
+</div>
+<div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-fixed-dim w-full h-full rounded-full"></div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-80 flex-grow relative bg-white flex flex-col">
+<!-- Top Bar (Shared Component: TopAppBar) -->
+<header class="fixed top-0 right-0 w-[calc(100%-20rem)] flex justify-end items-center h-16 px-12 bg-white/80 backdrop-blur-xl z-40">
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-slate-500 hover:text-primary transition-colors cursor-pointer" data-icon="help">help</span>
+<span class="material-symbols-outlined text-slate-500 hover:text-primary transition-colors cursor-pointer" data-icon="notifications">notifications</span>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-surface-container-high border-2 border-white shadow-sm">
+<img alt="User avatar" data-alt="Close-up professional portrait of a smiling businessman in a light blue shirt with clean studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmDFQ-vmLBKDJdGC_HhBqzAWFd1F1pxN-sdFxB-cdaRR6WJCcYOdJ1Dy2Hc9B3Ah3H0hHKnhh6Khi_nOxIUpA5kcAjVFjpJHq-uYlqGoDvigHqiMUKbca9VKOtnF-fMRRqdK62fQKUxJrBO1FExg8VitbJ5et5AGVvZ1EhFFmQpXwaW4_bb1RjsXQGkL2CpjRTHCICZMsXKJFd98CoHdA7Lch9cj0YLtro_OdzCo4lbXAwRpXkY2HqkTE7-KMTgG_puZGzbpRwMJpX"/>
+</div>
+</div>
+</header>
+<!-- Onboarding Canvas -->
+<section class="flex-grow flex items-center justify-center p-12 mt-16 overflow-y-auto">
+<div class="max-w-4xl w-full grid grid-cols-12 gap-12 items-center">
+<!-- Decorative Illustration Column -->
+<div class="col-span-12 md:col-span-5 flex flex-col items-center">
+<div class="relative group">
+<div class="absolute inset-0 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors"></div>
+<div class="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-surface-container-low flex items-center justify-center shadow-inner overflow-hidden">
+<img alt="Workspace" class="absolute inset-0 w-full h-full object-cover opacity-20 grayscale" data-alt="Modern minimalist home office with clean desk, laptop, and a small green plant in soft natural morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcnEKsueMJq_3a_SVsrKQm10s_0aJZK45XUH1dtQSR1-i6pN-U2An-b3a_Lq8MkuQfwwhl8ZZA0SXoH5Xcr3jB0--zXiXDUnkP9b3hSMgqx_QIwK56jGJ7NTHM5csaLQJl5zU0d1pq25mkA1HSg_uLXC5RyQO4HJm7l3UaGO437X4zYQzDEcV0co98GetX05b51qsp6IELp5hyFEZKo6IvEK7dA-l--8K9q8hQFh4tCpV0jQvdBkcTqvWbi_rsV8cz8ctxdz9e9ozu"/>
+<div class="bg-gradient-to-br from-primary to-primary-container w-32 h-32 md:w-40 md:h-40 rounded-3xl flex items-center justify-center shadow-xl shadow-primary/30 z-10">
+<span class="material-symbols-outlined text-white text-6xl md:text-8xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Column -->
+<div class="col-span-12 md:col-span-7 space-y-8">
+<div>
+<h2 class="text-4xl md:text-5xl font-black text-primary tracking-tight leading-tight">¡Todo listo para empezar!</h2>
+<p class="mt-6 text-xl text-secondary font-light max-w-lg">Tu cuenta ha sido configurada con éxito. Ya puedes empezar a gestionar tus turnos y clientes.</p>
+</div>
+<!-- Summary Bento Card -->
+<div class="bg-surface-container-low rounded-2xl p-8 border-l-4 border-primary shadow-sm space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-[10px] font-label uppercase tracking-widest text-on-secondary-container mb-1">Resumen del Negocio</p>
+<h3 class="text-2xl font-extrabold text-primary">Estudio Creativo Meridiano</h3>
+</div>
+<span class="bg-primary text-white text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider">Verificado</span>
+</div>
+<div class="grid grid-cols-2 gap-6 pt-4 border-t border-on-surface-variant/10">
+<div>
+<p class="text-[10px] font-label uppercase tracking-widest text-slate-400">Categoría</p>
+<p class="font-semibold text-primary">Consultoría Profesional</p>
+</div>
+<div>
+<p class="text-[10px] font-label uppercase tracking-widest text-slate-400">Ubicación</p>
+<p class="font-semibold text-primary">Barcelona, ES</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 text-sm text-secondary">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">info</span>
+<p>Tu panel de control se actualizará con datos en tiempo real una vez que recibas tu primer turno.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Action Bar -->
+<footer class="h-24 px-12 flex items-center justify-between bg-surface shadow-[0_-4px_20px_rgba(0,0,0,0.03)] z-40">
+<button class="flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all duration-300 py-3 px-6 rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined">arrow_back</span>
+<span class="text-sm font-label uppercase tracking-widest">Volver</span>
+</button>
+<button class="flex items-center gap-4 bg-primary-gradient text-white px-10 py-4 rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all duration-300">
+<span class="text-sm font-label uppercase tracking-widest font-extrabold">Ir al Panel de Control</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</footer>
+</main>
+</div>
+</body></html>

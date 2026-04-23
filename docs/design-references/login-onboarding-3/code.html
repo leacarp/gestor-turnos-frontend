@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#003256",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-container-highest": "#e1e3e4",
+                        "primary-fixed-dim": "#9ccaff",
+                        "on-primary-fixed-variant": "#00497a",
+                        "on-primary-container": "#7bb9fa",
+                        "inverse-surface": "#2e3132",
+                        "surface-container": "#edeeef",
+                        "secondary-container": "#cbe7f5",
+                        "tertiary": "#4c2700",
+                        "on-surface": "#191c1d",
+                        "on-secondary-fixed": "#021f29",
+                        "surface-bright": "#f8f9fa",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#673c11",
+                        "on-primary-fixed": "#001d35",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f3f4f5",
+                        "on-tertiary-container": "#e5a874",
+                        "surface-variant": "#e1e3e4",
+                        "primary-container": "#00497a",
+                        "on-background": "#191c1d",
+                        "secondary-fixed-dim": "#afcbd8",
+                        "error": "#ba1a1a",
+                        "secondary": "#48626e",
+                        "tertiary-fixed": "#ffdcc1",
+                        "outline-variant": "#c0c8cc",
+                        "on-surface-variant": "#40484c",
+                        "inverse-primary": "#9ccaff",
+                        "surface": "#ffffff",
+                        "surface-tint": "#12629d",
+                        "on-tertiary-fixed": "#2e1500",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d0e4ff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-tertiary-fixed-variant": "#683c11",
+                        "on-secondary-fixed-variant": "#304a55",
+                        "surface-dim": "#d9dadb",
+                        "secondary-fixed": "#cbe7f5",
+                        "on-error-container": "#93000a",
+                        "outline": "#70787c",
+                        "tertiary-fixed-dim": "#f9b984",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#4e6874",
+                        "background": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .tonal-shift {
+            background-color: #f8f9fa;
+        }
+        .tonal-depth {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased flex overflow-hidden">
+<!-- SideNavBar Component (Left Column) -->
+<aside class="h-screen w-80 fixed left-0 top-0 bg-[#003256] dark:bg-slate-950 shadow-2xl flex flex-col py-12 px-6 z-50">
+<div class="mb-12">
+<h1 class="text-2xl font-black text-white tracking-tighter">TurnoPro</h1>
+<p class="font-['Manrope'] font-bold text-white/60 text-xs uppercase tracking-widest mt-1">Onboarding Progress</p>
+</div>
+<nav class="flex-1 space-y-4">
+<!-- Completed Step -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-4 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">person</span>
+<span>Identity</span>
+<span class="material-symbols-outlined ml-auto text-on-primary-container text-sm">check_circle</span>
+</div>
+<!-- Completed Step -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-4 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">domain</span>
+<span>Business</span>
+<span class="material-symbols-outlined ml-auto text-on-primary-container text-sm">check_circle</span>
+</div>
+<!-- Active Step: Schedule -->
+<div class="flex items-center gap-4 text-white font-bold bg-white/10 rounded-lg p-4 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined active-icon" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span>Schedule</span>
+</div>
+<!-- Upcoming Step -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-4 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined">check_circle</span>
+<span>Finalize</span>
+</div>
+</nav>
+<div class="mt-auto">
+<div class="p-6 rounded-2xl bg-white/5 backdrop-blur-sm">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-2 h-2 rounded-full bg-on-primary-container"></div>
+<span class="text-xs font-bold text-white uppercase tracking-widest">Paso 3 de 4</span>
+</div>
+<div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-fixed-dim w-3/4 h-full rounded-full"></div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area (Right Column) -->
+<main class="ml-80 flex-1 min-h-screen relative bg-surface flex flex-col">
+<!-- TopAppBar Component -->
+<header class="fixed top-0 right-0 w-[calc(100%-20rem)] flex justify-end items-center px-12 h-20 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl z-40">
+<div class="flex items-center gap-8">
+<span class="font-['Inter'] text-sm font-semibold uppercase tracking-widest text-slate-400">Save Draft</span>
+<button class="text-[#003256] dark:text-blue-400 opacity-80 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</header>
+<!-- Onboarding Canvas -->
+<div class="flex-1 mt-20 px-12 py-16 max-w-5xl mx-auto w-full overflow-y-auto">
+<section class="mb-12">
+<h2 class="text-[2.25rem] font-headline font-extrabold text-primary tracking-tight leading-tight">Define tu horario</h2>
+<p class="text-[1.125rem] text-on-surface-variant mt-3 max-w-2xl leading-relaxed">Selecciona los días y rangos horarios en los que ofreces tus servicios. Esto permitirá a tus clientes reservar citas de forma automática.</p>
+</section>
+<!-- Availability List -->
+<div class="space-y-4">
+<!-- Day Card (Monday - Active) -->
+<div class="bg-surface-container-low rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-6 min-w-[200px]">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+<span class="font-headline font-bold text-lg text-primary min-w-[100px]">Lunes</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-[0.875rem] font-label uppercase tracking-widest text-outline mb-1">Desde</span>
+<input class="bg-white border-none rounded-lg px-4 py-3 text-primary font-bold shadow-sm focus:ring-2 focus:ring-primary/20" type="time" value="09:00"/>
+</div>
+<div class="mt-6 font-bold text-outline">a</div>
+<div class="flex flex-col">
+<span class="text-[0.875rem] font-label uppercase tracking-widest text-outline mb-1">Hasta</span>
+<input class="bg-white border-none rounded-lg px-4 py-3 text-primary font-bold shadow-sm focus:ring-2 focus:ring-primary/20" type="time" value="18:00"/>
+</div>
+<button class="mt-6 p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+<!-- Day Card (Tuesday - Active) -->
+<div class="bg-surface-container-low rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:bg-surface-container">
+<div class="flex items-center gap-6 min-w-[200px]">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+<span class="font-headline font-bold text-lg text-primary min-w-[100px]">Martes</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-[0.875rem] font-label uppercase tracking-widest text-outline mb-1">Desde</span>
+<input class="bg-white border-none rounded-lg px-4 py-3 text-primary font-bold shadow-sm" type="time" value="09:00"/>
+</div>
+<div class="mt-6 font-bold text-outline">a</div>
+<div class="flex flex-col">
+<span class="text-[0.875rem] font-label uppercase tracking-widest text-outline mb-1">Hasta</span>
+<input class="bg-white border-none rounded-lg px-4 py-3 text-primary font-bold shadow-sm" type="time" value="18:00"/>
+</div>
+<button class="mt-6 p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+<!-- Day Card (Wednesday - Inactive) -->
+<div class="bg-surface-container-low/50 rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 opacity-60">
+<div class="flex items-center gap-6 min-w-[200px]">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+<span class="font-headline font-bold text-lg text-primary min-w-[100px]">Miércoles</span>
+</div>
+<div class="flex items-center h-[58px]">
+<span class="italic text-outline">Cerrado</span>
+</div>
+</div>
+<!-- Day Card (Thursday - Active) -->
+<div class="bg-surface-container-low rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex items-center gap-6 min-w-[200px]">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+<span class="font-headline font-bold text-lg text-primary min-w-[100px]">Jueves</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-[0.875rem] font-label uppercase tracking-widest text-outline mb-1">Desde</span>
+<input class="bg-white border-none rounded-lg px-4 py-3 text-primary font-bold shadow-sm" type="time" value="09:00"/>
+</div>
+<div class="mt-6 font-bold text-outline">a</div>
+<div class="flex flex-col">
+<span class="text-[0.875rem] font-label uppercase tracking-widest text-outline mb-1">Hasta</span>
+<input class="bg-white border-none rounded-lg px-4 py-3 text-primary font-bold shadow-sm" type="time" value="18:00"/>
+</div>
+<button class="mt-6 p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+<!-- Day Card (Friday - Active) -->
+<div class="bg-surface-container-low rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex items-center gap-6 min-w-[200px]">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+<span class="font-headline font-bold text-lg text-primary min-w-[100px]">Viernes</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-[0.875rem] font-label uppercase tracking-widest text-outline mb-1">Desde</span>
+<input class="bg-white border-none rounded-lg px-4 py-3 text-primary font-bold shadow-sm" type="time" value="09:00"/>
+</div>
+<div class="mt-6 font-bold text-outline">a</div>
+<div class="flex flex-col">
+<span class="text-[0.875rem] font-label uppercase tracking-widest text-outline mb-1">Hasta</span>
+<input class="bg-white border-none rounded-lg px-4 py-3 text-primary font-bold shadow-sm" type="time" value="14:00"/>
+</div>
+<button class="mt-6 p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+<!-- Weekends Group (Visual Shift) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Saturday -->
+<div class="bg-surface-container-low/50 rounded-xl p-6 flex flex-col gap-4 opacity-60">
+<div class="flex items-center gap-6">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+<span class="font-headline font-bold text-lg text-primary">Sábado</span>
+</div>
+</div>
+<!-- Sunday -->
+<div class="bg-surface-container-low/50 rounded-xl p-6 flex flex-col gap-4 opacity-60">
+<div class="flex items-center gap-6">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-7 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+<span class="font-headline font-bold text-lg text-primary">Domingo</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Decorative Element (Bento Inspiration) -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="col-span-2 bg-primary-fixed p-8 rounded-3xl relative overflow-hidden flex flex-col justify-end min-h-[200px]">
+<div class="relative z-10">
+<p class="text-on-primary-fixed-variant font-bold text-xl mb-2">Sincronización Inteligente</p>
+<p class="text-on-primary-fixed-variant/70 text-sm max-w-sm">Próximamente podrás conectar Google Calendar y Outlook para evitar solapamientos automáticamente.</p>
+</div>
+<div class="absolute -top-10 -right-10 opacity-10">
+<span class="material-symbols-outlined text-[160px]">sync</span>
+</div>
+</div>
+<div class="bg-surface-container-high p-8 rounded-3xl flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-primary text-4xl mb-3">lock_clock</span>
+<p class="font-bold text-primary">Tiempos de Gracia</p>
+<p class="text-xs text-on-surface-variant mt-1">Configura 15 min entre citas en el próximo paso.</p>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Actions -->
+<footer class="mt-auto px-12 py-8 bg-white/40 backdrop-blur-md flex items-center justify-between z-40">
+<button class="flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+                Volver
+            </button>
+<button class="bg-gradient-to-br from-[#003256] to-[#00497a] text-white px-10 py-4 rounded-full font-bold text-lg shadow-xl shadow-primary/10 flex items-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                Continuar
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</footer>
+</main>
+</body></html>
