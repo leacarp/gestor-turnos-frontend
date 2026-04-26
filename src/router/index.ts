@@ -38,7 +38,7 @@ const router = createRouter({
     // Redirección temporal para testing
     {
       path: '/',
-      redirect: '/register/onboarding'
+      redirect: '/login'
     }
   ],
 })
