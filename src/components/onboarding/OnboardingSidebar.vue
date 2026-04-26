@@ -15,7 +15,7 @@ const props = defineProps<{
 <template>
   <aside class="onboarding-sidebar">
     <div class="onboarding-sidebar__brand">
-      <span class="onboarding-sidebar__logo">TurnoPro</span>
+      <span class="onboarding-sidebar__logo">Sloty</span>
       <span class="onboarding-sidebar__subtitle">Provider Onboarding</span>
     </div>
 
