@@ -8,8 +8,29 @@ const store = useOnboardingStore()
 <template>
   <div class="step-identity">
     <div class="step-identity__header">
-      <span class="step-identity__badge">Paso 1 de 4</span>
+      <span class="step-identity__badge" v-if="store.role === 'proveedor'">Paso 1 de 4</span>
       <h2 class="step-identity__title">Creá tu cuenta</h2>
+    </div>
+
+    <div class="step-identity__role-selector">
+      <button 
+        type="button" 
+        class="role-btn" 
+        :class="{ 'role-btn--active': store.role === 'cliente' }"
+        @click="store.role = 'cliente'"
+      >
+        <span class="material-symbols-outlined">person</span>
+        Soy Cliente
+      </button>
+      <button 
+        type="button" 
+        class="role-btn" 
+        :class="{ 'role-btn--active': store.role === 'proveedor' }"
+        @click="store.role = 'proveedor'"
+      >
+        <span class="material-symbols-outlined">storefront</span>
+        Soy Proveedor
+      </button>
     </div>
 
     <form class="step-identity__form" @submit.prevent>
@@ -108,5 +129,40 @@ const store = useOnboardingStore()
 }
 .step-identity__link:hover {
   text-decoration: underline;
+}
+
+.step-identity__role-selector {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.role-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  border: 2px solid var(--color-surface-container);
+  background-color: transparent;
+  color: var(--color-secondary);
+  font-family: var(--font-family-headline);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.role-btn:hover {
+  border-color: var(--color-primary-fixed-dim);
+  background-color: var(--color-surface-container-lowest);
+}
+
+.role-btn--active {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface-container-lowest);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
 }
 </style>

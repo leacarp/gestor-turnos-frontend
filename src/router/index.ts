@@ -3,6 +3,23 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // ── App (con layout de dashboard) ─────────────────
+    {
+      path: '/',
+      component: () => import('@/layouts/DashboardLayout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'dashboard',
+          component: () => import('@/views/ServicesView.vue'), // Temporalmente a Services
+        },
+        {
+          path: 'services',
+          name: 'services',
+          component: () => import('@/views/ServicesView.vue'),
+        }
+      ]
+    },
     {
       path: '/login',
       name: 'login',
@@ -34,11 +51,6 @@ const router = createRouter({
           component: () => import('@/views/onboarding/steps/StepFinalize.vue')
         }
       ]
-    },
-    // Redirección temporal para testing
-    {
-      path: '/',
-      redirect: '/login'
     }
   ],
 })

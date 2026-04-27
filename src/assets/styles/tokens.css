@@ -1,6 +1,6 @@
 :root {
   /* ── Tipografía ──────────────────────────────────────── */
-  --font-family-headline: 'Manrope', sans-serif;
+  --font-family-headline: 'Inter', sans-serif;
   --font-family-body: 'Inter', sans-serif;
   --font-family-label: 'Inter', sans-serif;
   
@@ -29,6 +29,7 @@
   --color-surface-container-low: #f3f4f5;
   --color-surface-container: #edeeef;
   --color-surface-container-high: #e7e8e9;
+  --color-surface-container-highest: #e1e2ec;
   --color-surface: #f8f9fa;
   --color-background: #ffffff;
 
@@ -37,7 +38,19 @@
   --color-primary-container: #00497a;
   --color-primary-fixed: #d0e4ff;
   --color-primary-fixed-dim: #9ccaff;
+  --color-on-primary-fixed-variant: #004395;
+  
   --color-secondary: #48626e;
+  --color-secondary-container: #d2e0fd;
+  --color-on-secondary-container: #55637c;
+  --color-secondary-fixed: #d5e3ff;
+  --color-on-secondary-fixed-variant: #39475e;
+
+  --color-tertiary: #545c72;
+  --color-tertiary-container: #6c748b;
+  --color-tertiary-fixed: #dae2fd;
+  --color-on-tertiary-fixed-variant: #3f465c;
+
   --color-outline: #70787c;
   --color-outline-variant: #c0c8cc;
   --color-border: var(--color-outline-variant);
@@ -66,10 +79,10 @@
   /* ── Bordes ──────────────────────────────────────────── */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
-  --radius-3xl: 1.5rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
   --radius-full: 9999px;
 
   --border-width: 1px;
@@ -84,4 +97,9 @@
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
+
+  /* ── Layout ──────────────────────────────────────────── */
+  --container-max-width: 1152px;
+  --sidebar-width: 260px;
+  --header-height: 64px;
 }
