@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aero Slate - Catálogo de Servicios</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-highest": "#e1e2ec",
+                        "secondary-fixed-dim": "#b9c7e3",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#bec6e0",
+                        "surface-container": "#ecedf7",
+                        "on-primary-container": "#fefcff",
+                        "surface-container-high": "#e6e7f2",
+                        "surface": "#f9f9ff",
+                        "primary-container": "#2170e4",
+                        "on-primary-fixed": "#001a42",
+                        "on-secondary-fixed-variant": "#39475e",
+                        "on-background": "#191b23",
+                        "on-surface": "#191b23",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#55637c",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c2c6d6",
+                        "on-tertiary-container": "#fefcff",
+                        "on-surface-variant": "#424754",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f2f3fd",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#515f77",
+                        "on-tertiary-fixed": "#131b2e",
+                        "surface-variant": "#e1e2ec",
+                        "secondary-container": "#d2e0fd",
+                        "on-secondary-fixed": "#0d1c31",
+                        "primary": "#0058be",
+                        "inverse-surface": "#2e3038",
+                        "surface-tint": "#005ac2",
+                        "primary-fixed": "#d8e2ff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#545c72",
+                        "inverse-on-surface": "#eff0fa",
+                        "surface-dim": "#d8d9e3",
+                        "outline": "#727785",
+                        "inverse-primary": "#adc6ff",
+                        "on-tertiary-fixed-variant": "#3f465c",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#dae2fd",
+                        "tertiary-container": "#6c748b",
+                        "secondary-fixed": "#d5e3ff",
+                        "background": "#f9f9ff",
+                        "surface-bright": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #0058be 0%, #2170e4 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-800/50 flex flex-col p-6 gap-y-4 z-50">
+<div class="mb-8 px-2">
+<h1 class="text-lg font-black text-slate-900 dark:text-white">Studio Admin</h1>
+<p class="text-xs text-slate-500 font-medium">Professional Tier</p>
+</div>
+<nav class="flex-1 flex flex-col gap-y-2">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-4 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<!-- Services (ACTIVE) -->
+<a class="flex items-center gap-3 px-4 py-2.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-all duration-200 ease-in-out scale-105" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-semibold text-sm">Services</span>
+</a>
+<!-- Calendar -->
+<a class="flex items-center gap-3 px-4 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-medium text-sm">Calendar</span>
+</a>
+<!-- Clients -->
+<a class="flex items-center gap-3 px-4 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium text-sm">Clients</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 px-4 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-y-2 border-t border-slate-200/30 pt-4">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="text-sm font-medium">Support</span>
+</a>
+<div class="flex items-center gap-3 px-4 py-4 mb-2">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-slate-200">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional studio manager in a bright modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjOe_iAOrwQEfs90MxP0Lb6-09eYjXA6dLVM-HaoFJgew8903amuYDjqAxsYNvlkb4CRkF5Xn1Acv3IPpbEj6r5Fhvmxr5Opx4ROthhhguFhv6bonK76BwLA1IDJaFcg3Yi1xIhWTkrGfVEFKPynh7Zf0N7HTXgznsYfJgF286x36n97I0FxZlR1vh2ui8eXH_aMUAa-RFP1zSQxp-zGj5BBAwrTz27w-a89vZ3o5pZw8lD7yAmpvfQQ77ISovPuog6CAqZfIPlbA"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-slate-900">Admin User</span>
+<button class="text-xs text-primary font-semibold text-left">Log Out</button>
+</div>
+</div>
+<button class="w-full py-3 px-4 rounded-full btn-gradient text-white text-xs font-bold tracking-wide shadow-lg shadow-blue-500/20 active:scale-95 transition-transform">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 min-h-screen bg-surface">
+<!-- Header Section -->
+<header class="pt-12 px-12 pb-8">
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Catálogo de Servicios</h1>
+<p class="text-on-surface-variant text-lg">Gestiona los servicios que ofreces a tus clientes</p>
+</div>
+<button class="flex items-center justify-center gap-2 px-8 py-4 rounded-full btn-gradient text-on-primary font-bold shadow-xl shadow-primary/10 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xl" data-icon="add">add</span>
+                    Nuevo Servicio
+                </button>
+</div>
+</header>
+<!-- Search & Filter Controls -->
+<section class="px-12 py-6">
+<div class="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4">
+<div class="relative flex-1 group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/50 transition-all outline-none" placeholder="Buscar servicios..." type="text"/>
+</div>
+<div class="relative min-w-[220px]">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="filter_list">filter_list</span>
+<select class="w-full pl-12 pr-10 py-4 bg-surface-container-low border-none rounded-xl appearance-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest text-on-surface-variant font-medium cursor-pointer outline-none">
+<option>Todas las categorías</option>
+<option>Cabello</option>
+<option>Uñas</option>
+<option>Spa</option>
+<option>Maquillaje</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</section>
+<!-- Service Grid -->
+<section class="px-12 pb-24">
+<div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl transition-all duration-300 hover:shadow-[0_40px_40px_-10px_rgba(81,95,119,0.06)] relative overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-wider rounded-full">Cabello</span>
+<button class="p-1 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h3 class="text-xl font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">Corte de cabello</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Corte profesional personalizado según la forma de tu rostro y últimas tendencias.</p>
+<div class="mt-auto pt-6 flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+<span class="text-sm font-medium">45 min</span>
+</div>
+<div class="text-2xl font-black text-on-surface">
+<span class="text-primary text-sm font-bold align-top mt-1 inline-block">$</span> 35
+                        </div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl transition-all duration-300 hover:shadow-[0_40px_40px_-10px_rgba(81,95,119,0.06)] relative overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold uppercase tracking-wider rounded-full">Cabello</span>
+<button class="p-1 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h3 class="text-xl font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">Tinte completo</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Coloración uniforme de raíz a puntas con productos premium de larga duración.</p>
+<div class="mt-auto pt-6 flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+<span class="text-sm font-medium">120 min</span>
+</div>
+<div class="text-2xl font-black text-on-surface">
+<span class="text-primary text-sm font-bold align-top mt-1 inline-block">$</span> 85
+                        </div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl transition-all duration-300 hover:shadow-[0_40px_40px_-10px_rgba(81,95,119,0.06)] relative overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="px-3 py-1 bg-secondary-fixed text-on-secondary-fixed-variant text-[10px] font-bold uppercase tracking-wider rounded-full">Spa</span>
+<button class="p-1 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h3 class="text-xl font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">Masaje Relax</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Tratamiento relajante con aceites esenciales para liberar tensión muscular.</p>
+<div class="mt-auto pt-6 flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="schedule" style="font-variation-settings: 'FILL' 1;">schedule</span>
+<span class="text-sm font-medium">60 min</span>
+</div>
+<div class="text-2xl font-black text-on-surface">
+<span class="text-primary text-sm font-bold align-top mt-1 inline-block">$</span> 60
+                        </div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+</div>
+<!-- Card 4 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl transition-all duration-300 hover:shadow-[0_40px_40px_-10px_rgba(81,95,119,0.06)] relative overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-bold uppercase tracking-wider rounded-full">Uñas</span>
+<button class="p-1 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h3 class="text-xl font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">Manicura Gel</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Limpieza profunda y esmaltado semipermanente con acabado espejo.</p>
+<div class="mt-auto pt-6 flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+<span class="text-sm font-medium">90 min</span>
+</div>
+<div class="text-2xl font-black text-on-surface">
+<span class="text-primary text-sm font-bold align-top mt-1 inline-block">$</span> 25
+                        </div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+</div>
+<!-- Card 5 (Asymmetric Placeholder Example) -->
+<div class="group bg-surface-container-low/50 border-2 border-dashed border-outline-variant/30 p-6 rounded-xl flex flex-col items-center justify-center text-center gap-4 cursor-pointer hover:border-primary/50 transition-all">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-3xl" data-icon="add_circle">add_circle</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Agregar más</h4>
+<p class="text-xs text-on-surface-variant mt-1">Expande tu oferta de servicios</p>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="group bg-surface-container-lowest p-6 rounded-xl transition-all duration-300 hover:shadow-[0_40px_40px_-10px_rgba(81,95,119,0.06)] relative overflow-hidden flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant text-[10px] font-bold uppercase tracking-wider rounded-full">Tratamiento</span>
+<button class="p-1 text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h3 class="text-xl font-bold text-on-surface mb-2 group-hover:text-primary transition-colors">Hidratación Profunda</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Mascarilla intensiva reparadora para cabellos dañados o secos.</p>
+<div class="mt-auto pt-6 flex items-center justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+<span class="text-sm font-medium">30 min</span>
+</div>
+<div class="text-2xl font-black text-on-surface">
+<span class="text-primary text-sm font-bold align-top mt-1 inline-block">$</span> 40
+                        </div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+</div>
+</div>
+</section>
+<!-- Signature "Focus Pane" Layout Footer/Promo -->
+<section class="px-12 pb-16">
+<div class="max-w-6xl mx-auto bg-surface-container-lowest rounded-xl p-8 flex flex-col md:flex-row items-center gap-12 border border-outline-variant/10">
+<div class="w-full md:w-1/3 aspect-video rounded-xl overflow-hidden shadow-2xl shadow-secondary/10">
+<img class="w-full h-full object-cover" data-alt="modern minimalist beauty salon interior with soft natural lighting and white furniture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa84fQ1D0kVzPPpdbU8XTMa3hAorkjmnugPL7Imzw1WkA2xsS2BR_B3-ogyx53kPQ2dYN24JHBmb9DDRZL2kMpDNnzNXysGHB5jEmoqvsTzuPtYge-1nUpp0jIMrBkhmVBcCr7vNbllA1YBbAsTmATbtYkYr7EC1_uMT7Li53P_pYKjGIATljLCcTXTtSMkWdyrhoCAZ2AsKj0Z8iCJ0SKVZjz1xb1NrWhUZyrtJsBSMQh_ouImLTOr2cujPOWzRbb4F-i3uawF14"/>
+</div>
+<div class="flex-1">
+<h2 class="text-2xl font-bold text-on-surface mb-4">Optimiza tu visibilidad</h2>
+<p class="text-on-surface-variant leading-relaxed mb-6">
+                        Personaliza cómo tus clientes ven estos servicios en tu portal de reservas. Agrega imágenes profesionales y descripciones detalladas para aumentar tus conversiones en un 30%.
+                    </p>
+<div class="flex gap-4">
+<button class="px-6 py-3 bg-surface-container-high text-primary font-bold rounded-full hover:bg-surface-container-highest transition-colors">Configurar Portal</button>
+<button class="px-6 py-3 text-primary font-bold hover:underline decoration-2 underline-offset-4 flex items-center gap-1">
+                            Ver tutorial <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

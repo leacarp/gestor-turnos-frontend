@@ -1,0 +1,65 @@
+---
+description: Estándares para componentes y views Vue 3
+globs: ["src/components/**/*.vue", "src/views/**/*.vue", "src/layouts/**/*.vue"]
+alwaysApply: false
+---
+
+# Estándares de Componentes Vue 3
+
+Leer @docs/HOW-TO-COMPONENTS.md antes de crear o modificar cualquier componente.
+
+## Estructura obligatoria de un SFC
+
+```vue
+<script setup lang="ts">
+// 1. Imports externos
+// 2. Imports internos (composables, stores, types)
+// 3. Props y emits
+// 4. Estado reactivo (ref, computed)
+// 5. Lógica / lifecycle hooks
+// 6. Handlers de eventos
+</script>
+
+<template>
+  <!-- Un único elemento raíz en componentes, múltiple en views está ok -->
+</template>
+
+<style scoped>
+/* Siempre scoped. Nunca estilos globales dentro de un SFC. */
+</style>
+```
+
+## Props
+```typescript
+// BIEN
+const props = defineProps<{
+  turno: Turno
+  isLoading?: boolean
+}>()
+
+// MAL — nunca sin tipos
+defineProps(['turno', 'isLoading'])
+```
+
+## Emits
+```typescript
+const emit = defineEmits<{
+  confirm: [turnoId: number]
+  cancel: []
+}>()
+```
+
+## Naming
+- Componentes: PascalCase (`TurnoCard.vue`, `AppButton.vue`)
+- Views: PascalCase con sufijo View (`TurnosView.vue`, `LoginView.vue`)
+- Composables: camelCase con prefijo use (`useTurnos.ts`)
+- Stores: camelCase con prefijo use y sufijo Store (`useTurnosStore.ts`)
+
+## v-for siempre con :key única y significativa
+```html
+<!-- BIEN -->
+<TurnoCard v-for="turno in turnos" :key="turno.id" :turno="turno" />
+
+<!-- MAL -->
+<TurnoCard v-for="(turno, index) in turnos" :key="index" />
+```
