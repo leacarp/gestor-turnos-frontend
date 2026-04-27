@@ -14,6 +14,8 @@ export interface ScheduleDay {
 }
 
 export const useOnboardingStore = defineStore('onboarding', () => {
+  const role = ref<'proveedor' | 'cliente'>('proveedor')
+
   const identity = ref({
     nombre: '',
     email: '',
@@ -39,6 +41,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
   ])
 
   return {
+    role,
     identity,
     business,
     schedule

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import OnboardingSidebar, { type OnboardingStep } from '@/components/onboarding/OnboardingSidebar.vue'
 import TopAppBar from '@/components/onboarding/TopAppBar.vue'
 import OnboardingFooter from '@/components/onboarding/OnboardingFooter.vue'
 
 const router = useRouter()
 const route = useRoute()
+const store = useOnboardingStore()
+
+const isCliente = computed(() => store.role === 'cliente')
 
 const steps: OnboardingStep[] = [
   { id: 1, title: 'Identity', icon: 'person', path: 'identity' },
@@ -21,25 +25,29 @@ const currentStepIndex = computed(() => {
   return index >= 0 ? index : 0
 })
 
-const currentStep = computed(() => steps[currentStepIndex.value].id)
+const currentStep = computed(() => steps[currentStepIndex.value]?.id)
 
 const showBack = computed(() => currentStepIndex.value > 0)
 const isFinalStep = computed(() => currentStepIndex.value === steps.length - 1)
 
 const continueText = computed(() => {
+  if (isCliente.value) return 'Registrarse'
   if (isFinalStep.value) return 'Ir al Panel de Control'
   return 'Continuar'
 })
 
 function handleBack() {
   if (currentStepIndex.value > 0) {
-    router.push(`/register/onboarding/${steps[currentStepIndex.value - 1].path}`)
+    router.push(`/register/onboarding/${steps[currentStepIndex.value - 1]?.path}`)
   }
 }
 
 function handleContinue() {
-  if (currentStepIndex.value < steps.length - 1) {
-    router.push(`/register/onboarding/${steps[currentStepIndex.value + 1].path}`)
+  if (isCliente.value) {
+    // Redirigir al dashboard de cliente o ruta principal
+    router.push('/')
+  } else if (currentStepIndex.value < steps.length - 1) {
+    router.push(`/register/onboarding/${steps[currentStepIndex.value + 1]?.path}`)
   } else {
     router.push('/')
   }
@@ -49,11 +57,12 @@ function handleContinue() {
 <template>
   <div class="onboarding-layout">
     <OnboardingSidebar 
+      v-if="!isCliente"
       :steps="steps" 
-      :currentStep="currentStep" 
+      :currentStep="currentStep ?? 0" 
     />
     
-    <main class="onboarding-layout__main">
+    <main class="onboarding-layout__main" :class="{ 'onboarding-layout__main--full': isCliente }">
       <TopAppBar class="onboarding-layout__topbar" />
       
       <div class="onboarding-layout__content-wrapper">
@@ -98,6 +107,10 @@ function handleContinue() {
   .onboarding-layout__main {
     margin-left: 24rem; /* match sidebar width */
   }
+}
+
+.onboarding-layout__main--full {
+  margin-left: 0 !important;
 }
 
 .onboarding-layout__topbar {
