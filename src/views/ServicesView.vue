@@ -83,7 +83,7 @@ function handleOptions(id: string | number) {
         </div>
         <button class="services-view__add-btn" @click="handleNewService">
           <span class="material-symbols-outlined">add</span>
-          Nuevo Servicio
+          Nuevo servicio
         </button>
       </div>
     </header>
