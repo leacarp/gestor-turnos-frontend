@@ -118,31 +118,6 @@ import { Icon } from '@iconify/vue'
                 </div>
               </div>
             </div>
-
-            <div class="config-pagos__controls-right">
-              <h4 class="config-pagos__summary-title">
-                <span class="material-symbols-outlined">info</span> Resumen Operativo
-              </h4>
-              <div class="config-pagos__summary-list">
-                <div class="config-pagos__summary-item">
-                  <span>Comisión MP</span>
-                  <span class="config-pagos__summary-val">3.99% + IVA</span>
-                </div>
-                <div class="config-pagos__summary-item">
-                  <span>Plazo de acreditación</span>
-                  <span class="config-pagos__summary-val">Inmediato</span>
-                </div>
-                <div class="config-pagos__summary-divider">
-                  <div class="config-pagos__summary-item config-pagos__summary-item--bold">
-                    <span>Tasa de seña activa</span>
-                    <span class="config-pagos__summary-val config-pagos__summary-val--primary">30%</span>
-                  </div>
-                  <div class="config-pagos__progress">
-                    <div class="config-pagos__progress-bar" style="width: 30%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
           
           <div class="config-pagos__actions">
