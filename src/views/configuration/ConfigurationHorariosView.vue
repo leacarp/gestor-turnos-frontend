@@ -11,7 +11,9 @@ const days = ref([
   { id: 'domingo', name: 'Domingo', active: false, start: '09:00', end: '13:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' }
 ])
 
-const turnMargin = ref(15)
+const turnMargin = ref<number | 'custom'>(15)
+const previousTurnMargin = ref<number | 'custom'>(15)
+const customTurnMarginValue = ref<number>(60)
 
 function copyToAll(sourceDay: typeof days.value[0]) {
   days.value.forEach(day => {
@@ -23,6 +25,83 @@ function copyToAll(sourceDay: typeof days.value[0]) {
       day.breakEnd = sourceDay.breakEnd
     }
   })
+}
+
+// Modal Descanso/Almuerzo
+const showBreakModal = ref(false)
+const selectedDayForBreak = ref<typeof days.value[0] | null>(null)
+const tempBreakStart = ref('')
+const tempBreakEnd = ref('')
+
+function openBreakModal(day: typeof days.value[0]) {
+  selectedDayForBreak.value = day
+  tempBreakStart.value = day.breakStart || '13:00'
+  tempBreakEnd.value = day.breakEnd || '14:00'
+  showBreakModal.value = true
+}
+
+function saveBreak() {
+  if (selectedDayForBreak.value) {
+    selectedDayForBreak.value.hasBreak = true
+    selectedDayForBreak.value.breakStart = tempBreakStart.value
+    selectedDayForBreak.value.breakEnd = tempBreakEnd.value
+  }
+  showBreakModal.value = false
+}
+
+function removeBreak() {
+  if (selectedDayForBreak.value) {
+    selectedDayForBreak.value.hasBreak = false
+  }
+  showBreakModal.value = false
+}
+
+// Modal Margen Personalizado
+const showMarginModal = ref(false)
+
+function onMarginChange() {
+  if (turnMargin.value === 'custom') {
+    showMarginModal.value = true
+  } else {
+    previousTurnMargin.value = turnMargin.value
+  }
+}
+
+function saveCustomMargin() {
+  showMarginModal.value = false
+  previousTurnMargin.value = 'custom'
+}
+
+function cancelCustomMargin() {
+  showMarginModal.value = false
+  turnMargin.value = previousTurnMargin.value
+}
+
+// Modal Feriados
+const showHolidaysModal = ref(false)
+const holidays = ref<{ date: string, description: string }[]>([])
+const newHolidayDate = ref('')
+const newHolidayDesc = ref('')
+
+function openHolidaysModal() {
+  showHolidaysModal.value = true
+}
+
+function addHoliday() {
+  if (newHolidayDate.value) {
+    holidays.value.push({ date: newHolidayDate.value, description: newHolidayDesc.value })
+    holidays.value.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    newHolidayDate.value = ''
+    newHolidayDesc.value = ''
+  }
+}
+
+function removeHoliday(index: number) {
+  holidays.value.splice(index, 1)
+}
+
+function closeHolidaysModal() {
+  showHolidaysModal.value = false
 }
 </script>
 
@@ -84,30 +163,19 @@ function copyToAll(sourceDay: typeof days.value[0]) {
               </div>
 
               <!-- Break / Almuerzo -->
-              <div class="config-horarios__break-toggle" title="Añadir descanso/almuerzo">
-                <label class="config-horarios__break-label">
-                  <input type="checkbox" v-model="day.hasBreak" class="config-horarios__checkbox config-horarios__checkbox--small" />
+              <div class="config-horarios__break-container">
+                <button 
+                  class="config-horarios__break-btn" 
+                  :class="{ 'config-horarios__break-btn--active': day.hasBreak }"
+                  @click="openBreakModal(day)"
+                  title="Configurar descanso o almuerzo"
+                >
                   <span class="material-symbols-outlined" style="font-size: 16px">lunch_dining</span>
-                </label>
+                  <span v-if="day.hasBreak" class="config-horarios__break-text">
+                    {{ day.breakStart }} - {{ day.breakEnd }}
+                  </span>
+                </button>
               </div>
-
-              <template v-if="day.hasBreak">
-                <div class="config-horarios__time-input config-horarios__time-input--break">
-                  <input 
-                    type="time" 
-                    v-model="day.breakStart" 
-                    class="config-horarios__time-field config-horarios__time-field--break" 
-                  />
-                </div>
-                <span class="config-horarios__time-sep">a</span>
-                <div class="config-horarios__time-input config-horarios__time-input--break">
-                  <input 
-                    type="time" 
-                    v-model="day.breakEnd" 
-                    class="config-horarios__time-field config-horarios__time-field--break" 
-                  />
-                </div>
-              </template>
 
               <button class="config-horarios__copy-btn" @click="copyToAll(day)" title="Copiar a los demás días activos">
                 <span class="material-symbols-outlined">content_copy</span>
@@ -123,19 +191,22 @@ function copyToAll(sourceDay: typeof days.value[0]) {
         <div class="config-horarios__advanced">
           <h4 class="config-horarios__advanced-title">Configuraciones Adicionales</h4>
           <div class="config-horarios__advanced-tags">
-            <div class="config-horarios__tag">
+            <div class="config-horarios__tag" @click="openHolidaysModal">
               <span class="material-symbols-outlined">event_busy</span>
               Excepciones de feriados
+              <span v-if="holidays.length > 0" class="config-horarios__badge">{{ holidays.length }}</span>
             </div>
             <div class="config-horarios__tag config-horarios__tag--input">
               <span class="material-symbols-outlined">update</span>
               Margen entre turnos:
-              <select v-model="turnMargin" class="config-horarios__margin-select">
+              <select v-model="turnMargin" @change="onMarginChange" class="config-horarios__margin-select">
                 <option :value="0">0 min</option>
                 <option :value="5">5 min</option>
                 <option :value="10">10 min</option>
                 <option :value="15">15 min</option>
                 <option :value="30">30 min</option>
+                <option :value="60">60 min</option>
+                <option value="custom">Otro{{ turnMargin === 'custom' ? ` (${customTurnMarginValue} min)` : '' }}</option>
               </select>
             </div>
           </div>
@@ -161,6 +232,105 @@ function copyToAll(sourceDay: typeof days.value[0]) {
         </div>
       </div>
 
+    </div>
+
+    <!-- Modal Descanso -->
+    <div v-if="showBreakModal" class="config-horarios__modal-overlay" @click.self="showBreakModal = false">
+      <div class="config-horarios__modal">
+        <h3 class="config-horarios__modal-title">Horario de descanso</h3>
+        <p class="config-horarios__modal-desc">
+          Configura el horario de almuerzo o descanso para el {{ selectedDayForBreak?.name.toLowerCase() }}.
+        </p>
+        
+        <div class="config-horarios__modal-body">
+          <div class="config-horarios__modal-row">
+            <div class="config-horarios__modal-field">
+              <label>Desde</label>
+              <div class="config-horarios__time-input">
+                <input type="time" v-model="tempBreakStart" class="config-horarios__time-field" />
+              </div>
+            </div>
+            <div class="config-horarios__modal-field">
+              <label>Hasta</label>
+              <div class="config-horarios__time-input">
+                <input type="time" v-model="tempBreakEnd" class="config-horarios__time-field" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-horarios__modal-actions">
+          <button v-if="selectedDayForBreak?.hasBreak" class="config-horarios__btn-danger" @click="removeBreak">
+            Eliminar
+          </button>
+          <div style="flex-grow: 1"></div>
+          <button class="config-horarios__btn-secondary" @click="showBreakModal = false">Cancelar</button>
+          <button class="config-horarios__btn-primary" @click="saveBreak">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Margen Personalizado -->
+    <div v-if="showMarginModal" class="config-horarios__modal-overlay" @click.self="cancelCustomMargin">
+      <div class="config-horarios__modal">
+        <h3 class="config-horarios__modal-title">Margen entre turnos</h3>
+        <p class="config-horarios__modal-desc">
+          Ingresa la cantidad de minutos que deseas dejar como margen entre cada turno.
+        </p>
+        
+        <div class="config-horarios__modal-body">
+          <div class="config-horarios__modal-field">
+            <label>Minutos</label>
+            <input type="number" v-model="customTurnMarginValue" class="config-horarios__input-number" min="1" />
+          </div>
+        </div>
+
+        <div class="config-horarios__modal-actions">
+          <button class="config-horarios__btn-secondary" @click="cancelCustomMargin">Cancelar</button>
+          <button class="config-horarios__btn-primary" @click="saveCustomMargin">Aplicar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Feriados -->
+    <div v-if="showHolidaysModal" class="config-horarios__modal-overlay" @click.self="closeHolidaysModal">
+      <div class="config-horarios__modal config-horarios__modal--lg">
+        <h3 class="config-horarios__modal-title">Excepciones de feriados</h3>
+        <p class="config-horarios__modal-desc">
+          Agrega fechas en las que no estarás disponible (feriados, vacaciones, etc.).
+        </p>
+        
+        <div class="config-horarios__modal-body">
+          <div class="config-horarios__holiday-form">
+            <input type="date" v-model="newHolidayDate" class="config-horarios__input-text" />
+            <input type="text" v-model="newHolidayDesc" placeholder="Descripción (ej. Feriado)" class="config-horarios__input-text" @keyup.enter="addHoliday" />
+            <button class="config-horarios__btn-primary config-horarios__btn-primary--small" :disabled="!newHolidayDate" @click="addHoliday">
+              Añadir
+            </button>
+          </div>
+
+          <div class="config-horarios__holiday-list">
+            <div v-if="holidays.length === 0" class="config-horarios__holiday-empty">
+              No hay feriados configurados.
+            </div>
+            <div v-for="(holiday, index) in holidays" :key="index" class="config-horarios__holiday-item">
+              <div class="config-horarios__holiday-info">
+                <span class="config-horarios__holiday-date">
+                  {{ new Date(holiday.date + 'T00:00:00').toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
+                </span>
+                <span class="config-horarios__holiday-desc">{{ holiday.description || 'Feriado' }}</span>
+              </div>
+              <button class="config-horarios__holiday-delete" @click="removeHoliday(index)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-horarios__modal-actions">
+          <button class="config-horarios__btn-primary" @click="closeHolidaysModal">Listo</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -298,31 +468,6 @@ function copyToAll(sourceDay: typeof days.value[0]) {
   width: 100px;
 }
 
-.config-horarios__time-input--break {
-  background-color: rgba(186, 26, 26, 0.05); /* very soft red for break */
-  border: 1px dashed rgba(186, 26, 26, 0.2);
-}
-
-.config-horarios__time-input--break:focus-within {
-  background-color: #fff;
-  border-color: rgba(186, 26, 26, 0.5);
-}
-
-.config-horarios__break-toggle {
-  display: flex;
-  align-items: center;
-  margin-left: var(--space-2);
-  margin-right: var(--space-2);
-}
-
-.config-horarios__break-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-}
-
 .config-horarios__time-input:focus-within {
   border-color: rgba(0, 73, 122, 0.3);
   background-color: #fff;
@@ -340,10 +485,6 @@ function copyToAll(sourceDay: typeof days.value[0]) {
   cursor: pointer;
 }
 
-.config-horarios__time-field--break {
-  color: #ba1a1a; /* error color for break */
-}
-
 .config-horarios__time-field:focus {
   outline: none;
   box-shadow: none;
@@ -352,6 +493,43 @@ function copyToAll(sourceDay: typeof days.value[0]) {
 .config-horarios__time-sep {
   color: var(--color-text-secondary);
   font-weight: var(--font-weight-medium);
+}
+
+/* Break styles */
+.config-horarios__break-container {
+  margin-left: var(--space-2);
+}
+
+.config-horarios__break-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-outline-variant);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.config-horarios__break-btn:hover {
+  background-color: var(--color-surface-container-high);
+}
+
+.config-horarios__break-btn--active {
+  background-color: rgba(186, 26, 26, 0.05);
+  color: #ba1a1a;
+  border-color: rgba(186, 26, 26, 0.2);
+}
+
+.config-horarios__break-btn--active:hover {
+  background-color: rgba(186, 26, 26, 0.1);
+}
+
+.config-horarios__break-text {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
 }
 
 .config-horarios__copy-btn {
@@ -406,12 +584,30 @@ function copyToAll(sourceDay: typeof days.value[0]) {
   transition: background-color var(--transition-fast);
 }
 
+.config-horarios__badge {
+  background-color: var(--color-primary-container);
+  color: #fff;
+  border-radius: var(--radius-full);
+  padding: 0 var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .config-horarios__tag--input {
   cursor: default;
 }
 
 .config-horarios__tag--input:hover {
   background-color: var(--color-surface-container-high);
+}
+
+.config-horarios__tag:hover {
+  background-color: var(--color-secondary-container);
 }
 
 .config-horarios__margin-select {
@@ -422,10 +618,6 @@ function copyToAll(sourceDay: typeof days.value[0]) {
   color: var(--color-primary-container);
   cursor: pointer;
   outline: none;
-}
-
-.config-horarios__tag:hover {
-  background-color: var(--color-secondary-container);
 }
 
 .config-horarios__footer {
@@ -537,5 +729,228 @@ function copyToAll(sourceDay: typeof days.value[0]) {
 .config-horarios__context-tip-desc {
   color: #fff;
   font-weight: var(--font-weight-medium);
+}
+
+/* Modals */
+.config-horarios__modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.config-horarios__modal {
+  background: var(--color-surface-container-lowest, #fff);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+}
+
+.config-horarios__modal--lg {
+  max-width: 500px;
+}
+
+.config-horarios__modal-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.config-horarios__modal-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.config-horarios__modal-body {
+  margin-bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.config-horarios__modal-row {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.config-horarios__modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.config-horarios__modal-field label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.config-horarios__input-number,
+.config-horarios__input-text {
+  background-color: var(--color-surface-container-low, #f5f5f5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color var(--transition-fast);
+}
+
+.config-horarios__input-number:focus,
+.config-horarios__input-text:focus {
+  outline: none;
+  border-color: rgba(0, 73, 122, 0.3);
+  background-color: #fff;
+}
+
+.config-horarios__modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.config-horarios__btn-secondary {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-outline-variant, #ccc);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  transition: background-color var(--transition-fast);
+}
+
+.config-horarios__btn-secondary:hover {
+  background-color: var(--color-surface-container-high, #eee);
+}
+
+.config-horarios__btn-primary {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--color-primary-container, #00497a);
+  color: #fff;
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  transition: opacity var(--transition-fast);
+}
+
+.config-horarios__btn-primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.config-horarios__btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.config-horarios__btn-primary--small {
+  padding: var(--space-2) var(--space-3);
+}
+
+.config-horarios__btn-danger {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  border: none;
+  background: rgba(186, 26, 26, 0.1);
+  color: #ba1a1a;
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  transition: background-color var(--transition-fast);
+}
+
+.config-horarios__btn-danger:hover {
+  background: rgba(186, 26, 26, 0.2);
+}
+
+/* Feriados */
+.config-horarios__holiday-form {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.config-horarios__holiday-form input[type="date"] {
+  flex: 0 0 140px;
+}
+
+.config-horarios__holiday-form input[type="text"] {
+  flex: 1;
+}
+
+.config-horarios__holiday-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: var(--space-2);
+}
+
+.config-horarios__holiday-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-4) 0;
+  font-style: italic;
+}
+
+.config-horarios__holiday-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  background-color: var(--color-surface-container-low);
+  border-radius: var(--radius-lg);
+}
+
+.config-horarios__holiday-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.config-horarios__holiday-date {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-transform: capitalize;
+}
+
+.config-horarios__holiday-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.config-horarios__holiday-delete {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.config-horarios__holiday-delete:hover {
+  background-color: rgba(186, 26, 26, 0.1);
+  color: #ba1a1a;
 }
 </style>
