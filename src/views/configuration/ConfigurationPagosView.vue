@@ -37,7 +37,6 @@ import { Icon } from '@iconify/vue'
             <p class="config-pagos__integration-desc">Tu cuenta está vinculada correctamente. Recibes los cobros de forma instantánea en tu billetera digital.</p>
           </div>
           <div class="config-pagos__integration-bottom">
-            <span class="config-pagos__integration-id">ID: mp_8842...992</span>
             <button class="config-pagos__integration-link">Configurar cuenta</button>
           </div>
         </div>
@@ -121,10 +120,6 @@ import { Icon } from '@iconify/vue'
           </div>
           
           <div class="config-pagos__actions">
-            <div class="config-pagos__secure">
-              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
-              <span>Configuración protegida por SSL de 256 bits</span>
-            </div>
             <button class="config-pagos__btn-save">
               <span class="material-symbols-outlined">save</span>
               Guardar configuración de pagos

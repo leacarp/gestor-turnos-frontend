@@ -123,8 +123,6 @@ const previewMessage = computed(() => {
             <div class="config-recs__editor-header">
               <h3 class="config-recs__editor-title">Editor de Mensajes</h3>
               <div class="config-recs__editor-tags">
-                <span class="config-recs__tag">WhatsApp</span>
-                <span class="config-recs__tag">24 horas</span>
               </div>
             </div>
 
@@ -136,6 +134,9 @@ const previewMessage = computed(() => {
                   rows="6"
                   v-model="messageTemplate"
                 ></textarea>
+                <p v-if="messageTemplate.length > 160" style="color: firebrick; font-weight: bold;">
+                  Límite excedido (máximo 160 caracteres)
+                </p>
                 <div class="config-recs__char-count">{{ messageTemplate.length }} / 160 caracteres</div>
               </div>
             </div>
@@ -217,6 +218,7 @@ const previewMessage = computed(() => {
 }
 
 .config-recs__description {
+  font-size: var(--font-size-lg);
   color: var(--color-text-secondary);
   line-height: var(--line-height-normal);
   max-width: 42rem;
@@ -585,13 +587,13 @@ const previewMessage = computed(() => {
 
 .config-recs__btn-cancel {
   padding: var(--space-2) var(--space-6);
-  font-size: var(--font-size-sm);
+  color: var(--color-primary-container);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-secondary);
   background: transparent;
   border: none;
+  font-size: var(--font-size-md);
   cursor: pointer;
-  transition: color var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
 
 .config-recs__btn-cancel:hover {
@@ -604,7 +606,7 @@ const previewMessage = computed(() => {
   color: #fff;
   border-radius: var(--radius-full);
   font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   border: none;
   cursor: pointer;
   box-shadow: var(--shadow-primary);
@@ -612,7 +614,7 @@ const previewMessage = computed(() => {
 }
 
 .config-recs__btn-save:hover {
-  opacity: 0.9;
+  transform: scale(1.05);
 }
 
 /* Info Grid */

@@ -462,7 +462,7 @@ function closeHolidaysModal() {
   align-items: center;
   background-color: var(--color-surface-container-low);
   border-radius: var(--radius-xl);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-5);
   border: 1px solid transparent;
   transition: all var(--transition-fast);
   width: 100px;
