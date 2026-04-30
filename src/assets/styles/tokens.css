@@ -60,6 +60,7 @@
   --color-text-disabled: #70787c;
 
   --color-error: #ba1a1a;
+  --color-success: #10b981;
   
   /* ── Gradientes ──────────────────────────────────────── */
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);

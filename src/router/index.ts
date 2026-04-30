@@ -19,6 +19,9 @@ const router = createRouter({
           component: () => import('@/views/ServicesView.vue'),
         },
         {
+          path: 'clientes',
+          name: 'clientes',
+          component: () => import('@/views/ClientsView.vue'),
           path: 'configuracion',
           component: () => import('@/views/configuration/ConfigurationView.vue'),
           redirect: '/configuracion/servicios',
