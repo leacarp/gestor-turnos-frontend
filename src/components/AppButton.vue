@@ -121,13 +121,13 @@ function handleClick(event: MouseEvent) {
 }
 
 .app-button--outline {
-  background: transparent;
+  background: var(--color-surface-container-low);
   color: var(--color-primary);
-  border: 1px solid var(--color-outline-variant);
+  border: none;
 }
 .app-button--outline:hover:not(:disabled) {
-  background: var(--color-surface-container-lowest);
   border-color: var(--color-primary);
+  transform: scale(1.02);
 }
 
 /* Estados */
