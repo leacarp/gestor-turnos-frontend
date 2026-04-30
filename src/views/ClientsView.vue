@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import AppInput from '@/components/AppInput.vue'
 import ClientCard from '@/components/ClientCard.vue'
 import type { Client } from '@/components/ClientCard.vue'
 
@@ -53,33 +52,46 @@ const filteredClients = computed(() => {
 
 <template>
   <div class="clients-view">
+    <!-- Header Section -->
     <header class="clients-view__header">
-      <h1 class="clients-view__title">Clientes</h1>
+      <div class="clients-view__header-content">
+        <div class="clients-view__title-group">
+          <h1 class="clients-view__title">Clientes</h1>
+          <p class="clients-view__subtitle">Gestiona la información y el historial de tus clientes</p>
+        </div>
+      </div>
     </header>
 
-    <div class="clients-view__toolbar">
-      <div class="clients-view__search">
-        <AppInput
-          v-model="searchQuery"
-          placeholder="Buscar cliente..."
-          icon-left="search"
-          variant="outline"
-          class="clients-view__search-input"
+    <!-- Search & Filter Controls -->
+    <section class="clients-view__filters">
+      <div class="clients-view__filters-content">
+        <div class="clients-view__search">
+          <span class="material-symbols-outlined clients-view__search-icon">search</span>
+          <input 
+            v-model="searchQuery"
+            type="text" 
+            class="clients-view__search-input" 
+            placeholder="Buscar cliente por nombre, email o teléfono..." 
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Client Grid -->
+    <section class="clients-view__grid-section">
+      <div class="clients-view__grid">
+        <ClientCard
+          v-for="client in filteredClients"
+          :key="client.id"
+          :client="client"
         />
       </div>
-    </div>
 
-    <div class="clients-view__grid">
-      <ClientCard
-        v-for="client in filteredClients"
-        :key="client.id"
-        :client="client"
-      />
-    </div>
-
-    <div v-if="filteredClients.length === 0" class="clients-view__empty">
-      <p>No se encontraron clientes que coincidan con la búsqueda.</p>
-    </div>
+      <div v-if="filteredClients.length === 0" class="clients-view__empty">
+        <span class="material-symbols-outlined clients-view__empty-icon">group_off</span>
+        <p>No se encontraron clientes que coincidan con la búsqueda.</p>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -87,69 +99,153 @@ const filteredClients = computed(() => {
 .clients-view {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
-  padding: var(--space-8);
-  max-width: var(--container-max-width);
-  margin: 0 auto;
-  width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-surface);
+  font-family: var(--font-family-base);
 }
 
+/* ── Header ──────────────────────────────────────────── */
 .clients-view__header {
+  padding: var(--space-12) var(--space-12) var(--space-8);
+}
+
+.clients-view__header-content {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .clients-view__header-content {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.clients-view__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .clients-view__title {
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
   color: var(--color-text-primary);
+  letter-spacing: -0.025em;
   margin: 0;
 }
 
-.clients-view__toolbar {
+.clients-view__subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ── Filters & Search ────────────────────────────────── */
+.clients-view__filters {
+  padding: 0 var(--space-12) var(--space-6);
+}
+
+.clients-view__filters-content {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
   display: flex;
-  align-items: center;
-  margin-bottom: var(--space-2);
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .clients-view__search {
-  width: 100%;
-  max-width: 400px;
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  max-width: 480px;
 }
 
-/* Override AppInput border-radius to match design if needed, 
-   though the variant="outline" might be enough */
-:deep(.clients-view__search-input .app-input__field) {
-  border-radius: var(--radius-md);
+.clients-view__search-icon {
+  position: absolute;
+  left: var(--space-4);
+  color: var(--color-outline);
+  transition: color var(--transition-fast);
+  pointer-events: none;
+}
+
+.clients-view__search:focus-within .clients-view__search-icon {
+  color: var(--color-primary);
+}
+
+.clients-view__search-input {
+  width: 100%;
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-12);
+  background-color: var(--color-surface-container-low);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.clients-view__search-input::placeholder {
+  color: var(--color-text-disabled);
+}
+
+.clients-view__search-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(0, 50, 86, 0.1);
+  background-color: var(--color-surface-container-lowest);
+}
+
+/* ── Grid ────────────────────────────────────────────── */
+.clients-view__grid-section {
+  padding: 0 var(--space-12) var(--space-16);
 }
 
 .clients-view__grid {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: var(--space-6);
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
 }
 
+@media (min-width: 768px) {
+  .clients-view__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .clients-view__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── Empty State ─────────────────────────────────────── */
 .clients-view__empty {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: var(--space-12);
-  background-color: var(--color-surface-container-lowest);
-  border-radius: var(--radius-lg);
-  border: 1px dashed var(--color-border);
+  gap: var(--space-4);
+  padding: var(--space-16);
+  background-color: transparent;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-2xl);
   color: var(--color-text-secondary);
   font-family: var(--font-family-body);
+  text-align: center;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
 }
 
-@media (max-width: 768px) {
-  .clients-view__grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .clients-view__search {
-    max-width: 100%;
-  }
+.clients-view__empty-icon {
+  font-size: 48px;
+  color: var(--color-outline-variant);
 }
 </style>
