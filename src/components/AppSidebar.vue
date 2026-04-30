@@ -10,6 +10,7 @@ const navItems = [
   { name: 'Agenda', icon: 'calendar_today', path: '/agenda' },
   { name: 'Clientes', icon: 'group', path: '/clientes' },
   { name: 'Servicios', icon: 'inventory_2', path: '/services' },
+  { name: 'Perfil', icon: 'person', path: '/perfil' },
   { name: 'Configuración', icon: 'settings', path: '/configuracion' },
 ]
 
