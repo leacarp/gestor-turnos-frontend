@@ -83,7 +83,7 @@ function handleOptions(id: string | number) {
         </div>
         <button class="services-view__add-btn" @click="handleNewService">
           <span class="material-symbols-outlined">add</span>
-          Nuevo Servicio
+          Nuevo servicio
         </button>
       </div>
     </header>
@@ -175,12 +175,14 @@ function handleOptions(id: string | number) {
 .services-view__title {
   font-size: var(--font-size-3xl);
   font-weight: 800;
+  margin: 0;
   color: var(--color-text-primary);
   letter-spacing: -0.025em;
 }
 
 .services-view__subtitle {
   font-size: var(--font-size-lg);
+  margin: 0;
   color: var(--color-text-secondary);
 }
 
@@ -189,7 +191,7 @@ function handleOptions(id: string | number) {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-4) var(--space-8);
+  padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-full);
   background: var(--gradient-primary);
   color: #ffffff;

@@ -22,6 +22,34 @@ const router = createRouter({
           path: 'perfil',
           name: 'perfil',
           component: () => import('@/views/ProviderView.vue'),
+          path: 'clientes',
+          name: 'clientes',
+          component: () => import('@/views/ClientsView.vue'),
+          path: 'configuracion',
+          component: () => import('@/views/configuration/ConfigurationView.vue'),
+          redirect: '/configuracion/servicios',
+          children: [
+            {
+              path: 'servicios',
+              name: 'config-servicios',
+              component: () => import('@/views/configuration/ConfigurationServiciosView.vue')
+            },
+            {
+              path: 'horarios',
+              name: 'config-horarios',
+              component: () => import('@/views/configuration/ConfigurationHorariosView.vue')
+            },
+            {
+              path: 'recordatorios',
+              name: 'config-recordatorios',
+              component: () => import('@/views/configuration/ConfigurationRecordatoriosView.vue')
+            },
+            {
+              path: 'pagos',
+              name: 'config-pagos',
+              component: () => import('@/views/configuration/ConfigurationPagosView.vue')
+            }
+          ]
         }
       ]
     },
