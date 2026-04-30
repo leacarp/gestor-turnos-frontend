@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { toast } from 'vue3-toastify'
 
 const days = ref([
   { id: 'lunes', name: 'Lunes', active: true, start: '09:00', end: '18:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' },
@@ -27,6 +28,34 @@ function copyToAll(sourceDay: typeof days.value[0]) {
   })
 }
 
+function updateDayTime(day: typeof days.value[0], field: 'start' | 'end', event: Event) {
+  const target = event.target as HTMLInputElement
+  const newValue = target.value
+
+  if (field === 'start') {
+    if (newValue >= day.end) {
+      toast.error('La hora de inicio de la jornada debe ser menor a la hora de fin.')
+      target.value = day.start
+      return
+    }
+    day.start = newValue
+  } else {
+    if (newValue <= day.start) {
+      toast.error('La hora de fin de la jornada debe ser mayor a la hora de inicio.')
+      target.value = day.end
+      return
+    }
+    day.end = newValue
+  }
+
+  if (day.hasBreak) {
+    if (day.breakStart < day.start || day.breakEnd > day.end) {
+      toast.warning('Atención: El nuevo horario de la jornada invalida el descanso. Por favor configúrelo nuevamente.')
+      day.hasBreak = false
+    }
+  }
+}
+
 // Modal Descanso/Almuerzo
 const showBreakModal = ref(false)
 const selectedDayForBreak = ref<typeof days.value[0] | null>(null)
@@ -42,6 +71,14 @@ function openBreakModal(day: typeof days.value[0]) {
 
 function saveBreak() {
   if (selectedDayForBreak.value) {
+    if (tempBreakStart.value >= tempBreakEnd.value) {
+      toast.error('La hora de inicio del descanso debe ser menor a la hora de fin.')
+      return
+    }
+    if (tempBreakStart.value < selectedDayForBreak.value.start || tempBreakEnd.value > selectedDayForBreak.value.end) {
+      toast.error(`El descanso debe estar dentro del horario de la jornada (${selectedDayForBreak.value.start} a ${selectedDayForBreak.value.end}).`)
+      return
+    }
     selectedDayForBreak.value.hasBreak = true
     selectedDayForBreak.value.breakStart = tempBreakStart.value
     selectedDayForBreak.value.breakEnd = tempBreakEnd.value
@@ -149,7 +186,8 @@ function closeHolidaysModal() {
               <div class="config-horarios__time-input">
                 <input 
                   type="time" 
-                  v-model="day.start" 
+                  :value="day.start"
+                  @change="updateDayTime(day, 'start', $event)"
                   class="config-horarios__time-field" 
                 />
               </div>
@@ -157,7 +195,8 @@ function closeHolidaysModal() {
               <div class="config-horarios__time-input">
                 <input 
                   type="time" 
-                  v-model="day.end" 
+                  :value="day.end"
+                  @change="updateDayTime(day, 'end', $event)"
                   class="config-horarios__time-field" 
                 />
               </div>
