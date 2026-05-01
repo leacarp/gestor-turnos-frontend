@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import AppButton from '@/components/AppButton.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+function goToDeleteService(id: string) {
+  router.push({ path: '/services', query: { delete: id } })
+}
 // Logic for Servicios
 </script>
 
@@ -52,7 +60,7 @@
                 <span class="config-servicios__price">$2.500</span>
               </td>
               <td class="config-servicios__td config-servicios__td--right">
-                <button class="config-servicios__delete-btn">
+                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="goToDeleteService('1')">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </td>
@@ -80,7 +88,7 @@
                 <span class="config-servicios__price">$6.500</span>
               </td>
               <td class="config-servicios__td config-servicios__td--right">
-                <button class="config-servicios__delete-btn">
+                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="goToDeleteService('1')">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </td>
@@ -108,7 +116,7 @@
                 <span class="config-servicios__price">$1.200</span>
               </td>
               <td class="config-servicios__td config-servicios__td--right">
-                <button class="config-servicios__delete-btn">
+                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="goToDeleteService('1')">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </td>
@@ -136,7 +144,7 @@
                 <span class="config-servicios__price">$4.000</span>
               </td>
               <td class="config-servicios__td config-servicios__td--right">
-                <button class="config-servicios__delete-btn">
+                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="goToDeleteService('1')">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </td>
@@ -160,10 +168,9 @@
           <div class="config-servicios__bento-content">
             <h4 class="config-servicios__bento-title">Servicio más popular</h4>
             <p class="config-servicios__bento-desc">Corte + Color representa el 45% de tus ingresos.</p>
-            <button class="config-servicios__bento-link">
+            <AppButton variant="ghost" iconRight="arrow_forward" style="margin-top: 1rem; padding: 0;">
               Ver estadísticas detalladas
-              <span class="material-symbols-outlined config-servicios__bento-link-icon">arrow_forward</span>
-            </button>
+            </AppButton>
           </div>
           <div class="config-servicios__bento-bg">
             <span class="material-symbols-outlined config-servicios__bento-bg-icon">trending_up</span>
