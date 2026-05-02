@@ -58,6 +58,11 @@ const router = createRouter({
       component: () => import('@/layouts/BookingLayout.vue'),
       children: [
         {
+          path: 'schedule',
+          name: 'booking-schedule',
+          component: () => import('@/views/AppointmentSelectDateView.vue')
+        },
+        {
           path: 'confirmation',
           name: 'booking-confirmation',
           component: () => import('@/views/AppointmentConfirmationView.vue')
