@@ -51,6 +51,18 @@ const router = createRouter({
           component: () => import('@/views/onboarding/steps/StepFinalize.vue')
         }
       ]
+    },
+    // ── Booking (Vista cliente) ───────────────────────
+    {
+      path: '/booking',
+      component: () => import('@/layouts/BookingLayout.vue'),
+      children: [
+        {
+          path: 'confirmation',
+          name: 'booking-confirmation',
+          component: () => import('@/views/AppointmentConfirmationView.vue')
+        }
+      ]
     }
   ],
 })

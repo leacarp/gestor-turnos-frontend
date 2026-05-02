@@ -1,9 +1,8 @@
 :root {
   /* ── Tipografía ──────────────────────────────────────── */
-  --font-family-headline: 'Inter', sans-serif;
+  --font-family-headline: 'Manrope', sans-serif;
   --font-family-body: 'Inter', sans-serif;
   --font-family-label: 'Inter', sans-serif;
-  
   --font-family-base: var(--font-family-body);
   --font-family-display: var(--font-family-headline);
 
@@ -14,6 +13,7 @@
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.875rem;
+  --font-size-display: 2.25rem;
 
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -39,7 +39,7 @@
   --color-primary-fixed: #d0e4ff;
   --color-primary-fixed-dim: #9ccaff;
   --color-on-primary-fixed-variant: #004395;
-  
+
   --color-secondary: #48626e;
   --color-secondary-container: #d2e0fd;
   --color-on-secondary-container: #55637c;
@@ -60,7 +60,7 @@
   --color-text-disabled: #70787c;
 
   --color-error: #ba1a1a;
-  
+
   /* ── Gradientes ──────────────────────────────────────── */
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
 
@@ -91,7 +91,9 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --shadow-primary: 0 4px 14px 0 rgba(0, 50, 86, 0.2);
+  --shadow-primary-xl: 0 20px 25px -5px rgba(0, 50, 86, 0.2);
 
   /* ── Transiciones ────────────────────────────────────── */
   --transition-fast: 150ms ease;
@@ -101,5 +103,6 @@
   /* ── Layout ──────────────────────────────────────────── */
   --container-max-width: 1152px;
   --sidebar-width: 260px;
+  --sidebar-width-booking: 20rem;
   --header-height: 64px;
 }
