@@ -6,11 +6,11 @@ const route = useRoute()
 const router = useRouter()
 
 const navItems = [
-  { name: 'Dashboard', icon: 'grid_view', path: '/' },
-  { name: 'Agenda', icon: 'calendar_today', path: '/agenda' },
-  { name: 'Clientes', icon: 'group', path: '/clientes' },
-  { name: 'Servicios', icon: 'inventory_2', path: '/services' },
   { name: 'Perfil', icon: 'person', path: '/perfil' },
+  { name: 'Agenda', icon: 'calendar_today', path: '/agenda' },
+  { name: 'Servicios', icon: 'inventory_2', path: '/services' },
+  { name: 'Clientes', icon: 'group', path: '/clientes' },
+  { name: 'Dashboard', icon: 'grid_view', path: '/' },
   { name: 'Configuración', icon: 'settings', path: '/configuracion' },
 ]
 
@@ -261,9 +261,10 @@ function handleLogout() {
 }
 
 .app-sidebar__logout-btn:hover {
-  background-color: var(--color-error);
+  border: 2px, red;
+  background-color: #f75959;
   color: #ffffff;
-  transform: translateY(-2px);
+  transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(186, 26, 26, 0.2);
 }
 

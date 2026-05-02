@@ -11,7 +11,7 @@ const router = createRouter({
         {
           path: '',
           name: 'dashboard',
-          component: () => import('@/views/ServicesView.vue'), // Temporalmente a Services
+          component: () => import('@/views/ProviderView.vue'), // Ahora la vista por defecto es el perfil
         },
         {
           path: 'services',
@@ -22,9 +22,13 @@ const router = createRouter({
           path: 'perfil',
           name: 'perfil',
           component: () => import('@/views/ProviderView.vue'),
+        },
+        {
           path: 'clientes',
           name: 'clientes',
           component: () => import('@/views/ClientsView.vue'),
+        },
+        {
           path: 'configuracion',
           component: () => import('@/views/configuration/ConfigurationView.vue'),
           redirect: '/configuracion/servicios',
@@ -84,6 +88,11 @@ const router = createRouter({
           component: () => import('@/views/onboarding/steps/StepFinalize.vue')
         }
       ]
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/NotFoundView.vue')
     }
   ],
 })

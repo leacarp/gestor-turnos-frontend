@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import { Icon } from '@iconify/vue'
 
 const whatsappActive = ref(true)
@@ -169,8 +170,8 @@ const previewMessage = computed(() => {
             </div>
 
             <div class="config-recs__actions">
-              <button class="config-recs__btn-cancel">Cancelar</button>
-              <button class="config-recs__btn-save">Guardar configuración</button>
+              <AppButton variant="outline">Cancelar</AppButton>
+              <AppButton variant="gradient">Guardar configuración</AppButton>
             </div>
           </section>
         </div>
@@ -421,7 +422,7 @@ const previewMessage = computed(() => {
 /* Editor */
 .config-recs__editor-card {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-8);
+  padding: var(--space-12);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(192, 200, 204, 0.1);
@@ -579,42 +580,10 @@ const previewMessage = computed(() => {
 }
 
 .config-recs__actions {
-  margin-top: var(--space-10);
+  margin-top: var(--space-12);
   display: flex;
   justify-content: flex-end;
-  gap: var(--space-4);
-}
-
-.config-recs__btn-cancel {
-  padding: var(--space-2) var(--space-6);
-  color: var(--color-primary-container);
-  font-weight: var(--font-weight-semibold);
-  background: transparent;
-  border: none;
-  font-size: var(--font-size-md);
-  cursor: pointer;
-  transition: background-color var(--transition-fast);
-}
-
-.config-recs__btn-cancel:hover {
-  color: var(--color-text-primary);
-}
-
-.config-recs__btn-save {
-  padding: var(--space-3) var(--space-8);
-  background: var(--gradient-primary);
-  color: #fff;
-  border-radius: var(--radius-full);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-md);
-  border: none;
-  cursor: pointer;
-  box-shadow: var(--shadow-primary);
-  transition: opacity var(--transition-fast);
-}
-
-.config-recs__btn-save:hover {
-  transform: scale(1.05);
+  gap: var(--space-5);
 }
 
 /* Info Grid */

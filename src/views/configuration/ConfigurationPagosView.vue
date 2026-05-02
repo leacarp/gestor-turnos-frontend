@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import AppButton from '@/components/AppButton.vue'
 // Logic for Pagos
 </script>
 
@@ -37,7 +38,7 @@ import { Icon } from '@iconify/vue'
             <p class="config-pagos__integration-desc">Tu cuenta está vinculada correctamente. Recibes los cobros de forma instantánea en tu billetera digital.</p>
           </div>
           <div class="config-pagos__integration-bottom">
-            <button class="config-pagos__integration-link">Configurar cuenta</button>
+            <AppButton variant="outline">Configurar cuenta</AppButton>
           </div>
         </div>
 
@@ -120,10 +121,9 @@ import { Icon } from '@iconify/vue'
           </div>
           
           <div class="config-pagos__actions">
-            <button class="config-pagos__btn-save">
-              <span class="material-symbols-outlined">save</span>
+            <AppButton variant="gradient" iconLeft="save">
               Guardar configuración de pagos
-            </button>
+            </AppButton>
           </div>
         </div>
 
@@ -136,7 +136,7 @@ import { Icon } from '@iconify/vue'
               <h4 class="config-pagos__promo-title">Optimiza tu facturación</h4>
               <p class="config-pagos__promo-desc">El 85% de los profesionales que cobran seña reducen el ausentismo en un 60%.</p>
             </div>
-            <button class="config-pagos__promo-btn">Ver reportes</button>
+            <AppButton variant="outline" style="background: white; border: none; color: #00497a;">Ver reportes</AppButton>
           </div>
         </div>
 

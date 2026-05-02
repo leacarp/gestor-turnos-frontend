@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { toast } from 'vue3-toastify'
+import AppButton from '@/components/AppButton.vue'
 
 const days = ref([
   { id: 'lunes', name: 'Lunes', active: true, start: '09:00', end: '18:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' },
@@ -254,8 +255,8 @@ function closeHolidaysModal() {
         <div class="config-horarios__footer">
           <p class="config-horarios__footer-text">Los cambios se aplicarán inmediatamente a tu calendario público.</p>
           <div class="config-horarios__footer-actions">
-            <button class="config-horarios__btn-discard">Descartar</button>
-            <button class="config-horarios__btn-save">Guardar horarios</button>
+            <AppButton variant="outline">Descartar</AppButton>
+            <AppButton variant="gradient">Guardar horarios</AppButton>
           </div>
         </div>
       </div>
@@ -299,12 +300,12 @@ function closeHolidaysModal() {
         </div>
 
         <div class="config-horarios__modal-actions">
-          <button v-if="selectedDayForBreak?.hasBreak" class="config-horarios__btn-danger" @click="removeBreak">
+          <AppButton v-if="selectedDayForBreak?.hasBreak" @click="removeBreak" style="color: #ba1a1a; background: rgba(186, 26, 26, 0.1);">
             Eliminar
-          </button>
+          </AppButton>
           <div style="flex-grow: 1"></div>
-          <button class="config-horarios__btn-secondary" @click="showBreakModal = false">Cancelar</button>
-          <button class="config-horarios__btn-primary" @click="saveBreak">Guardar</button>
+          <AppButton variant="outline" @click="showBreakModal = false">Cancelar</AppButton>
+          <AppButton variant="solid" @click="saveBreak">Guardar</AppButton>
         </div>
       </div>
     </div>
@@ -325,8 +326,8 @@ function closeHolidaysModal() {
         </div>
 
         <div class="config-horarios__modal-actions">
-          <button class="config-horarios__btn-secondary" @click="cancelCustomMargin">Cancelar</button>
-          <button class="config-horarios__btn-primary" @click="saveCustomMargin">Aplicar</button>
+          <AppButton variant="outline" @click="cancelCustomMargin">Cancelar</AppButton>
+          <AppButton variant="solid" @click="saveCustomMargin">Aplicar</AppButton>
         </div>
       </div>
     </div>
@@ -343,9 +344,9 @@ function closeHolidaysModal() {
           <div class="config-horarios__holiday-form">
             <input type="date" v-model="newHolidayDate" class="config-horarios__input-text" />
             <input type="text" v-model="newHolidayDesc" placeholder="Descripción (ej. Feriado)" class="config-horarios__input-text" @keyup.enter="addHoliday" />
-            <button class="config-horarios__btn-primary config-horarios__btn-primary--small" :disabled="!newHolidayDate" @click="addHoliday">
+            <AppButton variant="solid" :disabled="!newHolidayDate" @click="addHoliday">
               Añadir
-            </button>
+            </AppButton>
           </div>
 
           <div class="config-horarios__holiday-list">
@@ -367,7 +368,7 @@ function closeHolidaysModal() {
         </div>
 
         <div class="config-horarios__modal-actions">
-          <button class="config-horarios__btn-primary" @click="closeHolidaysModal">Listo</button>
+          <AppButton variant="solid" @click="closeHolidaysModal">Listo</AppButton>
         </div>
       </div>
     </div>

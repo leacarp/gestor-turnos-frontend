@@ -6,15 +6,54 @@ import AppButton from '@/components/AppButton.vue'
 
 const businessName = ref('Studio Hair')
 const category = ref('estetica')
+const previousCategory = ref('estetica')
 const email = ref('studio@hair.com')
 const phone = ref('11-4444-5555')
 
-const categoryOptions = [
+const showCustomCategoryModal = ref(false)
+const customCategoryValue = ref('')
+
+const categoryOptions = ref([
   { value: 'estetica', label: 'Estética' },
   { value: 'barberia', label: 'Barbería' },
   { value: 'salud', label: 'Salud' },
   { value: 'bienestar', label: 'Bienestar' },
-]
+  { value: 'otro', label: 'Otro' },
+])
+
+function onCategoryChange(newValue: string | number) {
+  if (newValue === 'otro') {
+    showCustomCategoryModal.value = true
+  } else {
+    previousCategory.value = String(newValue)
+    category.value = String(newValue)
+  }
+}
+
+function saveCustomCategory() {
+  if (customCategoryValue.value.trim()) {
+    const newVal = customCategoryValue.value.trim().toLowerCase().replace(/\s+/g, '-')
+    // Evitar duplicados
+    if (!categoryOptions.value.find(opt => opt.value === newVal)) {
+      categoryOptions.value.splice(categoryOptions.value.length - 1, 0, {
+        value: newVal,
+        label: customCategoryValue.value.trim()
+      })
+    }
+    category.value = newVal
+    previousCategory.value = newVal
+  } else {
+    category.value = previousCategory.value
+  }
+  showCustomCategoryModal.value = false
+  customCategoryValue.value = ''
+}
+
+function cancelCustomCategory() {
+  category.value = previousCategory.value
+  showCustomCategoryModal.value = false
+  customCategoryValue.value = ''
+}
 
 function handleSubmit() {
   // TODO: implement save
@@ -54,7 +93,7 @@ function handleSubmit() {
           <form class="provider-view__form" @submit.prevent="handleSubmit">
             <div class="provider-view__form-grid">
               <AppInput v-model="businessName" label="Nombre del negocio" />
-              <AppSelect v-model="category" label="Rubro" :options="categoryOptions" />
+              <AppSelect :modelValue="category" @update:modelValue="onCategoryChange" label="Rubro" :options="categoryOptions" />
               <AppInput v-model="email" label="Email" type="email" />
               <AppInput v-model="phone" label="Teléfono" type="tel" />
             </div>
@@ -116,6 +155,25 @@ function handleSubmit() {
         </div>
       </div>
     </section>
+
+    <!-- Modal Rubro Personalizado -->
+    <div v-if="showCustomCategoryModal" class="provider-view__modal-overlay" @click.self="cancelCustomCategory">
+      <div class="provider-view__modal">
+        <h3 class="provider-view__modal-title">Rubro personalizado</h3>
+        <p class="provider-view__modal-desc">
+          Ingresa el rubro al que pertenece tu negocio.
+        </p>
+        
+        <div class="provider-view__modal-body">
+          <AppInput v-model="customCategoryValue" placeholder="Ej: Peluquería canina" @keyup.enter="saveCustomCategory" />
+        </div>
+
+        <div class="provider-view__modal-actions">
+          <AppButton variant="outline" @click="cancelCustomCategory">Cancelar</AppButton>
+          <AppButton variant="solid" @click="saveCustomCategory">Aplicar</AppButton>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -448,5 +506,55 @@ function handleSubmit() {
   height: 100%;
   width: 85%;
   border-radius: var(--radius-full);
+}
+
+/* Modals */
+.provider-view__modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.provider-view__modal {
+  background: var(--color-surface-container-lowest, #fff);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+}
+
+.provider-view__modal-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.provider-view__modal-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.provider-view__modal-body {
+  margin-bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.provider-view__modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: auto;
 }
 </style>
