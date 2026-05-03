@@ -7,6 +7,8 @@ import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import type { ServiceItem } from '@/components/ServiceCard.vue'
 
+type ServiceDraft = Pick<ServiceItem, 'title' | 'category' | 'description' | 'duration' | 'price'>
+
 const route = useRoute()
 const router = useRouter()
 
@@ -72,7 +74,13 @@ const services = ref<ServiceItem[]>([
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 const selectedService = ref<ServiceItem | null>(null)
-const editingService = ref<Partial<ServiceItem>>({})
+const editingService = ref<ServiceDraft>({
+  title: '',
+  category: 'Cabello',
+  description: '',
+  duration: 60,
+  price: 0,
+})
 
 function handleNewService() {
   // Para simplificar, abre el modal de edición vacío
@@ -91,7 +99,13 @@ function handleEdit(id: string | number) {
   const srv = services.value.find(s => s.id === id)
   if (srv) {
     selectedService.value = srv
-    editingService.value = { ...srv }
+    editingService.value = {
+      title: srv.title,
+      category: srv.category,
+      description: srv.description,
+      duration: srv.duration,
+      price: srv.price,
+    }
     showEditModal.value = true
   }
 }

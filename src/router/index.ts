@@ -29,6 +29,11 @@ const router = createRouter({
           component: () => import('@/views/ClientsView.vue'),
         },
         {
+          path: 'agenda',
+          name: 'agenda',
+          component: () => import('@/views/CalendarView.vue'),
+        },
+        {
           path: 'configuracion',
           component: () => import('@/views/configuration/ConfigurationView.vue'),
           redirect: '/configuracion/servicios',

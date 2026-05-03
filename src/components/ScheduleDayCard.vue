@@ -19,7 +19,12 @@ function toggleActive(event: Event) {
 
 function updateTimeRange(index: number, field: 'start' | 'end', value: string) {
   const newRanges = [...props.timeRanges]
-  newRanges[index] = { ...newRanges[index], [field]: value }
+  const prev = newRanges[index]
+  if (!prev) return
+  newRanges[index] = {
+    start: field === 'start' ? value : prev.start,
+    end: field === 'end' ? value : prev.end,
+  }
   emit('update:timeRanges', newRanges)
 }
 
