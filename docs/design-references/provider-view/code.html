@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#d5e3ff",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "on-secondary-container": "#55637c",
+                    "on-primary-container": "#fefcff",
+                    "inverse-primary": "#adc6ff",
+                    "on-primary-fixed": "#001a42",
+                    "secondary-container": "#d2e0fd",
+                    "on-primary-fixed-variant": "#004395",
+                    "on-tertiary-fixed": "#131b2e",
+                    "outline": "#727785",
+                    "secondary": "#515f77",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "primary": "#0058be",
+                    "outline-variant": "#c2c6d6",
+                    "on-surface": "#191b23",
+                    "secondary-fixed-dim": "#b9c7e3",
+                    "on-tertiary-container": "#fefcff",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#0d1c31",
+                    "inverse-on-surface": "#eff0fa",
+                    "tertiary-fixed": "#dae2fd",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#6c748b",
+                    "on-background": "#191b23",
+                    "background": "#f9f9ff",
+                    "on-surface-variant": "#424754",
+                    "inverse-surface": "#2e3038",
+                    "surface": "#f9f9ff",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e1e2ec",
+                    "surface-dim": "#d8d9e3",
+                    "on-secondary-fixed-variant": "#39475e",
+                    "on-secondary": "#ffffff",
+                    "surface-tint": "#005ac2",
+                    "surface-container": "#ecedf7",
+                    "primary-container": "#2170e4",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#e1e2ec",
+                    "surface-bright": "#f9f9ff",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e6e7f2",
+                    "primary-fixed": "#d8e2ff",
+                    "tertiary": "#545c72",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="h-screen w-72 fixed left-0 top-0 overflow-y-auto bg-slate-50 dark:bg-slate-950 flex flex-col gap-2 p-6 z-40">
+<div class="mb-8 px-4">
+<h1 class="text-xl font-extrabold tracking-tighter text-blue-600">Provider Studio</h1>
+<p class="text-xs text-slate-500 mt-1 uppercase tracking-widest font-bold">Aero Slate</p>
+</div>
+<div class="flex items-center gap-3 px-4 mb-8">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="Business Logo" data-alt="abstract geometric logo with blue and slate tones on a clean white circular background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcHht6gNOHGzjAL9BJ3z6Vw-vesF9dnhKZsxH1tIWDEwHoImInrtMMTWnXhPdtCroXyoPpbJqoFRD_PHR6CNqBlyAuMuOJwp9KgaUByYgEpj3_sv_x9vdz4PmU9BW36FHjgzuoaYsRHmiWMF-hKprt5NdtTgKnX4E3WOhHTo5_uF6BAtFtmsfXvWza3WxAOZaAaPUp-mmX_nuD6WMiCdet1IqPWm9ud6tsvmse-df9QnVpzPNB3RNC8bIofWew0KQkH_AAyQ2Zogs"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Settings</p>
+<p class="text-[10px] text-on-surface-variant">Manage your workspace</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<!-- Active Tab: Business Details -->
+<a class="bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm rounded-xl py-3 px-4 flex items-center gap-3 active:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">business_center</span>
+<span class="text-sm font-medium">Business Details</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 py-3 px-4 flex items-center gap-3 hover:bg-slate-200/30 dark:hover:bg-slate-800/30 rounded-xl transition-colors active:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">category</span>
+<span class="text-sm font-medium">Service Categories</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 py-3 px-4 flex items-center gap-3 hover:bg-slate-200/30 dark:hover:bg-slate-800/30 rounded-xl transition-colors active:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Team Management</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 py-3 px-4 flex items-center gap-3 hover:bg-slate-200/30 dark:hover:bg-slate-800/30 rounded-xl transition-colors active:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-sm font-medium">Billing &amp; Plan</span>
+</a>
+<a class="text-slate-500 dark:text-slate-400 py-3 px-4 flex items-center gap-3 hover:bg-slate-200/30 dark:hover:bg-slate-800/30 rounded-xl transition-colors active:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">vpn_key</span>
+<span class="text-sm font-medium">API Keys</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-slate-200/50 flex flex-col gap-2">
+<button class="w-full mb-4 bg-primary text-on-primary py-2.5 rounded-full text-xs font-semibold hover:bg-primary-container transition-all">
+                View Live Profile
+            </button>
+<a class="text-slate-500 dark:text-slate-400 py-2 px-4 flex items-center gap-3 hover:bg-slate-200/30 rounded-xl text-sm transition-colors" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span>Support</span>
+</a>
+<a class="text-error py-2 px-4 flex items-center gap-3 hover:bg-error-container/20 rounded-xl text-sm transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-72 flex-1 min-h-screen flex flex-col">
+<!-- TopNavBar (Authority: JSON) -->
+<header class="w-full sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm dark:shadow-none border-b border-slate-200/10 dark:border-slate-800/10">
+<div class="flex items-center justify-between px-8 py-3 w-full">
+<div class="flex items-center gap-8">
+<span class="text-lg font-bold text-slate-900 dark:text-white font-inter antialiased tracking-tight">Provider Studio</span>
+<nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200" href="#">Schedule</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200" href="#">Clients</a>
+<a class="text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600 dark:border-blue-400 pb-1" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400 text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-slate-100/50 dark:bg-slate-800/50 rounded-full text-sm border-none focus:ring-2 focus:ring-primary/20 w-48 transition-all" placeholder="Search..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:bg-slate-100/50 rounded-lg transition-all"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-2 text-slate-500 hover:bg-slate-100/50 rounded-lg transition-all"><span class="material-symbols-outlined">help_outline</span></button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200">
+<img alt="User Profile Avatar" data-alt="modern avatar of a professional looking individual with a friendly expression and stylish hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuhqlcKQvS8NGgi3Stsj7ol7LXXFSWtOIkx8wDUnqLwTthaeALbJqQwjIQqs7TBdW52S-CrYKEtYMntfoDddpMAqXtg9kKx7nfLdHEm9FnZc8EDm0tV9gcpYAdOKx0UincOI3eFWcVccIMRiVFvyJMqXSNJuEK4yHwzvfQxX0gfgnMrDVPh-YCrBpmbGHW97hgJXVpXBVQ19nGFpea65lBTm_iQMEE3Njng-6Dm4Y88dtr7rU2mU4HDgA6av5dSxmblGQcVATHxGw"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<section class="p-12 max-w-5xl">
+<!-- Header Section -->
+<div class="mb-12">
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Perfil del Negocio</h2>
+<p class="text-on-surface-variant text-lg">Actualiza la información pública y de contacto de tu establecimiento.</p>
+</div>
+<!-- Main Form Card (Focus Pane) -->
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-sm transition-all duration-300">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-16 h-16 rounded-2xl bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">storefront</span>
+</div>
+<div>
+<h3 class="text-xl font-bold text-on-surface">Datos del negocio</h3>
+<p class="text-sm text-on-surface-variant">Esta información será visible para tus clientes.</p>
+</div>
+</div>
+<form class="space-y-8">
+<!-- Form Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+<!-- Business Name -->
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant ml-1">Nombre del negocio</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-on-surface font-medium focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-slate-400" type="text" value="Studio Hair"/>
+</div>
+<!-- Category -->
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant ml-1">Rubro</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low border-none rounded-xl py-3 px-4 text-on-surface font-medium focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer">
+<option selected="">Estética</option>
+<option>Barbería</option>
+<option>Salud</option>
+<option>Bienestar</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<!-- Email -->
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant ml-1">Email</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-on-surface font-medium focus:ring-2 focus:ring-primary/30 transition-all" type="email" value="studio@hair.com"/>
+</div>
+<!-- Phone -->
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant ml-1">Teléfono</label>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-3 px-4 text-on-surface font-medium focus:ring-2 focus:ring-primary/30 transition-all" type="tel" value="11-4444-5555"/>
+</div>
+</div>
+<!-- Additional Details (Visual Interest) -->
+<div class="pt-6 border-t border-slate-100">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+<div class="space-y-4">
+<h4 class="font-bold text-on-surface">Ubicación principal</h4>
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<div>
+<p class="text-sm font-medium">Av. Santa Fe 1234, CABA</p>
+<p class="text-xs text-on-surface-variant">Buenos Aires, Argentina</p>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<h4 class="font-bold text-on-surface">Estado del perfil</h4>
+<div class="flex items-center gap-3">
+<span class="flex h-3 w-3 rounded-full bg-green-500"></span>
+<span class="text-sm font-medium text-on-surface">Perfil verificado y activo</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">Tu perfil ha sido verificado. Cualquier cambio importante en el rubro puede requerir una nueva validación.</p>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-10 flex items-center justify-end gap-4">
+<button class="px-6 py-3 rounded-full text-sm font-bold text-on-surface-variant bg-surface-container-high hover:bg-surface-container-highest transition-colors" type="button">
+                            Descartar cambios
+                        </button>
+<button class="px-10 py-3 rounded-full text-sm font-bold text-on-primary bg-gradient-to-br from-primary to-primary-container shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all" type="submit">
+                            Guardar cambios
+                        </button>
+</div>
+</form>
+</div>
+<!-- Bento Info Cards -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-gradient-to-br from-secondary-container/30 to-surface-container p-8 rounded-xl flex items-center justify-between">
+<div class="max-w-[60%]">
+<h4 class="text-xl font-bold mb-2">Mejora tu visibilidad</h4>
+<p class="text-sm text-on-secondary-container">Completa la galería de fotos para que tus clientes puedan ver tus mejores trabajos.</p>
+<button class="mt-4 text-primary text-sm font-bold flex items-center gap-2 group">
+                            Subir fotos <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="hidden sm:block">
+<img alt="Decoration" class="w-24 opacity-60" data-alt="abstract flowing blue and slate shapes suggesting creative energy and growth" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoVuP5G1-8OJ3AMdAp4e3KCeeyB9oKLMVKrKvcAMovUjN80m6ZDS7Uey8jYur9ljWLS03q3wfqKfya2ulrJS6MOKH_cp3N3SiJv7sqKPMi-L2X65sFiUC7zSD3GDIKOk-5cz3WAKTgHDaqiEMgOdKtvPb8e-CNLDNoPL3gWA5hIXJHtQKTMDAaRbuko5JattPTnPe0r8asZYth3gBlhWUipy1aq88SbcgDkzQTzH4ughrhu0VmMqMcAQcpOOI7bR5zPArAOEPzQ_4"/>
+</div>
+</div>
+<div class="bg-surface-container-highest p-8 rounded-xl flex flex-col justify-center text-center">
+<span class="text-4xl font-extrabold text-primary mb-1">85%</span>
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Perfil completado</p>
+<div class="w-full bg-white/50 h-2 rounded-full mt-4 overflow-hidden">
+<div class="bg-primary h-full w-[85%] rounded-full"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

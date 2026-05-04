@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 
 export interface ServiceItem {
   id: string | number
@@ -13,14 +13,14 @@ export interface ServiceItem {
 
 const props = withDefaults(defineProps<{
   service: ServiceItem
-}>(), {
-})
+}>(), {})
 
 const emit = defineEmits<{
   edit: [id: string | number]
   delete: [id: string | number]
-  options: [id: string | number]
 }>()
+
+const showOptions = ref(false)
 
 const badgeClass = computed(() => {
   const theme = props.service.colorTheme || 'default'
@@ -33,9 +33,34 @@ const badgeClass = computed(() => {
   }
 })
 
-function handleOptions() {
-  emit('options', props.service.id)
+function toggleOptions() {
+  showOptions.value = !showOptions.value
 }
+
+function handleEdit() {
+  showOptions.value = false
+  emit('edit', props.service.id)
+}
+
+function handleDelete() {
+  showOptions.value = false
+  emit('delete', props.service.id)
+}
+
+function closeMenu(e: MouseEvent) {
+  const target = e.target as HTMLElement
+  if (!target.closest(`.service-card__options-${props.service.id}`)) {
+    showOptions.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', closeMenu)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', closeMenu)
+})
 </script>
 
 <template>
@@ -44,9 +69,19 @@ function handleOptions() {
       <span class="service-card__badge" :class="badgeClass">
         {{ service.category }}
       </span>
-      <button class="service-card__options-btn" @click="handleOptions" aria-label="Opciones">
-        <span class="material-symbols-outlined">more_vert</span>
-      </button>
+      <div class="service-card__options-container" :class="[`service-card__options-${service.id}`]">
+        <button class="service-card__options-btn" @click.stop="toggleOptions" aria-label="Opciones">
+          <span class="material-symbols-outlined">more_vert</span>
+        </button>
+        <div v-if="showOptions" class="service-card__options-menu">
+          <button class="service-card__menu-item" @click.stop="handleEdit">
+            <span class="material-symbols-outlined">edit</span> Editar
+          </button>
+          <button class="service-card__menu-item service-card__menu-item--danger" @click.stop="handleDelete">
+            <span class="material-symbols-outlined">delete</span> Eliminar
+          </button>
+        </div>
+      </div>
     </div>
 
     <h3 class="service-card__title">{{ service.title }}</h3>
@@ -144,6 +179,63 @@ function handleOptions() {
 .service-card__options-btn:hover {
   color: var(--color-text-primary);
   background-color: var(--color-surface-container-low);
+}
+
+.service-card__options-container {
+  position: relative;
+}
+
+.service-card__options-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--space-2);
+  background-color: var(--color-surface-container-lowest);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(192, 200, 204, 0.2);
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.service-card__menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.service-card__menu-item .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--color-text-secondary);
+}
+
+.service-card__menu-item:hover {
+  background-color: var(--color-surface-container-low);
+}
+
+.service-card__menu-item--danger {
+  color: var(--color-error);
+}
+
+.service-card__menu-item--danger .material-symbols-outlined {
+  color: var(--color-error);
+}
+
+.service-card__menu-item--danger:hover {
+  background-color: rgba(186, 26, 26, 0.1);
 }
 
 .service-card__title {
