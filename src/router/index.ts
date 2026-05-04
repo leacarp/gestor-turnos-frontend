@@ -94,16 +94,20 @@ const router = createRouter({
       path: '/booking',
       component: () => import('@/layouts/BookingLayout.vue'),
       children: [
+        { path: '', redirect: { name: 'booking-schedule' } },
         {
           path: 'schedule',
           name: 'booking-schedule',
           component: () => import('@/views/AppointmentSelectDateView.vue')
         },
+        { path: 'details', name: 'booking-details', redirect: { name: 'booking-confirmation' } },
         {
           path: 'confirmation',
           name: 'booking-confirmation',
           component: () => import('@/views/AppointmentConfirmationView.vue')
-        }
+        },
+        { path: 'payment', name: 'booking-payment', redirect: { name: 'booking-confirmation' } },
+        { path: 'success', name: 'booking-success', redirect: { name: 'booking-confirmation' } }
       ]
     }
   ],
