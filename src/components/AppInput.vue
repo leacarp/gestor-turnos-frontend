@@ -146,6 +146,7 @@ function togglePasswordVisibility() {
 .app-input__field {
   width: 100%;
   font-family: var(--font-family-body);
+  background-color: var(--color-surface-container-lowest);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
   border-radius: var(--radius-xl);
@@ -166,7 +167,7 @@ function togglePasswordVisibility() {
 
 .app-input__field--outline {
   background-color: var(--color-surface-container-lowest);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-primary);
 }
 
 .app-input__field--outline:focus {

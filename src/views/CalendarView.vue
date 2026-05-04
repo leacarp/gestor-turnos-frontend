@@ -2,8 +2,11 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import AppButton from '@/components/AppButton.vue'
+import AppInput from '@/components/AppInput.vue'
+import AppSelect from '@/components/AppSelect.vue'
 
-export type EstadoTurnoAgenda = 'confirmado' | 'pendiente' | 'cancelado'
+export type EstadoTurnoAgenda = 'confirmado' | 'pendiente' | 'cancelado' | 'finalizado'
 
 export interface TurnoAgendaItem {
   id: string
@@ -25,6 +28,7 @@ const estadoOptions: { value: EstadoTurnoAgenda; label: string }[] = [
   { value: 'confirmado', label: 'Confirmado' },
   { value: 'pendiente', label: 'Pendiente' },
   { value: 'cancelado', label: 'Cancelado' },
+  { value: 'finalizado', label: 'Finalizado' },
 ]
 
 function toYmd(d: Date): string {
@@ -47,7 +51,6 @@ const selectedDate = ref<Date>(new Date(todayStart))
 const visibleMonth = ref<Date>(new Date(todayStart))
 const searchQuery = ref('')
 const cancelAllModalOpen = ref(false)
-const cancelAllStep = ref<1 | 2>(1)
 
 function initialTurnos(): TurnoAgendaItem[] {
   return [
@@ -176,13 +179,6 @@ const cancelAllFirstMessage = computed(() => {
   return `¿Seguro deseas cancelar todos los turnos del ${fecha}? Le avisaremos a todos los clientes afectados.`
 })
 
-const cancelAllSecondMessage = computed(() => {
-  if (isSelectedDayToday.value) {
-    return 'Esta acción cancelará todos los turnos de hoy. Los clientes serán notificados. ¿Deseas confirmar?'
-  }
-  return 'Esta acción cancelará todos los turnos de la fecha seleccionada. Los clientes serán notificados. ¿Deseas confirmar?'
-})
-
 const nextTurnoId = computed(() => {
   if (!isSelectedDayToday.value) return null
   const now = new Date()
@@ -264,18 +260,17 @@ function handleRowActivate(ev: MouseEvent | KeyboardEvent) {
   router.push({ name: 'clientes' })
 }
 
+function deleteTurno(id: string) {
+  turnos.value = turnos.value.filter(t => t.id !== id)
+  toast.success('Turno eliminado')
+}
+
 function openCancelAllModal() {
-  cancelAllStep.value = 1
   cancelAllModalOpen.value = true
 }
 
 function closeCancelAllModal() {
   cancelAllModalOpen.value = false
-  cancelAllStep.value = 1
-}
-
-function advanceCancelAllStep() {
-  cancelAllStep.value = 2
 }
 
 function confirmCancelAllTurnos() {
@@ -292,7 +287,7 @@ function confirmCancelAllTurnos() {
 <template>
   <div class="calendar-view">
     <header class="calendar-view__topbar">
-      <h2 class="calendar-view__topbar-title">Agenda del Proveedor</h2>
+      <h1 class="calendar-view__topbar-title">Agenda del Proveedor</h1>
       <div class="calendar-view__topbar-actions">
         <div class="calendar-view__search">
           <span class="material-symbols-outlined calendar-view__search-icon" aria-hidden="true">search</span>
@@ -322,10 +317,9 @@ function confirmCancelAllTurnos() {
           <p class="calendar-view__kicker">Planificación diaria</p>
           <h3 class="calendar-view__day-title">{{ dayTitle }}</h3>
         </div>
-        <button type="button" class="calendar-view__cancel-all" @click="openCancelAllModal">
-          <span class="material-symbols-outlined" aria-hidden="true">event_busy</span>
-          <span>Cancelar todos</span>
-        </button>
+        <AppButton variant="outline" iconLeft="event_busy" @click="openCancelAllModal" style="color: #ba1a1a; border-color: rgba(186, 26, 26, 0.2); background: rgba(186, 26, 26, 0.05);">
+          Cancelar todos
+        </AppButton>
       </div>
 
       <div class="calendar-view__bento">
@@ -379,72 +373,77 @@ function confirmCancelAllTurnos() {
         </div>
 
         <div class="calendar-view__col-right">
-          <article
+          <div
             v-for="t in turnosForSelectedDay"
             :key="t.id"
-            class="calendar-view__turn"
-            :class="{
-              'calendar-view__turn--next': nextTurnoId === t.id,
-            }"
-            role="button"
-            tabindex="0"
-            aria-label="Ver clientes"
-            @click="handleRowActivate"
-            @keydown.enter.prevent="handleRowActivate"
-            @keydown.space.prevent="handleRowActivate"
+            class="calendar-view__turn-wrapper"
           >
-            <div class="calendar-view__turn-main">
-              <div class="calendar-view__turn-time">
-                <span
-                  class="calendar-view__turn-clock"
-                  :class="{ 'calendar-view__turn-clock--accent': nextTurnoId === t.id }"
-                >{{ formatHour12(t.hour, t.minute).time }}</span>
-                <span
-                  class="calendar-view__turn-meridiem"
-                  :class="{ 'calendar-view__turn-meridiem--accent': nextTurnoId === t.id }"
-                >{{ formatHour12(t.hour, t.minute).meridiem }}</span>
-              </div>
-              <div
-                class="calendar-view__turn-rule"
-                :class="
-                  t.bar === 'primary'
-                    ? 'calendar-view__turn-rule--primary'
-                    : 'calendar-view__turn-rule--tertiary'
-                "
-                aria-hidden="true"
-              />
-              <div class="calendar-view__turn-text">
-                <div class="calendar-view__turn-name-row">
-                  <h5 class="calendar-view__turn-name">{{ t.clientName }}</h5>
-                  <span v-if="nextTurnoId === t.id" class="calendar-view__turn-badge">Siguiente</span>
+            <div class="calendar-view__turn-delete-bg" v-if="t.estado === 'finalizado'">
+              <button class="calendar-view__turn-delete-btn" @click.stop="deleteTurno(t.id)" aria-label="Eliminar turno">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+            <article
+              class="calendar-view__turn"
+              :class="{
+                'calendar-view__turn--next': nextTurnoId === t.id,
+                'calendar-view__turn--slidable': t.estado === 'finalizado'
+              }"
+              role="button"
+              tabindex="0"
+              aria-label="Ver clientes"
+              @click="handleRowActivate"
+              @keydown.enter.prevent="handleRowActivate"
+              @keydown.space.prevent="handleRowActivate"
+            >
+              <div class="calendar-view__turn-main">
+                <div class="calendar-view__turn-time">
+                  <span
+                    class="calendar-view__turn-clock"
+                    :class="{ 'calendar-view__turn-clock--accent': nextTurnoId === t.id }"
+                  >{{ formatHour12(t.hour, t.minute).time }}</span>
+                  <span
+                    class="calendar-view__turn-meridiem"
+                    :class="{ 'calendar-view__turn-meridiem--accent': nextTurnoId === t.id }"
+                  >{{ formatHour12(t.hour, t.minute).meridiem }}</span>
                 </div>
-                <p class="calendar-view__turn-service">{{ t.service }}</p>
+                <div
+                  class="calendar-view__turn-rule"
+                  :class="
+                    t.bar === 'primary'
+                      ? 'calendar-view__turn-rule--primary'
+                      : 'calendar-view__turn-rule--tertiary'
+                  "
+                  aria-hidden="true"
+                />
+                <div class="calendar-view__turn-text">
+                  <div class="calendar-view__turn-name-row">
+                    <h5 class="calendar-view__turn-name">{{ t.clientName }}</h5>
+                    <span v-if="nextTurnoId === t.id" class="calendar-view__turn-badge">Siguiente</span>
+                  </div>
+                  <p class="calendar-view__turn-service">{{ t.service }}</p>
+                </div>
               </div>
-            </div>
-            <div class="calendar-view__turn-aside">
-              <span
-                class="calendar-view__pill"
-                :class="{
-                  'calendar-view__pill--confirmado': t.estado === 'confirmado',
-                  'calendar-view__pill--pendiente': t.estado === 'pendiente',
-                  'calendar-view__pill--cancelado': t.estado === 'cancelado',
-                }"
-              >{{ t.estado }}</span>
-              <div class="calendar-view__status-select-wrap" @click.stop @keydown.stop>
-                <select
-                  :id="`estado-${t.id}`"
-                  class="calendar-view__status-select"
-                  :value="t.estado"
-                  aria-label="Cambiar estado del turno"
-                  @change="handleEstadoChange(t.id, $event)"
-                >
-                  <option v-for="opt in estadoOptions" :key="opt.value" :value="opt.value">
-                    {{ opt.label }}
-                  </option>
-                </select>
+              <div class="calendar-view__turn-aside">
+                <span
+                  class="calendar-view__pill"
+                  :class="{
+                    'calendar-view__pill--confirmado': t.estado === 'confirmado',
+                    'calendar-view__pill--pendiente': t.estado === 'pendiente',
+                    'calendar-view__pill--cancelado': t.estado === 'cancelado',
+                    'calendar-view__pill--finalizado': t.estado === 'finalizado',
+                  }"
+                >{{ t.estado }}</span>
+                <div class="calendar-view__status-select-wrap" @click.stop @keydown.stop>
+                  <AppSelect
+                    :modelValue="t.estado"
+                    :options="estadoOptions"
+                    @update:modelValue="(v) => handleEstadoChange(t.id, { target: { value: v } } as any)"
+                  />
+                </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </div>
 
           <p v-if="!turnosForSelectedDay.length" class="calendar-view__empty">No hay turnos para esta fecha.</p>
         </div>
@@ -462,34 +461,20 @@ function confirmCancelAllTurnos() {
           class="calendar-view__modal"
           role="dialog"
           aria-modal="true"
-          :aria-labelledby="cancelAllStep === 1 ? 'cancel-all-title-1' : 'cancel-all-title-2'"
+          aria-labelledby="cancel-all-title"
         >
-          <template v-if="cancelAllStep === 1">
-            <h2 id="cancel-all-title-1" class="calendar-view__modal-title">
-              Cancelar todos los turnos
-            </h2>
-            <p class="calendar-view__modal-text">{{ cancelAllFirstMessage }}</p>
-            <div class="calendar-view__modal-actions">
-              <button type="button" class="calendar-view__modal-btn calendar-view__modal-btn--ghost" @click="closeCancelAllModal">
-                No, volver
-              </button>
-              <button type="button" class="calendar-view__modal-btn calendar-view__modal-btn--danger" @click="advanceCancelAllStep">
-                Sí, continuar
-              </button>
-            </div>
-          </template>
-          <template v-else>
-            <h2 id="cancel-all-title-2" class="calendar-view__modal-title">Confirmación final</h2>
-            <p class="calendar-view__modal-text">{{ cancelAllSecondMessage }}</p>
-            <div class="calendar-view__modal-actions">
-              <button type="button" class="calendar-view__modal-btn calendar-view__modal-btn--ghost" @click="cancelAllStep = 1">
-                Volver
-              </button>
-              <button type="button" class="calendar-view__modal-btn calendar-view__modal-btn--danger" @click="confirmCancelAllTurnos">
-                Sí, cancelar todos
-              </button>
-            </div>
-          </template>
+          <h2 id="cancel-all-title" class="calendar-view__modal-title">
+            Cancelar todos los turnos
+          </h2>
+          <p class="calendar-view__modal-text">{{ cancelAllFirstMessage }}</p>
+          <div class="calendar-view__modal-actions">
+            <AppButton variant="outline" @click="closeCancelAllModal">
+              Cancelar
+            </AppButton>
+            <AppButton variant="solid" style="background-color: #ba1a1a;" @click="confirmCancelAllTurnos">
+              Sí, cancelar todos
+            </AppButton>
+          </div>
         </div>
       </div>
     </Teleport>
@@ -499,30 +484,26 @@ function confirmCancelAllTurnos() {
 <style scoped>
 .calendar-view {
   min-height: 100vh;
-  background-color: var(--calendar-color-background);
-  color: var(--calendar-color-on-surface);
-  font-family: var(--font-family-body);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
 }
 
 .calendar-view__topbar {
   width: 100%;
-  height: var(--calendar-header-height);
-  padding: 0 var(--calendar-space-content-x);
+  padding: var(--space-12) var(--space-12) var(--space-8);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 40;
   background: transparent;
 }
 
 .calendar-view__topbar-title {
   margin: 0;
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--calendar-letter-spacing-tight);
-  color: var(--calendar-color-on-surface);
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--color-text-primary);
 }
 
 .calendar-view__topbar-actions {
@@ -533,32 +514,42 @@ function confirmCancelAllTurnos() {
 
 .calendar-view__search {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .calendar-view__search-icon {
   position: absolute;
-  inset: 0 auto 0 var(--space-3);
-  margin: auto 0;
-  height: fit-content;
-  font-size: var(--font-size-sm);
-  color: var(--calendar-color-secondary);
+  left: var(--space-4);
+  color: var(--color-outline);
+  transition: color var(--transition-fast);
   pointer-events: none;
 }
 
+.calendar-view__search:focus-within .calendar-view__search-icon {
+  color: var(--color-primary);
+}
+
 .calendar-view__search-input {
-  background-color: var(--calendar-color-surface-container-low);
-  border: none;
-  border-radius: var(--calendar-radius-pill);
-  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-10);
-  font-size: var(--font-size-sm);
   width: 16rem;
-  color: var(--calendar-color-on-surface);
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-12);
+  background-color: var(--color-surface-container-low);
+  border: none;
+  border-radius: var(--radius-2xl);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-base);
   outline: none;
-  transition: box-shadow var(--transition-base);
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.calendar-view__search-input::placeholder {
+  color: var(--color-text-disabled);
 }
 
 .calendar-view__search-input:focus {
-  box-shadow: 0 0 0 2px var(--calendar-search-focus-ring);
+  background-color: var(--color-surface-container-lowest);
+  box-shadow: 0 0 0 2px rgba(0, 50, 86, 0.2);
 }
 
 .calendar-view__topbar-icons {
@@ -570,23 +561,23 @@ function confirmCancelAllTurnos() {
 .calendar-view__icon-btn {
   border: none;
   background: transparent;
-  border-radius: var(--calendar-radius-pill);
+  border-radius: var(--radius-full);
   padding: var(--space-2);
   cursor: pointer;
-  color: var(--calendar-color-secondary);
+  color: var(--color-text-secondary);
   transition: background-color var(--transition-base);
 }
 
 .calendar-view__icon-btn:hover {
-  background-color: var(--calendar-color-surface-container-low);
+  background-color: var(--color-surface-container-low);
 }
 
 .calendar-view__avatar {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: var(--calendar-radius-pill);
-  background-color: var(--calendar-color-primary-container);
-  color: var(--calendar-color-on-primary);
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-container);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -595,7 +586,7 @@ function confirmCancelAllTurnos() {
 }
 
 .calendar-view__content {
-  padding: 0 var(--calendar-space-content-x) var(--calendar-space-content-bottom);
+  padding: 0 var(--space-12) var(--space-16);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
@@ -612,43 +603,21 @@ function confirmCancelAllTurnos() {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   text-transform: uppercase;
-  letter-spacing: var(--calendar-letter-spacing-widest);
-  color: var(--calendar-color-secondary);
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
 }
 
 .calendar-view__day-title {
   margin: 0;
-  font-size: var(--calendar-font-size-display);
-  font-weight: var(--calendar-font-weight-extrabold);
-  letter-spacing: var(--calendar-letter-spacing-tight);
-}
-
-.calendar-view__cancel-all {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  border: none;
-  border-radius: var(--calendar-radius-pill);
-  font-family: inherit;
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  background-color: var(--calendar-color-surface-container-high);
-  color: var(--calendar-color-error);
-  transition:
-    background-color var(--transition-slow),
-    color var(--transition-slow);
-}
-
-.calendar-view__cancel-all:hover {
-  background-color: var(--calendar-color-error-container);
-  color: var(--calendar-color-on-error-container);
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
 }
 
 .calendar-view__bento {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: var(--calendar-space-bento-gap);
+  gap: var(--space-6);
   align-items: flex-start;
 }
 
@@ -670,9 +639,9 @@ function confirmCancelAllTurnos() {
 }
 
 .calendar-view__card {
-  background-color: var(--calendar-color-surface-container-lowest);
-  border-radius: var(--calendar-radius-card);
-  border: 1px solid var(--calendar-border-subtle);
+  background-color: var(--color-surface-container-lowest);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-surface-container);
   box-shadow: var(--shadow-sm);
 }
 
@@ -690,7 +659,7 @@ function confirmCancelAllTurnos() {
 .calendar-view__cal-month {
   margin: 0;
   font-weight: var(--font-weight-bold);
-  color: var(--calendar-color-on-surface);
+  color: var(--color-text-primary);
 }
 
 .calendar-view__cal-nav {
@@ -709,7 +678,7 @@ function confirmCancelAllTurnos() {
 }
 
 .calendar-view__cal-nav-btn:hover {
-  background-color: var(--calendar-color-surface-container-low);
+  background-color: var(--color-surface-container-low);
 }
 
 .calendar-view__cal-nav-ic {
@@ -723,7 +692,7 @@ function confirmCancelAllTurnos() {
   text-align: center;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
-  color: var(--calendar-color-secondary);
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
 }
 
@@ -746,23 +715,23 @@ function confirmCancelAllTurnos() {
   border-radius: var(--radius-lg);
   cursor: pointer;
   font-family: inherit;
-  color: var(--calendar-color-on-surface);
+  color: var(--color-text-primary);
   transition: background-color var(--transition-base);
 }
 
 .calendar-view__day--outside {
-  color: var(--calendar-color-outline-variant);
+  color: var(--color-outline-variant);
 }
 
 .calendar-view__day:hover:not(.calendar-view__day--selected) {
-  background-color: var(--calendar-color-surface-container-low);
+  background-color: var(--color-surface-container-low);
 }
 
 .calendar-view__day--selected {
-  background-color: var(--calendar-color-primary);
-  color: var(--calendar-color-on-primary);
+  background-color: var(--color-primary);
+  color: #fff;
   font-weight: var(--font-weight-bold);
-  box-shadow: var(--calendar-shadow-day-selected);
+  box-shadow: var(--shadow-sm);
   cursor: default;
 }
 
@@ -772,9 +741,9 @@ function confirmCancelAllTurnos() {
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  background-color: var(--calendar-color-primary);
+  background-color: var(--color-primary);
   padding: var(--space-8);
-  border-radius: var(--calendar-radius-card);
+  border-radius: var(--radius-xl);
   cursor: pointer;
   border: none;
   width: 100%;
@@ -790,20 +759,20 @@ function confirmCancelAllTurnos() {
 .calendar-view__summary-inner {
   position: relative;
   z-index: 2;
-  color: var(--calendar-color-on-primary);
+  color: #fff;
 }
 
 .calendar-view__summary-label {
   margin: 0 0 var(--space-1);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: color-mix(in srgb, var(--calendar-color-primary-fixed) 80%, transparent);
+  color: color-mix(in srgb, var(--color-primary-fixed) 80%, transparent);
 }
 
 .calendar-view__summary-count {
   margin: 0 0 var(--space-4);
-  font-size: var(--calendar-font-size-summary-count);
-  font-weight: var(--calendar-font-weight-black);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
 }
 
 .calendar-view__summary-chips {
@@ -814,9 +783,9 @@ function confirmCancelAllTurnos() {
 }
 
 .calendar-view__chip {
-  background-color: var(--calendar-summary-chip-bg);
+  background-color: rgba(255, 255, 255, 0.2);
   padding: var(--space-1) var(--space-3);
-  border-radius: var(--calendar-radius-pill);
+  border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
   backdrop-filter: blur(4px);
 }
@@ -826,12 +795,12 @@ function confirmCancelAllTurnos() {
   right: -1rem;
   bottom: -1rem;
   z-index: 1;
-  opacity: var(--calendar-summary-icon-opacity);
+  opacity: 0.2;
   pointer-events: none;
 }
 
 .calendar-view__summary-deco-icon {
-  font-size: var(--calendar-summary-decor-size);
+  font-size: 120px;
 }
 
 .calendar-view__col-right {
@@ -841,32 +810,79 @@ function confirmCancelAllTurnos() {
   gap: var(--space-4);
 }
 
+.calendar-view__turn-wrapper {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.calendar-view__turn-delete-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(186, 26, 26, 0.1);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: var(--space-6);
+  z-index: 0;
+}
+
+.calendar-view__turn-delete-btn {
+  background-color: #ba1a1a;
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.calendar-view__turn-delete-btn:hover {
+  transform: scale(1.1);
+  background-color: #93000a;
+}
+
 .calendar-view__turn {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-6);
   padding: var(--space-6);
-  background-color: var(--calendar-color-surface-container-lowest);
-  border-radius: var(--calendar-radius-card);
-  border: 1px solid var(--calendar-border-row);
+  background-color: var(--color-surface-container-lowest);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-surface-container);
   transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow var(--transition-slow),
     border-color var(--transition-slow);
 }
 
+.calendar-view__turn-wrapper:hover .calendar-view__turn--slidable {
+  transform: translateX(-70px);
+}
+
 .calendar-view__turn:hover {
-  box-shadow: var(--calendar-shadow-row-hover);
+  box-shadow: var(--shadow-md);
 }
 
 .calendar-view__turn:focus {
-  outline: 2px solid var(--calendar-color-primary);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .calendar-view__turn--next {
-  border-color: var(--calendar-ring-primary-border);
-  box-shadow: 0 0 0 2px var(--calendar-ring-primary-soft);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(0, 73, 122, 0.3);
 }
 
 .calendar-view__turn-main {
@@ -881,6 +897,7 @@ function confirmCancelAllTurnos() {
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
+  width: 4rem; /* Fijado para alinear correctamente la barra vertical */
 }
 
 .calendar-view__turn-clock {
@@ -889,34 +906,34 @@ function confirmCancelAllTurnos() {
 }
 
 .calendar-view__turn-clock--accent {
-  color: var(--calendar-color-primary);
+  color: var(--color-primary);
 }
 
 .calendar-view__turn-meridiem {
-  font-size: var(--calendar-font-size-2xs);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  letter-spacing: var(--calendar-letter-spacing-tight);
-  color: var(--calendar-color-secondary);
+  letter-spacing: -0.025em;
+  color: var(--color-text-secondary);
 }
 
 .calendar-view__turn-meridiem--accent {
-  color: var(--calendar-color-primary);
+  color: var(--color-primary);
 }
 
 .calendar-view__turn-rule {
-  width: var(--calendar-divider-width);
+  width: 4px;
   height: 2.5rem;
-  border-radius: var(--calendar-radius-pill);
+  border-radius: var(--radius-full);
   flex-shrink: 0;
 }
 
 .calendar-view__turn-rule--primary {
-  background-color: var(--calendar-color-primary);
+  background-color: var(--color-primary);
 }
 
 .calendar-view__turn-rule--tertiary {
-  background-color: var(--calendar-color-tertiary-container);
+  background-color: var(--color-surface-container-highest);
 }
 
 .calendar-view__turn-text {
@@ -937,19 +954,19 @@ function confirmCancelAllTurnos() {
 }
 
 .calendar-view__turn-badge {
-  font-size: var(--calendar-font-size-2xs);
-  font-weight: var(--calendar-font-weight-black);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   padding: var(--space-1) var(--space-2);
-  border-radius: var(--calendar-radius-pill);
-  background-color: var(--calendar-primary-muted-bg);
-  color: var(--calendar-color-primary);
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-container);
+  color: var(--color-primary);
 }
 
 .calendar-view__turn-service {
   margin: 0;
   font-size: var(--font-size-sm);
-  color: var(--calendar-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 .calendar-view__turn-aside {
@@ -961,61 +978,41 @@ function confirmCancelAllTurnos() {
 
 .calendar-view__pill {
   padding: var(--space-1) var(--space-4);
-  border-radius: var(--calendar-radius-pill);
+  border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  letter-spacing: var(--calendar-letter-spacing-widest);
+  letter-spacing: 0.1em;
   white-space: nowrap;
 }
 
 .calendar-view__pill--confirmado {
-  background-color: var(--calendar-color-status-confirmado-bg);
-  color: var(--calendar-color-status-confirmado-text);
+  background-color: #e6f4ea;
+  color: #137333;
 }
 
 .calendar-view__pill--pendiente {
-  background-color: var(--calendar-color-secondary-container);
-  color: var(--calendar-color-on-secondary-container);
+  background-color: var(--color-surface-container-high);
+  color: var(--color-text-primary);
 }
 
 .calendar-view__pill--cancelado {
-  background-color: var(--calendar-color-status-cancelado-bg);
-  color: var(--calendar-color-status-cancelado-text);
+  background-color: #fce8e6;
+  color: #c5221f;
+}
+
+.calendar-view__pill--finalizado {
+  background-color: #f1d9f3;
+  color: #9d28d3;
 }
 
 .calendar-view__status-select-wrap {
   min-width: 8.5rem;
 }
 
-.calendar-view__status-select {
-  width: 100%;
-  font-family: inherit;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: var(--space-2) var(--space-8) var(--space-2) var(--space-3);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--calendar-border-subtle);
-  background-color: var(--calendar-color-surface-container-low);
-  color: var(--calendar-color-on-surface);
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23727785' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right var(--space-1) center;
-  background-size: 1.25rem;
-}
-
-.calendar-view__status-select:focus {
-  outline: 2px solid var(--calendar-search-focus-ring);
-  outline-offset: 1px;
-}
-
 .calendar-view__empty {
   text-align: center;
-  color: var(--calendar-color-secondary);
+  color: var(--color-text-secondary);
   padding: var(--space-8);
   margin: 0;
 }
@@ -1034,11 +1031,11 @@ function confirmCancelAllTurnos() {
 .calendar-view__modal {
   width: 100%;
   max-width: 26rem;
-  background: var(--calendar-color-surface-container-lowest);
-  border-radius: var(--calendar-radius-card);
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--radius-xl);
   padding: var(--space-8);
   box-shadow: var(--shadow-lg);
-  border: 1px solid var(--calendar-border-subtle);
+  border: 1px solid var(--color-surface-container);
 }
 
 .calendar-view__modal-title {
@@ -1050,7 +1047,7 @@ function confirmCancelAllTurnos() {
 .calendar-view__modal-text {
   margin: 0 0 var(--space-6);
   font-size: var(--font-size-sm);
-  color: var(--calendar-color-secondary);
+  color: var(--color-text-secondary);
   line-height: var(--line-height-normal);
 }
 
@@ -1059,32 +1056,6 @@ function confirmCancelAllTurnos() {
   flex-wrap: wrap;
   gap: var(--space-3);
   justify-content: flex-end;
-}
-
-.calendar-view__modal-btn {
-  font-family: inherit;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  border: none;
-  transition: opacity var(--transition-fast);
-}
-
-.calendar-view__modal-btn--ghost {
-  background: transparent;
-  color: var(--calendar-color-on-surface);
-  border: 1px solid var(--calendar-border-subtle);
-}
-
-.calendar-view__modal-btn--danger {
-  background: var(--calendar-color-error);
-  color: var(--calendar-color-on-primary);
-}
-
-.calendar-view__modal-btn:hover {
-  opacity: 0.92;
 }
 
 </style>
