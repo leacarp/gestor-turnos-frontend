@@ -60,7 +60,12 @@
   --color-text-disabled: #70787c;
 
   --color-error: #ba1a1a;
+<<<<<<< HEAD
 
+=======
+  --color-success: #10b981;
+  
+>>>>>>> af09b70fd495e9b0bd5f4b5f0c0c1cffd98a5642
   /* ── Gradientes ──────────────────────────────────────── */
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
 
@@ -92,7 +97,11 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+<<<<<<< HEAD
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+=======
+  --shadow-xl: 0 40px 40px -10px rgba(81, 95, 119, 0.06);
+>>>>>>> af09b70fd495e9b0bd5f4b5f0c0c1cffd98a5642
   --shadow-primary: 0 4px 14px 0 rgba(0, 50, 86, 0.2);
   --shadow-primary-soft: 0 20px 25px -5px rgba(0, 50, 86, 0.1), 0 8px 10px -6px rgba(0, 50, 86, 0.1);
   --shadow-primary-xl: 0 20px 25px -5px rgba(0, 50, 86, 0.2);
@@ -107,4 +116,54 @@
   --sidebar-width: 260px;
   --sidebar-width-booking: 20rem;
   --header-height: 64px;
+
+  /* ── Agenda / calendar-view (design-reference code.html) ── */
+  --calendar-color-background: #f9f9ff;
+  --calendar-color-on-surface: #191b23;
+  --calendar-color-secondary: #515f77;
+  --calendar-color-outline: #727785;
+  --calendar-color-outline-variant: #c2c6d6;
+  --calendar-color-surface-container-lowest: #ffffff;
+  --calendar-color-surface-container-low: #f2f3fd;
+  --calendar-color-surface-container-high: #e6e7f2;
+  --calendar-color-primary: #0058be;
+  --calendar-color-primary-container: #2170e4;
+  --calendar-color-on-primary: #ffffff;
+  --calendar-color-primary-fixed-dim: #adc6ff;
+  --calendar-color-primary-fixed: #d8e2ff;
+  --calendar-color-error: #ba1a1a;
+  --calendar-color-error-container: #ffdad6;
+  --calendar-color-on-error-container: #93000a;
+  --calendar-color-secondary-container: #d2e0fd;
+  --calendar-color-on-secondary-container: #55637c;
+  --calendar-color-tertiary-container: #6c748b;
+  --calendar-color-status-confirmado-bg: #e8f5e9;
+  --calendar-color-status-confirmado-text: #2e7d32;
+  --calendar-color-status-cancelado-bg: #ffdad6;
+  --calendar-color-status-cancelado-text: #93000a;
+  --calendar-shadow-day-selected: 0 4px 6px -1px rgba(0, 88, 190, 0.2);
+  --calendar-shadow-row-hover: 0 40px 40px -10px rgba(81, 95, 119, 0.06);
+  --calendar-border-subtle: rgba(194, 198, 214, 0.1);
+  --calendar-border-row: rgba(194, 198, 214, 0.05);
+  --calendar-ring-primary-soft: rgba(0, 88, 190, 0.2);
+  --calendar-ring-primary-border: rgba(0, 88, 190, 0.1);
+  --calendar-primary-muted-bg: rgba(0, 88, 190, 0.1);
+  --calendar-summary-chip-bg: rgba(255, 255, 255, 0.1);
+  --calendar-search-focus-ring: rgba(0, 88, 190, 0.3);
+  --calendar-summary-icon-opacity: 0.1;
+  --calendar-font-size-2xs: 0.625rem;
+  --calendar-font-size-display: 2.25rem;
+  --calendar-font-size-summary-count: 1.875rem;
+  --calendar-font-weight-extrabold: 800;
+  --calendar-font-weight-black: 900;
+  --calendar-letter-spacing-widest: 0.1em;
+  --calendar-letter-spacing-tight: -0.025em;
+  --calendar-radius-card: 0.75rem;
+  --calendar-radius-pill: 9999px;
+  --calendar-space-content-x: 3rem;
+  --calendar-space-content-bottom: 3rem;
+  --calendar-space-bento-gap: 2rem;
+  --calendar-header-height: 5rem;
+  --calendar-divider-width: 2px;
+  --calendar-summary-decor-size: 120px;
 }

@@ -11,12 +11,54 @@ const router = createRouter({
         {
           path: '',
           name: 'dashboard',
-          component: () => import('@/views/ServicesView.vue'), // Temporalmente a Services
+          component: () => import('@/views/ProviderView.vue'), // Ahora la vista por defecto es el perfil
         },
         {
           path: 'services',
           name: 'services',
           component: () => import('@/views/ServicesView.vue'),
+        },
+        {
+          path: 'perfil',
+          name: 'perfil',
+          component: () => import('@/views/ProviderView.vue'),
+        },
+        {
+          path: 'clientes',
+          name: 'clientes',
+          component: () => import('@/views/ClientsView.vue'),
+        },
+        {
+          path: 'agenda',
+          name: 'agenda',
+          component: () => import('@/views/CalendarView.vue'),
+        },
+        {
+          path: 'configuracion',
+          component: () => import('@/views/configuration/ConfigurationView.vue'),
+          redirect: '/configuracion/servicios',
+          children: [
+            {
+              path: 'servicios',
+              name: 'config-servicios',
+              component: () => import('@/views/configuration/ConfigurationServiciosView.vue')
+            },
+            {
+              path: 'horarios',
+              name: 'config-horarios',
+              component: () => import('@/views/configuration/ConfigurationHorariosView.vue')
+            },
+            {
+              path: 'recordatorios',
+              name: 'config-recordatorios',
+              component: () => import('@/views/configuration/ConfigurationRecordatoriosView.vue')
+            },
+            {
+              path: 'pagos',
+              name: 'config-pagos',
+              component: () => import('@/views/configuration/ConfigurationPagosView.vue')
+            }
+          ]
         }
       ]
     },
@@ -53,6 +95,7 @@ const router = createRouter({
       ]
     },
     {
+<<<<<<< HEAD
       path: '/booking',
       component: () => import('@/layouts/BookingLayout.vue'),
       redirect: '/booking/service',
@@ -73,6 +116,11 @@ const router = createRouter({
           component: () => import('@/views/AppointmentConfirmationView.vue')
         }
       ]
+=======
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/NotFoundView.vue')
+>>>>>>> af09b70fd495e9b0bd5f4b5f0c0c1cffd98a5642
     }
   ],
 })
