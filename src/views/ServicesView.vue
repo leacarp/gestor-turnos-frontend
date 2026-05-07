@@ -1,7 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
 import ServiceCard from '@/components/ServiceCard.vue'
+import AppButton from '@/components/AppButton.vue'
+import AppInput from '@/components/AppInput.vue'
 import type { ServiceItem } from '@/components/ServiceCard.vue'
+
+type ServiceDraft = Pick<ServiceItem, 'title' | 'category' | 'description' | 'duration' | 'price'>
+
+const route = useRoute()
+const router = useRouter()
 
 const searchQuery = ref('')
 const selectedCategory = ref('Todas las categorías')
@@ -21,16 +30,16 @@ const services = ref<ServiceItem[]>([
     title: 'Corte de cabello',
     description: 'Corte profesional personalizado según la forma de tu rostro y últimas tendencias.',
     duration: 45,
-    price: 35,
+    price: 2500,
     colorTheme: 'default'
   },
   {
     id: '2',
     category: 'Cabello',
-    title: 'Tinte completo',
+    title: 'Corte + Color',
     description: 'Coloración uniforme de raíz a puntas con productos premium de larga duración.',
     duration: 120,
-    price: 85,
+    price: 6500,
     colorTheme: 'tertiary'
   },
   {
@@ -39,7 +48,7 @@ const services = ref<ServiceItem[]>([
     title: 'Masaje Relax',
     description: 'Tratamiento relajante con aceites esenciales para liberar tensión muscular.',
     duration: 60,
-    price: 60,
+    price: 6000,
     colorTheme: 'secondary'
   },
   {
@@ -48,28 +57,116 @@ const services = ref<ServiceItem[]>([
     title: 'Manicura Gel',
     description: 'Limpieza profunda y esmaltado semipermanente con acabado espejo.',
     duration: 90,
-    price: 25,
+    price: 2500,
     colorTheme: 'primary'
   },
   {
     id: '5',
     category: 'Tratamiento',
-    title: 'Hidratación Profunda',
+    title: 'Tratamiento Capilar',
     description: 'Mascarilla intensiva reparadora para cabellos dañados o secos.',
-    duration: 30,
-    price: 40,
+    duration: 60,
+    price: 4000,
     colorTheme: 'surface'
   }
 ])
 
+const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+const selectedService = ref<ServiceItem | null>(null)
+const editingService = ref<ServiceDraft>({
+  title: '',
+  category: 'Cabello',
+  description: '',
+  duration: 60,
+  price: 0,
+})
+
 function handleNewService() {
-  // TODO: Open modal
-  console.log('Open new service modal')
+  // Para simplificar, abre el modal de edición vacío
+  selectedService.value = null
+  editingService.value = {
+    title: '',
+    category: 'Cabello',
+    description: '',
+    duration: 60,
+    price: 0
+  }
+  showEditModal.value = true
 }
 
-function handleOptions(id: string | number) {
-  console.log('Options for service', id)
+function handleEdit(id: string | number) {
+  const srv = services.value.find(s => s.id === id)
+  if (srv) {
+    selectedService.value = srv
+    editingService.value = {
+      title: srv.title,
+      category: srv.category,
+      description: srv.description,
+      duration: srv.duration,
+      price: srv.price,
+    }
+    showEditModal.value = true
+  }
 }
+
+function saveEdit() {
+  if (selectedService.value) {
+    const index = services.value.findIndex(s => s.id === selectedService.value!.id)
+    if (index !== -1) {
+      services.value[index] = { ...services.value[index], ...editingService.value } as ServiceItem
+      toast.success('Cambios realizados')
+    }
+  } else {
+    // Es uno nuevo
+    const newId = String(Date.now())
+    services.value.push({
+      id: newId,
+      colorTheme: 'default',
+      ...editingService.value
+    } as ServiceItem)
+    toast.success('Servicio creado')
+  }
+  showEditModal.value = false
+}
+
+function handleDelete(id: string | number) {
+  const srv = services.value.find(s => s.id === id)
+  if (srv) {
+    selectedService.value = srv
+    showDeleteModal.value = true
+  }
+}
+
+function confirmDelete() {
+  if (selectedService.value) {
+    services.value = services.value.filter(s => s.id !== selectedService.value!.id)
+    toast.success('Servicio eliminado')
+    showDeleteModal.value = false
+    selectedService.value = null
+    
+    // Clean up query param if it was there
+    if (route.query.delete) {
+      router.replace({ path: route.path, query: {} })
+    }
+  }
+}
+
+function cancelDelete() {
+  showDeleteModal.value = false
+  selectedService.value = null
+  // Clean up query param if it was there
+  if (route.query.delete) {
+    router.replace({ path: route.path, query: {} })
+  }
+}
+
+onMounted(() => {
+  if (route.query.delete) {
+    const serviceIdToDel = route.query.delete as string
+    handleDelete(serviceIdToDel)
+  }
+})
 </script>
 
 <template>
@@ -81,10 +178,9 @@ function handleOptions(id: string | number) {
           <h1 class="services-view__title">Catálogo de Servicios</h1>
           <p class="services-view__subtitle">Gestiona los servicios que ofreces a tus clientes</p>
         </div>
-        <button class="services-view__add-btn" @click="handleNewService">
-          <span class="material-symbols-outlined">add</span>
-          Nuevo Servicio
-        </button>
+        <AppButton variant="gradient" iconLeft="add" @click="handleNewService">
+          Nuevo servicio
+        </AppButton>
       </div>
     </header>
 
@@ -119,7 +215,8 @@ function handleOptions(id: string | number) {
           v-for="service in services" 
           :key="service.id" 
           :service="service" 
-          @options="handleOptions"
+          @edit="handleEdit"
+          @delete="handleDelete"
         />
 
         <!-- Add More Placeholder Card -->
@@ -134,6 +231,44 @@ function handleOptions(id: string | number) {
         </div>
       </div>
     </section>
+
+    <!-- Modal Editar / Nuevo -->
+    <div v-if="showEditModal" class="services-view__modal-overlay" @click.self="showEditModal = false">
+      <div class="services-view__modal">
+        <h3 class="services-view__modal-title">{{ selectedService ? 'Editar Servicio' : 'Nuevo Servicio' }}</h3>
+        
+        <div class="services-view__modal-body">
+          <AppInput v-model="editingService.title" label="Nombre del servicio" />
+          <AppInput v-model="editingService.category" label="Categoría" />
+          <AppInput v-model="editingService.description" label="Descripción" />
+          <div class="services-view__modal-row">
+            <AppInput v-model="editingService.duration" type="number" label="Duración (min)" />
+            <AppInput v-model="editingService.price" type="number" label="Precio ($)" />
+          </div>
+        </div>
+
+        <div class="services-view__modal-actions">
+          <AppButton variant="outline" @click="showEditModal = false">Cancelar</AppButton>
+          <AppButton variant="solid" @click="saveEdit">Guardar</AppButton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Eliminar -->
+    <div v-if="showDeleteModal" class="services-view__modal-overlay" @click.self="cancelDelete">
+      <div class="services-view__modal">
+        <h3 class="services-view__modal-title">Eliminar Servicio</h3>
+        <p class="services-view__modal-desc">
+          ¿Quieres eliminar el servicio: <strong>{{ selectedService?.title }}</strong>? Esta acción no se puede deshacer.
+        </p>
+
+        <div class="services-view__modal-actions">
+          <AppButton variant="outline" @click="cancelDelete">Cancelar</AppButton>
+          <AppButton style="background-color: rgba(186, 26, 26, 0.1); color: #ba1a1a; border: none;" @click="confirmDelete">Eliminar</AppButton>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -175,38 +310,15 @@ function handleOptions(id: string | number) {
 .services-view__title {
   font-size: var(--font-size-3xl);
   font-weight: 800;
+  margin: 0;
   color: var(--color-text-primary);
   letter-spacing: -0.025em;
 }
 
 .services-view__subtitle {
   font-size: var(--font-size-lg);
+  margin: 0;
   color: var(--color-text-secondary);
-}
-
-.services-view__add-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-8);
-  border-radius: var(--radius-full);
-  background: var(--gradient-primary);
-  color: #ffffff;
-  font-weight: var(--font-weight-bold);
-  border: none;
-  cursor: pointer;
-  box-shadow: var(--shadow-primary);
-  transition: all var(--transition-fast);
-}
-
-.services-view__add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px 0 rgba(0, 50, 86, 0.3);
-}
-
-.services-view__add-btn:active {
-  transform: scale(0.95);
 }
 
 .services-view__filters {
@@ -386,5 +498,63 @@ function handleOptions(id: string | number) {
 .services-view__add-card-subtitle {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
+}
+
+/* Modals */
+.services-view__modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.services-view__modal {
+  background: var(--color-surface-container-lowest, #fff);
+  padding: var(--space-6);
+  border-radius: var(--radius-xl);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+}
+
+.services-view__modal-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.services-view__modal-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.services-view__modal-body {
+  margin-bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.services-view__modal-row {
+  display: flex;
+  gap: var(--space-4);
+}
+.services-view__modal-row > * {
+  flex: 1;
+}
+
+.services-view__modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: auto;
 }
 </style>

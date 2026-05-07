@@ -12,6 +12,7 @@ const props = defineProps<{
   disabled?: boolean
   required?: boolean
   id?: string
+  variant?: 'filled' | 'outline'
 }>()
 
 const emit = defineEmits<{
@@ -59,10 +60,13 @@ function togglePasswordVisibility() {
         :disabled="disabled"
         :required="required"
         class="app-input__field"
-        :class="{
-          'app-input__field--has-icon-left': iconLeft,
-          'app-input__field--has-icon-right': iconRight || type === 'password',
-        }"
+        :class="[
+          `app-input__field--${variant || 'filled'}`,
+          {
+            'app-input__field--has-icon-left': iconLeft,
+            'app-input__field--has-icon-right': iconRight || type === 'password',
+          }
+        ]"
         @input="handleInput"
       />
 
@@ -142,23 +146,37 @@ function togglePasswordVisibility() {
 .app-input__field {
   width: 100%;
   font-family: var(--font-family-body);
+  background-color: var(--color-surface-container-lowest);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
-  background-color: var(--color-surface-container-high);
-  border: none;
   border-radius: var(--radius-xl);
   padding: var(--space-4);
-  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
   outline: none;
+}
+
+.app-input__field--filled {
+  background-color: var(--color-surface-container-high);
+  border: none;
+}
+
+.app-input__field--filled:focus {
+  background-color: var(--color-surface-container-lowest);
+  box-shadow: 0 0 0 2px var(--color-primary-fixed-dim);
+}
+
+.app-input__field--outline {
+  background-color: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-primary);
+}
+
+.app-input__field--outline:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .app-input__field::placeholder {
   color: var(--color-outline-variant);
-}
-
-.app-input__field:focus {
-  background-color: var(--color-surface-container-lowest);
-  box-shadow: 0 0 0 2px var(--color-primary-fixed-dim); /* Aproximación a surface-tint */
 }
 
 .app-input__field--has-icon-left {

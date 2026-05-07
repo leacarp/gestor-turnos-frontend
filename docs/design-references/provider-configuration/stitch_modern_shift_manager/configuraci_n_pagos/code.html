@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f2f3fd",
+                    "surface-tint": "#005ac2",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "primary-container": "#2170e4",
+                    "on-secondary-container": "#55637c",
+                    "background": "#f9f9ff",
+                    "on-secondary-fixed": "#0d1c31",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e1e2ec",
+                    "outline": "#727785",
+                    "tertiary-container": "#6c748b",
+                    "primary": "#0058be",
+                    "on-surface": "#191b23",
+                    "secondary-container": "#d2e0fd",
+                    "surface": "#f9f9ff",
+                    "secondary-fixed-dim": "#b9c7e3",
+                    "surface-bright": "#f9f9ff",
+                    "surface-container-high": "#e6e7f2",
+                    "inverse-surface": "#2e3038",
+                    "on-primary-fixed": "#001a42",
+                    "on-background": "#191b23",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#d8d9e3",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#545c72",
+                    "tertiary-fixed-dim": "#bec6e0",
+                    "surface-variant": "#e1e2ec",
+                    "on-tertiary-container": "#fefcff",
+                    "on-primary-fixed-variant": "#004395",
+                    "secondary": "#515f77",
+                    "surface-container": "#ecedf7",
+                    "primary-fixed": "#d8e2ff",
+                    "error-container": "#ffdad6",
+                    "inverse-primary": "#adc6ff",
+                    "inverse-on-surface": "#eff0fa",
+                    "outline-variant": "#c2c6d6",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#fefcff",
+                    "on-surface-variant": "#424754",
+                    "secondary-fixed": "#d5e3ff",
+                    "on-tertiary-fixed-variant": "#3f465c",
+                    "on-tertiary-fixed": "#131b2e",
+                    "on-secondary-fixed-variant": "#39475e",
+                    "tertiary-fixed": "#dae2fd"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#f9f9ff]/80 backdrop-blur-xl dark:bg-slate-950/80 flex flex-col p-4 gap-2 z-50">
+<div class="px-4 py-6 mb-4">
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">AeroManager</h1>
+<p class="text-xs text-on-surface-variant/70 uppercase tracking-widest mt-1">Panel de Proveedor</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-medium">Calendario</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-[#ecedf7] dark:bg-slate-800 text-blue-700 dark:text-blue-300 font-semibold rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium">Configuración</span>
+</a>
+</nav>
+<div class="mt-auto p-2">
+<button class="w-full py-3 px-4 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full font-semibold flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                Nuevo Turno
+            </button>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 left-64 h-16 z-40 bg-[#f9f9ff]/80 backdrop-blur-xl flex items-center justify-between px-8 w-full border-b border-transparent">
+<div class="flex items-center gap-8">
+<a class="text-slate-500 dark:text-slate-400 pb-4 text-sm font-medium hover:text-blue-500 transition-colors" href="#">Servicios</a>
+<a class="text-slate-500 dark:text-slate-400 pb-4 text-sm font-medium hover:text-blue-500 transition-colors" href="#">Horarios</a>
+<a class="text-slate-500 dark:text-slate-400 pb-4 text-sm font-medium hover:text-blue-500 transition-colors" href="#">Recordatorios</a>
+<a class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-4 text-sm font-medium" href="#">Pagos</a>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-lg" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Buscar transacción..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional male business consultant in a well-lit modern office with a friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7I8fPouX7w2PcRw0UkaW-zUAzAaUkJbJnxE0b1f4fGLyytWuxCR7KymOk1avSiDr3S0AoKcnS-ep44bxWW1xY5XFW122UvtZJcikeQbGCZ9RERP-08lIHLWVtNE0zdVBBga8MD5E9D6_Pe-u1szefYSUm5p6sdINaoyxT3ziWFUdLgie-J3bhTqzbAsAtDAG68GEr6oZme4rqEX6_ZCKqljNNxnjKnOIMyAr7zF3XNitVB-r02eMEyyuRWvfgIKez-6tveZDnRSI"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pl-64 pt-16 min-h-screen">
+<div class="p-12 max-w-6xl mx-auto">
+<!-- Header Section -->
+<div class="mb-12">
+<h2 class="text-4xl font-extrabold text-on-surface tracking-tight mb-2">Configuración de Pagos</h2>
+<p class="text-on-surface-variant text-lg max-w-2xl">Gestiona cómo recibes tus ingresos, integra pasarelas de pago y define tus políticas de reserva.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Integration Card -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest rounded-xl p-8 shadow-sm flex flex-col justify-between overflow-hidden relative group">
+<div class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors"></div>
+<div>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-12 h-12 bg-surface-container flex items-center justify-center rounded-xl">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div>
+<h3 class="text-xl font-bold text-on-surface">MercadoPago</h3>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Conectado</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed">Tu cuenta está vinculada correctamente. Recibes los cobros de forma instantánea en tu billetera digital.</p>
+</div>
+<div class="mt-8 flex items-center justify-between">
+<span class="text-sm font-medium text-on-surface-variant">ID: mp_8842...992</span>
+<button class="text-sm font-semibold text-primary hover:underline">Configurar Webhooks</button>
+</div>
+</div>
+<!-- Policies Card -->
+<div class="col-span-12 lg:col-span-7 bg-surface-container rounded-xl p-8 shadow-sm">
+<h3 class="text-xl font-bold text-on-surface mb-6">Políticas de Reserva</h3>
+<div class="space-y-6">
+<label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl cursor-pointer hover:bg-surface-bright transition-all">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="book_online">book_online</span>
+</div>
+<div>
+<span class="block font-semibold text-on-surface">Requerir seña</span>
+<span class="text-xs text-on-surface-variant">Solicita un pago parcial para confirmar</span>
+</div>
+</div>
+<input checked="" class="w-6 h-6 rounded-md border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl cursor-pointer hover:bg-surface-bright transition-all">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+</div>
+<div>
+<span class="block font-semibold text-on-surface">Aceptar pago total</span>
+<span class="text-xs text-on-surface-variant">Permite liquidar el 100% por adelantado</span>
+</div>
+</div>
+<input class="w-6 h-6 rounded-md border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl cursor-pointer hover:bg-surface-bright transition-all">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="cancel">cancel</span>
+</div>
+<div>
+<span class="block font-semibold text-on-surface">Permitir cancelación</span>
+<span class="text-xs text-on-surface-variant">Habilita devoluciones automáticas</span>
+</div>
+</div>
+<input checked="" class="w-6 h-6 rounded-md border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Financial Controls Card (Focus Pane) -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-10 shadow-2xl shadow-secondary/5 mt-4">
+<div class="flex flex-col md:flex-row gap-12 items-start">
+<div class="flex-1 space-y-8">
+<div>
+<h3 class="text-2xl font-bold text-on-surface mb-2">Valores de Reserva</h3>
+<p class="text-on-surface-variant">Define los montos o porcentajes fijos que los clientes deben abonar para asegurar su lugar.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-3">
+<label class="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Monto de seña ($)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">$</span>
+<input class="w-full bg-surface-container-low border-none rounded-xl pl-10 pr-4 py-4 text-lg font-semibold focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" placeholder="0.00" type="number"/>
+</div>
+<p class="text-xs text-on-surface-variant/70 italic">Monto fijo sugerido para servicios estándar.</p>
+</div>
+<div class="space-y-3">
+<label class="text-sm font-bold text-on-surface-variant uppercase tracking-wider">% de seña</label>
+<div class="relative">
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">%</span>
+<input class="w-full bg-surface-container-low border-none rounded-xl px-4 py-4 text-lg font-semibold focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" type="number" value="30"/>
+</div>
+<p class="text-xs text-on-surface-variant/70 italic">Calculado sobre el valor total del servicio.</p>
+</div>
+</div>
+</div>
+<div class="w-full md:w-80 bg-surface-container-low rounded-xl p-6 border border-outline-variant/10">
+<h4 class="font-bold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="info">info</span>
+                                Resumen Operativo
+                            </h4>
+<div class="space-y-4">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Comisión MP</span>
+<span class="font-semibold">3.99% + IVA</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Plazo de acreditación</span>
+<span class="font-semibold">Inmediato</span>
+</div>
+<div class="pt-4 border-t border-outline-variant/20">
+<div class="flex justify-between text-sm mb-1">
+<span class="text-on-surface-variant">Tasa de seña activa</span>
+<span class="font-bold text-primary">30%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[30%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-outline-variant/20 flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="text-sm">Configuración protegida por SSL de 256 bits</span>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+                            Guardar configuración de pagos
+                        </button>
+</div>
+</div>
+<!-- Promotional/Stats Card -->
+<div class="col-span-12 lg:col-span-12 h-48 rounded-xl relative overflow-hidden flex items-center px-10">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="vibrant abstract close-up of business data visualizations and financial charts in soft blue and white tones with professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkjpyynq3_PkFKwim26-Jwv7TfTTrDesKU25iIvIU71QT0l_NGbnlcB6R4L0GI493WO8vazoezqFe-Hkahgy6sliFTd4foV4BYKMUwY1CmOAHWHwZUXIWyhO5yuqHf6E1Fe8Mw-aGPvXCH6QvTriwn08zZOXNWadOAHckZ6GwNoJkIKjzUPWcQNCX_oXjjkH_I-sA20lANzQ3E3Th7rzyfwGi8Es4llJq7IGW4WJkTJirnPXdP45mJg0P_pXjqddwkuY99BCF2tuY"/>
+<div class="absolute inset-0 bg-primary/80 backdrop-blur-sm"></div>
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between w-full">
+<div class="text-on-primary">
+<h4 class="text-2xl font-bold mb-1">Optimiza tu facturación</h4>
+<p class="opacity-80">El 85% de los profesionales que cobran seña reducen el ausentismo en un 60%.</p>
+</div>
+<button class="mt-4 md:mt-0 px-6 py-2 bg-surface-container-lowest text-primary font-bold rounded-full hover:bg-white transition-colors">Ver reportes</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Help Button -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-surface-container-lowest shadow-2xl rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all duration-300 group z-50 border border-outline-variant/20">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</body></html>

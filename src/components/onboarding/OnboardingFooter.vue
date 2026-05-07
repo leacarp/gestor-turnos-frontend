@@ -15,15 +15,14 @@ const emit = defineEmits<{
 
 <template>
   <footer class="onboarding-footer" :class="{ 'onboarding-footer--final': isFinalStep }">
-    <button 
+    <AppButton 
       v-if="showBack" 
-      type="button" 
-      class="onboarding-footer__back-btn" 
+      variant="ghost" 
+      iconLeft="arrow_back"
       @click="emit('back')"
     >
-      <span class="material-symbols-outlined">arrow_back</span>
       Volver
-    </button>
+    </AppButton>
     
     <div v-else></div>
 

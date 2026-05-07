@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AeroManager - Configuración de Horarios</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f2f3fd",
+                        "surface-tint": "#005ac2",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "primary-container": "#2170e4",
+                        "on-secondary-container": "#55637c",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed": "#0d1c31",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e1e2ec",
+                        "outline": "#727785",
+                        "tertiary-container": "#6c748b",
+                        "primary": "#0058be",
+                        "on-surface": "#191b23",
+                        "secondary-container": "#d2e0fd",
+                        "surface": "#f9f9ff",
+                        "secondary-fixed-dim": "#b9c7e3",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-high": "#e6e7f2",
+                        "inverse-surface": "#2e3038",
+                        "on-primary-fixed": "#001a42",
+                        "on-background": "#191b23",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d8d9e3",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#545c72",
+                        "tertiary-fixed-dim": "#bec6e0",
+                        "surface-variant": "#e1e2ec",
+                        "on-tertiary-container": "#fefcff",
+                        "on-primary-fixed-variant": "#004395",
+                        "secondary": "#515f77",
+                        "surface-container": "#ecedf7",
+                        "primary-fixed": "#d8e2ff",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#adc6ff",
+                        "inverse-on-surface": "#eff0fa",
+                        "outline-variant": "#c2c6d6",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#fefcff",
+                        "on-surface-variant": "#424754",
+                        "secondary-fixed": "#d5e3ff",
+                        "on-tertiary-fixed-variant": "#3f465c",
+                        "on-tertiary-fixed": "#131b2e",
+                        "on-secondary-fixed-variant": "#39475e",
+                        "tertiary-fixed": "#dae2fd"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-button {
+            background: linear-gradient(135deg, #0058be 0%, #2170e4 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#f9f9ff]/80 backdrop-blur-xl border-r border-outline-variant/15 flex flex-col p-4 gap-2 z-50">
+<div class="mb-8 px-4 py-2">
+<h1 class="text-xl font-bold tracking-tight text-slate-900">AeroManager</h1>
+<p class="text-xs text-on-surface-variant font-medium">Panel de Proveedor</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="text-sm font-medium">Calendario</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-sm font-medium">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-[#ecedf7] text-blue-700 font-semibold rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-sm font-medium">Configuración</span>
+</a>
+</nav>
+<div class="mt-auto p-4 flex items-center gap-3 bg-surface-container-low rounded-xl">
+<img alt="Provider Profile Picture" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" data-alt="professional male portrait with friendly expression and clean background for business profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBySxvTq9sdus4xGnK4lhHk2ONrFi60lPDQLYFWeZYM_3mqJM2_wqMkDGALC25kGvyzm3ayuROOXMSb3RIxpx_Li3qQ8Qzsc6-YS9D-cyCAmPvU5Z_xqPlz32LFh1-XioYCiZkmqPNXgJ8ovu3J5uRsHDPiq7bVUCPugOjA3NadfwalGVpoFBPCqhD23fRMeC6J-RAT8xSUs5__WWLJbpoNf11kW2yvsPpPqX-uCzLTEXrx-q4oS6BZdmmGLqgwt3hHrUz2JyG7Wdg"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold truncate">Carlos Aranda</p>
+<p class="text-[10px] text-on-surface-variant truncate">Premium Provider</p>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 left-64 h-16 z-40 bg-[#f9f9ff]/80 backdrop-blur-xl flex items-center justify-between px-8 border-b border-outline-variant/15">
+<div class="flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="text-slate-500 hover:text-blue-500 transition-colors text-sm font-medium" href="#">Servicios</a>
+<a class="text-blue-600 border-b-2 border-blue-600 pb-5 text-sm font-bold" href="#">Horarios</a>
+<a class="text-slate-500 hover:text-blue-500 transition-colors text-sm font-medium" href="#">Recordatorios</a>
+<a class="text-slate-500 hover:text-blue-500 transition-colors text-sm font-medium" href="#">Pagos</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-12 pb-12 min-h-screen bg-surface">
+<div class="max-w-4xl mx-auto">
+<!-- Header Section with Editorial Fluidity -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-xl">
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Configuración de Horarios</h2>
+<p class="text-lg text-on-surface-variant">Define tu disponibilidad semanal para que tus clientes puedan reservar turnos de manera automática.</p>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 bg-secondary-container text-on-secondary-container rounded-full text-sm font-medium">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+                    Zona horaria: (GMT-3) Buenos Aires
+                </div>
+</div>
+<!-- Focus Pane for Schedule Selection -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_40px_40px_-10px_rgba(81,95,119,0.06)] p-8">
+<div class="space-y-6">
+<!-- Day Rows -->
+<!-- Lunes -->
+<div class="grid grid-cols-12 items-center gap-4 py-2 group">
+<div class="col-span-3 flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded-md border-outline-variant text-primary focus:ring-primary/30 transition-all" type="checkbox"/>
+<span class="font-semibold text-on-surface">Lunes</span>
+</div>
+<div class="col-span-8 flex items-center gap-3">
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="09:00"/>
+</div>
+<span class="text-on-surface-variant font-medium">a</span>
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="18:00"/>
+</div>
+<button class="ml-4 p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Martes -->
+<div class="grid grid-cols-12 items-center gap-4 py-2 group">
+<div class="col-span-3 flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded-md border-outline-variant text-primary focus:ring-primary/30 transition-all" type="checkbox"/>
+<span class="font-semibold text-on-surface">Martes</span>
+</div>
+<div class="col-span-8 flex items-center gap-3">
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="09:00"/>
+</div>
+<span class="text-on-surface-variant font-medium">a</span>
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="18:00"/>
+</div>
+<button class="ml-4 p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Miércoles -->
+<div class="grid grid-cols-12 items-center gap-4 py-2 group">
+<div class="col-span-3 flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded-md border-outline-variant text-primary focus:ring-primary/30 transition-all" type="checkbox"/>
+<span class="font-semibold text-on-surface">Miércoles</span>
+</div>
+<div class="col-span-8 flex items-center gap-3">
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="09:00"/>
+</div>
+<span class="text-on-surface-variant font-medium">a</span>
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="18:00"/>
+</div>
+<button class="ml-4 p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Jueves -->
+<div class="grid grid-cols-12 items-center gap-4 py-2 group">
+<div class="col-span-3 flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded-md border-outline-variant text-primary focus:ring-primary/30 transition-all" type="checkbox"/>
+<span class="font-semibold text-on-surface">Jueves</span>
+</div>
+<div class="col-span-8 flex items-center gap-3">
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="09:00"/>
+</div>
+<span class="text-on-surface-variant font-medium">a</span>
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="18:00"/>
+</div>
+<button class="ml-4 p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Viernes -->
+<div class="grid grid-cols-12 items-center gap-4 py-2 group">
+<div class="col-span-3 flex items-center gap-3">
+<input checked="" class="w-5 h-5 rounded-md border-outline-variant text-primary focus:ring-primary/30 transition-all" type="checkbox"/>
+<span class="font-semibold text-on-surface">Viernes</span>
+</div>
+<div class="col-span-8 flex items-center gap-3">
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="09:00"/>
+</div>
+<span class="text-on-surface-variant font-medium">a</span>
+<div class="flex items-center bg-surface-container-low rounded-xl px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:bg-white transition-all w-full max-w-[140px]">
+<input class="bg-transparent border-none focus:ring-0 p-0 text-sm w-full font-medium" type="time" value="13:00"/>
+</div>
+<button class="ml-4 p-2 text-on-surface-variant hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Sábado (Cerrado) -->
+<div class="grid grid-cols-12 items-center gap-4 py-2 group">
+<div class="col-span-3 flex items-center gap-3">
+<input class="w-5 h-5 rounded-md border-outline-variant text-primary focus:ring-primary/30 transition-all" type="checkbox"/>
+<span class="font-semibold text-on-surface-variant">Sábado</span>
+</div>
+<div class="col-span-8 flex items-center gap-3">
+<span class="text-on-surface-variant text-sm italic">Cerrado</span>
+</div>
+</div>
+<!-- Domingo (Cerrado) -->
+<div class="grid grid-cols-12 items-center gap-4 py-2 group border-b border-outline-variant/10 pb-6">
+<div class="col-span-3 flex items-center gap-3">
+<input class="w-5 h-5 rounded-md border-outline-variant text-primary focus:ring-primary/30 transition-all" type="checkbox"/>
+<span class="font-semibold text-on-surface-variant">Domingo</span>
+</div>
+<div class="col-span-8 flex items-center gap-3">
+<span class="text-on-surface-variant text-sm italic">Cerrado</span>
+</div>
+</div>
+<!-- Advanced Configuration Chips -->
+<div class="pt-4">
+<h4 class="text-sm font-bold text-on-surface mb-4">Configuraciones Adicionales</h4>
+<div class="flex flex-wrap gap-3">
+<div class="bg-surface-container-high px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium text-secondary cursor-pointer hover:bg-secondary-container transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="lunch_dining">lunch_dining</span>
+                                Añadir horario de almuerzo
+                            </div>
+<div class="bg-surface-container-high px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium text-secondary cursor-pointer hover:bg-secondary-container transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="event_busy">event_busy</span>
+                                Excepciones de feriados
+                            </div>
+<div class="bg-surface-container-high px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium text-secondary cursor-pointer hover:bg-secondary-container transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="update">update</span>
+                                Margen entre turnos (15 min)
+                            </div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-8 flex items-center justify-between border-t border-outline-variant/10">
+<p class="text-sm text-on-surface-variant max-w-xs">Los cambios se aplicarán inmediatamente a tu calendario público.</p>
+<div class="flex gap-4">
+<button class="px-6 py-2.5 rounded-full text-primary font-bold hover:bg-surface-container-high transition-all">Descartar</button>
+<button class="gradient-button px-8 py-2.5 rounded-full text-white font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all">Guardar horarios</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Contextual Information (Editorial Layout) -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+<div class="p-8 bg-primary/5 rounded-xl border border-primary/10">
+<span class="material-symbols-outlined text-primary mb-4 text-3xl" data-icon="verified">verified</span>
+<h3 class="text-xl font-bold text-on-surface mb-2">Reserva Inteligente</h3>
+<p class="text-on-surface-variant">AeroManager detecta automáticamente conflictos en tu agenda y solo permite reservas en los huecos libres dentro de estos horarios.</p>
+</div>
+<div class="relative rounded-xl overflow-hidden group aspect-video md:aspect-auto h-full min-h-[200px]">
+<img alt="Calendar Planner" class="absolute inset-0 w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" data-alt="modern minimalist office desk with a digital tablet showing a calendar application, clean white aesthetic with soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5kigOVZNXGjv_Iw0CCoXpZp-gKMxyBeD9c9fuNAmiw_tngakC0So6JqRfy4MiGQUYoIxffJ7w5TfA4DtttzIsSCsKD1o3EE9m_9O0yfoZ9XSR-7SSQ_4D1R63ZlW8relAZ37GomJJBlY2-BM9Cb7P2nv4-CbgXC-MT4RMmQbDcSGR9MhMoBUzhWe3p-OVCq72kQrubFtmHOM6R8Y2Mqcq0lu2i6JQrfQWjzhF3tL5v1JXSlRx_LoO_BMUiVqpUHZJ0y3jOqKNT8Y"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+<div class="absolute bottom-6 left-6 right-6">
+<span class="text-xs uppercase tracking-widest text-white/80 font-bold mb-1 block">Tip Pro</span>
+<p class="text-white font-medium">Usa el botón de copiar para aplicar el mismo horario a toda la semana.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
