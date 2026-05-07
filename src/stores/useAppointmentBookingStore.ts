@@ -12,6 +12,8 @@ export interface BookingService {
   requiresDeposit?: boolean
   /** Monto de la seña en la misma moneda que `price` */
   depositAmount?: number
+  /** Indica si es un servicio destacado */
+  isPopular?: boolean
 }
 
 export interface BookingGuestDetails {

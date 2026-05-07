@@ -6,53 +6,105 @@ import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 const router = useRouter()
 const store = useAppointmentBookingStore()
 
-// Mock data
-const currentMonthYear = ref('October 2023')
+interface CalendarDay {
+  day: number;
+  isCurrentMonth: boolean;
+  fullDate: string;
+  isPast: boolean;
+}
+
+// --- LÓGICA DINÁMICA DE FECHAS ---
+const viewDate = ref(new Date()) // Fecha que controla qué mes estamos viendo
 const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-// Generamos días para el calendario (simil al mockup)
+const currentMonthYear = computed(() => {
+  return viewDate.value.toLocaleString('default', { month: 'long', year: 'numeric' })
+})
+
+
+
+// --- NAVEGACIÓN ---
+function changeMonth(offset: number) {
+  viewDate.value = new Date(viewDate.value.getFullYear(), viewDate.value.getMonth() + offset, 1)
+}
+
+// --- SELECCIÓN Y TURNOS ---
+const availableTimes = ref(['09:00 AM', '10:30 AM', '12:00 PM', '02:30 PM'])
+const localSelectedDate = ref<string>('')
+const localSelectedTime = ref<string>('')
+
+
+// --- FORMATEO PARA LA UI ---
+const formattedSelectedDate = computed(() => {
+  if (!localSelectedDate.value) return 'Select a date'
+  return new Date(localSelectedDate.value + 'T00:00:00').toLocaleDateString('en-US', {
+    weekday: 'long', month: 'short', day: 'numeric'
+  })
+})
+
+function handleContinue() {
+  if (localSelectedDate.value && localSelectedTime.value) {
+    store.setDateTime(localSelectedDate.value, localSelectedTime.value)
+    router.push({ name: 'booking-details' })
+  }
+}
+
+const serviceName = computed(() => store.selectedService?.name || 'Corte y Barba')
+const serviceDuration = computed(() => store.selectedService?.duration || 45)
+const servicePrice = computed(() => store.selectedService?.price || 2500)
+
+
+const today = new Date()
+today.setHours(0, 0, 0, 0) // Normalizamos a medianoche para comparar solo fechas
+
 const calendarDays = computed(() => {
-  const days = []
+  const year = viewDate.value.getFullYear()
+  const month = viewDate.value.getMonth()
+
+  const firstDayOfMonth = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const daysInPrevMonth = new Date(year, month, 0).getDate()
+
+  const days: CalendarDay[] = []
+
   // Días del mes anterior
-  for (let i = 27; i <= 30; i++) {
-    days.push({ day: i, isCurrentMonth: false, fullDate: `2023-09-${i}` })
+  for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+    const d = daysInPrevMonth - i
+    days.push({
+      day: d,
+      isCurrentMonth: false,
+      fullDate: `${year}-${month}-${d}`,
+      isPast: true // Los días de meses anteriores siempre se consideran pasados o inactivos
+    })
   }
+
   // Días del mes actual
-  for (let i = 1; i <= 31; i++) {
-    const formattedDay = i.toString().padStart(2, '0')
-    days.push({ day: i, isCurrentMonth: true, fullDate: `2023-10-${formattedDay}` })
+  for (let i = 1; i <= daysInMonth; i++) {
+    const dateObj = new Date(year, month, i)
+    const formattedDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`
+
+    days.push({
+      day: i,
+      isCurrentMonth: true,
+      fullDate: formattedDate,
+      // Si la fecha es menor a "hoy", es pasado
+      isPast: dateObj < today
+    })
   }
+
   return days
 })
 
-const availableTimes = ['09:00 AM', '10:30 AM', '12:00 PM', '02:30 PM']
 
-// Local state for UI selection before confirming
-const localSelectedDate = ref<string>('2023-10-12') // Default pre-selected as in mockup
-const localSelectedTime = ref<string>('10:30 AM') // Default pre-selected
-
-function selectDate(date: string, isCurrentMonth: boolean) {
-  if (isCurrentMonth) {
-    localSelectedDate.value = date
-    // In a real app, we'd fetch available times for this date here
+function selectDate(item: CalendarDay) {
+  if (item.isCurrentMonth && !item.isPast) {
+    localSelectedDate.value = item.fullDate
   }
 }
 
 function selectTime(time: string) {
   localSelectedTime.value = time
 }
-
-function handleContinue() {
-  if (localSelectedDate.value && localSelectedTime.value) {
-    store.setDateTime(localSelectedDate.value, localSelectedTime.value)
-    router.push({ name: 'booking-details' }) // Suponiendo que la ruta que sigue es booking-details
-  }
-}
-
-// Para el resumen, obtenemos el servicio del store (si existe) o mostramos un fallback
-const serviceName = computed(() => store.selectedService?.name || 'Corte y Barba')
-const serviceDuration = computed(() => store.selectedService?.duration || 45)
-const servicePrice = computed(() => store.selectedService?.price || 2500)
 </script>
 
 <template>
@@ -70,19 +122,29 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
 
     <!-- Bento Grid Layout -->
     <div class="select-date-view__grid">
-      
+
       <!-- Main Calendar Section -->
       <section class="select-date-view__calendar-section">
-        
+
         <!-- Month Picker -->
         <div class="calendar-card">
           <div class="calendar-card__header">
             <h3 class="calendar-card__title">{{ currentMonthYear }}</h3>
             <div class="calendar-card__actions">
-              <button class="calendar-card__nav-btn" aria-label="Previous month">
+              <!-- Botón mes anterior -->
+              <button
+                class="calendar-card__nav-btn"
+                @click="changeMonth(-1)"
+                aria-label="Previous month"
+              >
                 <span class="material-symbols-outlined">chevron_left</span>
               </button>
-              <button class="calendar-card__nav-btn" aria-label="Next month">
+              <!-- Botón mes siguiente -->
+              <button
+                class="calendar-card__nav-btn"
+                @click="changeMonth(1)"
+                aria-label="Next month"
+              >
                 <span class="material-symbols-outlined">chevron_right</span>
               </button>
             </div>
@@ -91,37 +153,37 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
           <!-- Calendar Grid -->
           <div class="calendar-card__grid">
             <!-- Days of week -->
-            <div 
-              v-for="day in weekDays" 
-              :key="day" 
+            <div
+              v-for="day in weekDays"
+              :key="day"
               class="calendar-card__weekday"
             >
               {{ day }}
             </div>
-            
+
             <!-- Days -->
-            <div 
-              v-for="item in calendarDays" 
+            <div
+              v-for="item in calendarDays"
               :key="item.fullDate"
               class="calendar-card__day-wrapper"
             >
-              <!-- Selected State -->
-              <div 
-                v-if="item.isCurrentMonth && localSelectedDate === item.fullDate"
-                class="calendar-card__day calendar-card__day--selected"
-              >
-                <div class="calendar-card__day-bg"></div>
-                <span class="calendar-card__day-text">{{ item.day }}</span>
-              </div>
-              
-              <!-- Normal State -->
-              <div 
-                v-else
+              <!--
+                Estado del día:
+                - selected: si coincide con la fecha elegida
+                - inactive: si es de otro mes
+                - disabled: si es una fecha pasada
+              -->
+              <div
                 class="calendar-card__day"
-                :class="{ 'calendar-card__day--inactive': !item.isCurrentMonth }"
-                @click="selectDate(item.fullDate, item.isCurrentMonth)"
+                :class="{
+                  'calendar-card__day--selected': localSelectedDate === item.fullDate,
+                  'calendar-card__day--inactive': !item.isCurrentMonth,
+                  'calendar-card__day--disabled': item.isPast,
+                  'calendar-card__day--available': item.isCurrentMonth && !item.isPast
+                }"
+                @click="selectDate(item)"
               >
-                {{ item.day }}
+                <span class="calendar-card__day-text">{{ item.day }}</span>
               </div>
             </div>
           </div>
@@ -130,11 +192,11 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
         <!-- Available Slots -->
         <div class="slots-section">
           <h4 class="slots-section__title">
-            Available Times for Thursday, Oct 12
+            Available Times for {{ formattedSelectedDate }}
           </h4>
           <div class="slots-section__grid">
-            <button 
-              v-for="time in availableTimes" 
+            <button
+              v-for="time in availableTimes"
               :key="time"
               class="slot-btn"
               :class="{ 'slot-btn--selected': localSelectedTime === time }"
@@ -149,7 +211,7 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
 
       <!-- Booking Summary Sidecard -->
       <aside class="select-date-view__summary">
-        
+
         <div class="summary-card">
           <div class="summary-card__content">
             <h4 class="summary-card__label">Selected Service</h4>
@@ -159,7 +221,7 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
               <span class="summary-card__duration-text">{{ serviceDuration }} min</span>
             </div>
           </div>
-          
+
           <div class="summary-card__pricing">
             <div class="summary-card__pricing-row">
               <span class="summary-card__pricing-label">Service cost</span>
@@ -170,8 +232,13 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
               <span>ARS</span>
             </div>
           </div>
-          
-          <button class="summary-card__continue-btn" @click="handleContinue">
+
+          <!-- Botón continuar (puedes añadir :disabled si no hay selección) -->
+          <button
+            class="summary-card__continue-btn"
+            :disabled="!localSelectedDate || !localSelectedTime"
+            @click="handleContinue"
+          >
             Continue
           </button>
         </div>
@@ -239,15 +306,15 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
 .select-date-view__title {
   color: var(--color-primary);
   font-family: var(--font-family-headline);
-  font-size: 2.25rem; /* 36px */
-  font-weight: 800; /* extrabold */
+  font-size: 2.25rem; /* 36px - 4xl */
+  font-weight: 800;
   letter-spacing: -0.025em;
   line-height: var(--line-height-tight);
 }
 
 @media (min-width: 768px) {
   .select-date-view__title {
-    font-size: 3rem; /* 48px */
+    font-size: 3rem; /* 48px - 5xl */
   }
 }
 
@@ -262,8 +329,8 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
 .select-date-view__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-10);
-  max-width: 72rem; /* max-w-6xl */
+  gap: var(--space-6); /* Reduced from space-10 */
+  max-width: 72rem;
 }
 
 @media (min-width: 1024px) {
@@ -275,7 +342,7 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
 .select-date-view__calendar-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-6); /* Reduced from space-8 */
 }
 
 @media (min-width: 1024px) {
@@ -314,7 +381,7 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
 .calendar-card__title {
   color: var(--color-primary);
   font-family: var(--font-family-headline);
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl); /* Reduced from 2xl */
   font-weight: var(--font-weight-bold);
   margin: 0;
 }
@@ -349,7 +416,7 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
 }
 
 .calendar-card__weekday {
-  color: rgba(64, 72, 76, 0.6); /* text-secondary/60 approx */
+  color: rgba(64, 72, 76, 0.6);
   font-family: var(--font-family-label);
   font-size: 0.625rem; /* 10px */
   font-weight: var(--font-weight-bold);
@@ -359,72 +426,76 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
 }
 
 .calendar-card__day-wrapper {
-  padding: var(--space-4) 0;
+  padding: 0; /* Design uses internal padding for the day element */
 }
 
 .calendar-card__day {
   color: var(--color-secondary);
   font-family: var(--font-family-body);
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
   padding: var(--space-4) 0;
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
 }
 
-.calendar-card__day:hover:not(.calendar-card__day--inactive) {
+.calendar-card__day:hover:not(.calendar-card__day--inactive):not(.calendar-card__day--disabled):not(.calendar-card__day--selected) {
   background-color: var(--color-surface);
 }
 
-.calendar-card__day--inactive {
-  color: rgba(72, 98, 110, 0.3); /* text-secondary/30 */
+.calendar-card__day--inactive,
+.calendar-card__day--disabled {
+  color: rgba(72, 98, 110, 0.3);
   cursor: default;
+  pointer-events: none;
 }
 
 .calendar-card__day--selected {
-  position: relative;
-  cursor: pointer;
+  color: #ffffff;
+  font-weight: 700;
 }
 
-.calendar-card__day-bg {
+.calendar-card__day--selected::before {
+  content: '';
   position: absolute;
-  inset: 0.5rem; /* inset-2 equivalent approx */
+  inset: 0.5rem; /* inset-2 */
   background: var(--gradient-primary);
   border-radius: var(--radius-xl);
   box-shadow: 0 10px 15px -3px rgba(0, 50, 86, 0.2);
+  z-index: 0;
 }
 
 .calendar-card__day-text {
   position: relative;
-  color: #ffffff;
-  font-weight: var(--font-weight-bold);
+  z-index: 1;
 }
 
 /* ── Slots Section ─────────────────────────────────────── */
 .slots-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
 .slots-section__title {
   color: var(--color-primary);
   font-family: var(--font-family-label);
-  font-size: 0.875rem; /* 14px */
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin: 0;
+  margin-bottom: var(--space-3);
 }
 
 .slots-section__grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--space-2);
 }
 
 @media (min-width: 640px) {
@@ -441,12 +512,13 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
   border: none;
   border-radius: var(--radius-xl);
   padding: var(--space-4) var(--space-6);
+  font-size: var(--font-size-sm);
   cursor: pointer;
   text-align: center;
-  transition: background-color var(--transition-base), color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: all var(--transition-base);
 }
 
-.slot-btn:hover {
+.slot-btn:hover:not(.slot-btn--selected) {
   background-color: var(--color-primary);
   color: #ffffff;
 }
@@ -553,13 +625,13 @@ const servicePrice = computed(() => store.selectedService?.price || 2500)
   background-color: #ffffff;
   color: var(--color-primary);
   font-family: var(--font-family-body);
-  font-weight: 800; /* extrabold */
-  font-size: var(--font-size-lg);
+  font-weight: 800;
+  font-size: var(--font-size-md); /* Reduced from lg */
   border: none;
   border-radius: var(--radius-full);
-  padding: var(--space-5) 0;
+  padding: var(--space-4) 0; /* Reduced from space-5 */
   width: 100%;
-  margin-top: var(--space-4);
+  margin-top: var(--space-2); /* Reduced from space-4 */
   cursor: pointer;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   box-shadow: 0 20px 25px -5px rgba(0, 73, 122, 0.4), 0 8px 10px -6px rgba(0, 73, 122, 0.4);

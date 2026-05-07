@@ -52,11 +52,16 @@ const router = createRouter({
         }
       ]
     },
-    // ── Booking (Vista cliente) ───────────────────────
     {
       path: '/booking',
       component: () => import('@/layouts/BookingLayout.vue'),
+      redirect: '/booking/service',
       children: [
+        {
+          path: 'service',
+          name: 'booking-service',
+          component: () => import('@/views/AppointmentSelectServiceView.vue')
+        },
         {
           path: 'schedule',
           name: 'booking-schedule',
