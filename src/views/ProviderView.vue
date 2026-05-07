@@ -12,6 +12,7 @@ const phone = ref('11-4444-5555')
 
 const showCustomCategoryModal = ref(false)
 const customCategoryValue = ref('')
+const logoInput = ref<HTMLInputElement | null>(null)
 
 const categoryOptions = ref([
   { value: 'estetica', label: 'Estética' },
@@ -55,6 +56,18 @@ function cancelCustomCategory() {
   customCategoryValue.value = ''
 }
 
+function triggerLogoUpload() {
+  logoInput.value?.click()
+}
+
+function handleLogoUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    console.log('Logo seleccionado:', target.files[0])
+    // TODO: procesar imagen
+  }
+}
+
 function handleSubmit() {
   // TODO: implement save
   console.log('Guardando cambios:', {
@@ -87,6 +100,10 @@ function handleSubmit() {
             <div class="provider-view__card-title-group">
               <h3 class="provider-view__card-title">Datos del negocio</h3>
               <p class="provider-view__card-subtitle">Esta información será visible para tus clientes.</p>
+            </div>
+            <div style="margin-left: auto;">
+              <input type="file" ref="logoInput" style="display: none;" accept="image/*" @change="handleLogoUpload" />
+              <AppButton type="button" variant="outline" iconLeft="upload" @click="triggerLogoUpload">Subir logo</AppButton>
             </div>
           </div>
 
