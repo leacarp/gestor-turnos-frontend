@@ -95,7 +95,6 @@ const router = createRouter({
       ]
     },
     {
-<<<<<<< HEAD
       path: '/booking',
       component: () => import('@/layouts/BookingLayout.vue'),
       redirect: '/booking/service',
@@ -111,16 +110,21 @@ const router = createRouter({
           component: () => import('@/views/AppointmentSelectDateView.vue')
         },
         {
+          path: 'details',
+          name: 'booking-details',
+          component: () => import('@/views/AppointmentDetailsView.vue')
+        },
+        {
           path: 'confirmation',
           name: 'booking-confirmation',
           component: () => import('@/views/AppointmentConfirmationView.vue')
         }
       ]
-=======
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/NotFoundView.vue')
->>>>>>> af09b70fd495e9b0bd5f4b5f0c0c1cffd98a5642
     }
   ],
 })
