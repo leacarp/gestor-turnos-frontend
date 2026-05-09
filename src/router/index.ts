@@ -115,6 +115,11 @@ const router = createRouter({
           component: () => import('@/views/AppointmentDetailsView.vue')
         },
         {
+          path: 'guest-details',
+          name: 'booking-guest-details',
+          component: () => import('@/views/AppointmentDetailsGuestView.vue')
+        },
+        {
           path: 'confirmation',
           name: 'booking-confirmation',
           component: () => import('@/views/AppointmentConfirmationView.vue')

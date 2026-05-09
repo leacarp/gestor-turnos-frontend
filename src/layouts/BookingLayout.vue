@@ -6,20 +6,20 @@ interface BookingStep {
   id: number
   label: string
   icon: string
-  routeName: string
+  routeNames: string[]
 }
 
 const route = useRoute()
 
 const steps: BookingStep[] = [
-  { id: 1, label: 'Service Selection', icon: 'content_cut', routeName: 'booking-service' },
-  { id: 2, label: 'Schedule',          icon: 'calendar_today', routeName: 'booking-schedule' },
-  { id: 3, label: 'Guest Details',     icon: 'person',         routeName: 'booking-details' },
-  { id: 4, label: 'Confirmation',      icon: 'check_circle',   routeName: 'booking-confirmation' },
+  { id: 1, label: 'Selección de Servicio', icon: 'content_cut', routeNames: ['booking-service'] },
+  { id: 2, label: 'Elegir Fecha',          icon: 'calendar_today', routeNames: ['booking-schedule'] },
+  { id: 3, label: 'Datos de cliente',      icon: 'person',         routeNames: ['booking-details', 'booking-guest-details'] },
+  { id: 4, label: 'Confirmación',          icon: 'check_circle',   routeNames: ['booking-confirmation'] },
 ]
 
 const currentStepIndex = computed(() => {
-  const idx = steps.findIndex(s => s.routeName === route.name)
+  const idx = steps.findIndex(s => s.routeNames.includes(route.name as string))
   return idx >= 0 ? idx : 0
 })
 </script>
@@ -32,7 +32,7 @@ const currentStepIndex = computed(() => {
         <!-- Brand -->
         <div class="booking-layout__brand">
           <span class="booking-layout__logo">Sloty</span>
-          <span class="booking-layout__subtitle">Booking Process</span>
+          <span class="booking-layout__subtitle">Proceso de Reserva</span>
         </div>
 
         <!-- Progress steps -->
@@ -93,7 +93,7 @@ const currentStepIndex = computed(() => {
     <div class="booking-layout__main">
       <!-- Sticky header -->
       <header class="booking-layout__header">
-        <span class="booking-layout__header-title">Booking Finalization</span>
+        <span class="booking-layout__header-title">Finalización de Reserva</span>
         <div class="booking-layout__header-actions">
           <button class="booking-layout__header-icon-btn" aria-label="Notificaciones">
             <span class="material-symbols-outlined">notifications</span>

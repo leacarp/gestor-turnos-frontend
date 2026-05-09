@@ -57,17 +57,17 @@ function handleConfirm() {
       
       <!-- Editorial Header Section -->
       <header class="details-view__header">
-        <p class="details-view__step">Step 03 of 04</p>
-        <h1 class="details-view__title">Verify your details.</h1>
+        <p class="details-view__step">Paso 03 de 04</p>
+        <h1 class="details-view__title">Verificá tus datos.</h1>
         <p class="details-view__subtitle">
-          We've retrieved your account information to streamline your booking process. Please ensure everything is accurate before proceeding to final confirmation.
+          Recuperamos la información de tu cuenta para agilizar el proceso de reserva. Por favor, asegurate de que todo sea correcto antes de proceder a la confirmación final.
         </p>
       </header>
 
       <!-- Loading State -->
       <div v-if="isLoading" class="details-view__loading">
         <span class="material-symbols-outlined details-view__spinner">sync</span>
-        <p>Loading your profile...</p>
+        <p>Cargando tu perfil...</p>
       </div>
 
       <div v-else class="details-view__content">
@@ -75,26 +75,26 @@ function handleConfirm() {
         <section class="profile-card">
           <div class="profile-card__header">
             <div>
-              <h3 class="profile-card__title">Logged-in Profile</h3>
-              <p class="profile-card__subtitle">Information automatically linked from your TurnoPro ID</p>
+              <h3 class="profile-card__title">Perfil Activo</h3>
+              <p class="profile-card__subtitle">Información vinculada automáticamente desde tu cuenta de TurnoPro</p>
             </div>
             <button type="button" class="profile-card__edit-btn" @click="handleEditProfile">
               <span class="material-symbols-outlined profile-card__edit-icon">edit</span>
-              Edit Profile
+              Editar Perfil
             </button>
           </div>
 
           <div class="profile-card__grid">
             <div class="profile-card__field">
-              <label class="profile-card__label">Full Legal Name</label>
+              <label class="profile-card__label">Nombre Completo</label>
               <p class="profile-card__value">{{ fullName }}</p>
             </div>
             <div class="profile-card__field">
-              <label class="profile-card__label">Email Address</label>
+              <label class="profile-card__label">Correo Electrónico</label>
               <p class="profile-card__value">{{ userProfile?.email }}</p>
             </div>
             <div class="profile-card__field profile-card__field--full">
-              <label class="profile-card__label">Phone Number</label>
+              <label class="profile-card__label">Número de Teléfono</label>
               <p class="profile-card__value">{{ userProfile?.phone }}</p>
             </div>
           </div>
@@ -104,24 +104,24 @@ function handleConfirm() {
         <section class="requirements-section">
           <div class="requirements-section__header">
             <span class="material-symbols-outlined requirements-section__icon">notes</span>
-            <h3 class="requirements-section__title">Special Requirements</h3>
+            <h3 class="requirements-section__title">Requisitos Especiales</h3>
           </div>
           <div class="requirements-section__input-wrapper">
             <textarea 
               v-model="notes"
               class="requirements-section__textarea" 
-              placeholder="Add any specific instructions or requirements for your professional service provider..."
+              placeholder="Agregá cualquier instrucción o requisito específico para el profesional..."
             ></textarea>
           </div>
           <p class="requirements-section__hint">
-            Optional: Any details provided here will be shared with your assigned professional.
+            Opcional: Cualquier detalle que proporciones aquí se compartirá con el profesional asignado.
           </p>
         </section>
 
         <!-- Action Button -->
         <div class="details-view__actions">
           <button type="button" class="details-view__submit-btn" @click="handleConfirm">
-            Confirm & Continue
+            Confirmar y Continuar
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>

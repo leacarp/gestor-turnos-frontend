@@ -1,4 +1,4 @@
-import type { BookingGuestDetails } from '@/stores/useAppointmentBookingStore'
+/*import type { BookingGuestDetails } from '@/stores/useAppointmentBookingStore'*/
 
 export interface UserProfile {
   id: string

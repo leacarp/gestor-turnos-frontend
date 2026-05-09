@@ -15,10 +15,10 @@ interface CalendarDay {
 
 // --- LÓGICA DINÁMICA DE FECHAS ---
 const viewDate = ref(new Date()) // Fecha que controla qué mes estamos viendo
-const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const weekDays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 
 const currentMonthYear = computed(() => {
-  return viewDate.value.toLocaleString('default', { month: 'long', year: 'numeric' })
+  return viewDate.value.toLocaleString('es-AR', { month: 'long', year: 'numeric' })
 })
 
 
@@ -36,8 +36,8 @@ const localSelectedTime = ref<string>('')
 
 // --- FORMATEO PARA LA UI ---
 const formattedSelectedDate = computed(() => {
-  if (!localSelectedDate.value) return 'Select a date'
-  return new Date(localSelectedDate.value + 'T00:00:00').toLocaleDateString('en-US', {
+  if (!localSelectedDate.value) return 'Seleccioná una fecha'
+  return new Date(localSelectedDate.value + 'T00:00:00').toLocaleDateString('es-AR', {
     weekday: 'long', month: 'short', day: 'numeric'
   })
 })
@@ -111,12 +111,12 @@ function selectTime(time: string) {
   <div class="select-date-view">
     <!-- Header Section -->
     <header class="select-date-view__header">
-      <span class="select-date-view__step-indicator">Step 2 of 4</span>
+      <span class="select-date-view__step-indicator">Paso 2 de 4</span>
       <h2 class="select-date-view__title">
-        Select your <br />preferred date.
+        Seleccioná tu <br />fecha preferida.
       </h2>
       <p class="select-date-view__subtitle">
-        Choose a day that suits your schedule. Our specialists are ready to provide the Azure experience.
+        Elegí el día que mejor se adapte a tus horarios. Nuestros especialistas están listos para brindarte la experiencia Azure.
       </p>
     </header>
 
@@ -135,7 +135,7 @@ function selectTime(time: string) {
               <button
                 class="calendar-card__nav-btn"
                 @click="changeMonth(-1)"
-                aria-label="Previous month"
+                aria-label="Mes anterior"
               >
                 <span class="material-symbols-outlined">chevron_left</span>
               </button>
@@ -143,7 +143,7 @@ function selectTime(time: string) {
               <button
                 class="calendar-card__nav-btn"
                 @click="changeMonth(1)"
-                aria-label="Next month"
+                aria-label="Mes siguiente"
               >
                 <span class="material-symbols-outlined">chevron_right</span>
               </button>
@@ -192,7 +192,7 @@ function selectTime(time: string) {
         <!-- Available Slots -->
         <div class="slots-section">
           <h4 class="slots-section__title">
-            Available Times for {{ formattedSelectedDate }}
+            Horarios disponibles para {{ formattedSelectedDate }}
           </h4>
           <div class="slots-section__grid">
             <button
@@ -214,7 +214,7 @@ function selectTime(time: string) {
 
         <div class="summary-card">
           <div class="summary-card__content">
-            <h4 class="summary-card__label">Selected Service</h4>
+            <h4 class="summary-card__label">Servicio Seleccionado</h4>
             <p class="summary-card__service-name">{{ serviceName }}</p>
             <div class="summary-card__duration">
               <span class="material-symbols-outlined summary-card__duration-icon">schedule</span>
@@ -224,11 +224,11 @@ function selectTime(time: string) {
 
           <div class="summary-card__pricing">
             <div class="summary-card__pricing-row">
-              <span class="summary-card__pricing-label">Service cost</span>
+              <span class="summary-card__pricing-label">Costo del servicio</span>
               <span class="summary-card__pricing-amount">${{ servicePrice }}</span>
             </div>
             <div class="summary-card__pricing-footer">
-              <span>Taxes included</span>
+              <span>Impuestos incluidos</span>
               <span>ARS</span>
             </div>
           </div>
@@ -239,7 +239,7 @@ function selectTime(time: string) {
             :disabled="!localSelectedDate || !localSelectedTime"
             @click="handleContinue"
           >
-            Continue
+            Continuar
           </button>
         </div>
 
@@ -247,9 +247,9 @@ function selectTime(time: string) {
         <div class="info-note">
           <span class="material-symbols-outlined info-note__icon">info</span>
           <div class="info-note__content">
-            <p class="info-note__title">Cancellation Policy</p>
+            <p class="info-note__title">Política de Cancelación</p>
             <p class="info-note__text">
-              Cancel up to 24 hours in advance for a full refund. No-shows may be charged a fee.
+              Cancelá con hasta 24 horas de anticipación para un reembolso completo. Las inasistencias pueden tener cargos adicionales.
             </p>
           </div>
         </div>

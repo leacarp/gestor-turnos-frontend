@@ -23,9 +23,9 @@ function handleServiceSelect(service: BookingService) {
 <template>
   <div class="select-service-view">
     <header class="select-service-view__header">
-      <h2 class="select-service-view__title">Available Services</h2>
+      <h2 class="select-service-view__title">Servicios Disponibles</h2>
       <p class="select-service-view__subtitle">
-        Experience premium grooming tailored to your style. Select from our signature services to begin your booking.
+        Experimentá un servicio premium adaptado a tu estilo. Seleccioná entre nuestros servicios exclusivos para comenzar tu reserva.
       </p>
     </header>
 
@@ -49,23 +49,7 @@ function handleServiceSelect(service: BookingService) {
       />
     </div>
 
-    <!-- Promotional Banner -->
-    <section class="select-service-view__promo">
-      <img 
-        class="select-service-view__promo-img" 
-        alt="A sophisticated barber shop interior with luxury leather chairs and warm amber lighting." 
-        src="https://lh3.googleusercontent.com/aida/ADBb0uhhwngXljBDRlq8VZt86kTyttPU295Jse8AEYkl7ZUWjJtkmAouQvN_pmJE9wPn-Z8hJ5IV__Lm0YsfEbNSJSeADZJUDkjJvZRg3dNJmR7sJqLomVmJpNWavPTmEH_pHMAMiSUncmSk3my3fohHA7mfyMNbK61rMOOIIsQYgwlZfm-a9ErKJcVz8dtvSDdb7ZWaETvbKIoV4lplDx2CBj7Zd7F9y6vcxabWVoj9ezArF56Jmoygo3WIPq9GhY33QcixX4qbTyg7pw"
-        aria-hidden="true"
-      />
-      <div class="select-service-view__promo-overlay">
-        <h4 class="select-service-view__promo-title">Meridian Signature Pack</h4>
-        <p class="select-service-view__promo-text">Combine any three services for a 20% savings on your total appointment.</p>
-        <a class="select-service-view__promo-link" href="#">
-          View Packages
-          <span class="material-symbols-outlined select-service-view__promo-icon">arrow_forward</span>
-        </a>
-      </div>
-    </section>
+
   </div>
 </template>
 
@@ -169,70 +153,5 @@ function handleServiceSelect(service: BookingService) {
   }
 }
 
-/* ── Promo Banner ──────────────────────────────────────── */
-.select-service-view__promo {
-  margin-top: var(--space-16);
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-2xl);
-  height: 16rem; /* h-64 */
-  background-color: var(--color-primary-container);
-}
 
-.select-service-view__promo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  mix-blend-mode: overlay;
-  opacity: 0.6;
-}
-
-.select-service-view__promo-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: var(--space-8);
-  background: linear-gradient(to top, rgba(0, 50, 86, 0.9), transparent);
-}
-
-.select-service-view__promo-title {
-  font-family: var(--font-family-headline);
-  font-weight: 800;
-  font-size: var(--font-size-2xl);
-  color: #ffffff;
-  letter-spacing: -0.025em; /* tracking-tight */
-  margin-bottom: var(--space-1);
-}
-
-.select-service-view__promo-text {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: var(--font-size-sm);
-  max-width: 24rem; /* max-w-sm aprox */
-  margin-bottom: var(--space-4);
-}
-
-.select-service-view__promo-link {
-  color: #ffffff;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.1em; /* tracking-widest */
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  text-decoration: none;
-  transition: gap var(--transition-base);
-  width: fit-content;
-}
-
-.select-service-view__promo-link:hover,
-.select-service-view__promo-link:focus-visible {
-  gap: var(--space-4);
-}
-
-.select-service-view__promo-icon {
-  font-size: var(--font-size-sm);
-}
 </style>
