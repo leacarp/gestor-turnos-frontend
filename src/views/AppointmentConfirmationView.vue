@@ -675,7 +675,7 @@ function handlePayDeposit() {
 }
 
 .confirmation-view__btn--primary {
-  background: var(--gradient-primary);
+  background: var(--color-primary);
   color: #ffffff;
   box-shadow: var(--shadow-xl), var(--shadow-primary-xl);
 }
