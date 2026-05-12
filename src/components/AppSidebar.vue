@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -47,7 +46,7 @@ function handleLogout() {
         class="app-sidebar__nav-item"
         :class="{ 'app-sidebar__nav-item--active': isActive(item.path) }"
       >
-        <span 
+        <span
           class="material-symbols-outlined app-sidebar__nav-icon"
           :style="isActive(item.path) ? 'font-variation-settings: \'FILL\' 1;' : ''"
         >

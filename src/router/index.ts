@@ -100,6 +100,42 @@ const router = createRouter({
       ]
     },
     {
+      path: '/booking',
+      component: () => import('@/layouts/BookingLayout.vue'),
+      redirect: '/booking/service',
+      children: [
+        { path: '', redirect: { name: 'booking-service' } },
+        {
+          path: 'service',
+          name: 'booking-service',
+          component: () => import('@/views/AppointmentSelectServiceView.vue')
+        },
+        {
+          path: 'schedule',
+          name: 'booking-schedule',
+          component: () => import('@/views/AppointmentSelectDateView.vue')
+        },
+        { path: 'details', name: 'booking-details', redirect: { name: 'booking-confirmation' } },
+        {
+          path: 'details',
+          name: 'booking-details',
+          component: () => import('@/views/AppointmentDetailsView.vue')
+        },
+        {
+          path: 'guest-details',
+          name: 'booking-guest-details',
+          component: () => import('@/views/AppointmentDetailsGuestView.vue')
+        },
+        {
+          path: 'confirmation',
+          name: 'booking-confirmation',
+          component: () => import('@/views/AppointmentConfirmationView.vue')
+        },
+        { path: 'payment', name: 'booking-payment', redirect: { name: 'booking-confirmation' } },
+        { path: 'success', name: 'booking-success', redirect: { name: 'booking-confirmation' } }
+      ]
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/NotFoundView.vue')
