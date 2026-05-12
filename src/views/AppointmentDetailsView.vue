@@ -57,6 +57,10 @@ function handleConfirm() {
       
       <!-- Editorial Header Section -->
       <header class="details-view__header">
+        <button class="back-btn" @click="router.push({ name: 'booking-schedule' })">
+          <span class="material-symbols-outlined">arrow_back</span>
+          Volver atrás
+        </button>
         <p class="details-view__step">Paso 03 de 04</p>
         <h1 class="details-view__title">Verificá tus datos.</h1>
         <p class="details-view__subtitle">
@@ -140,21 +144,49 @@ function handleConfirm() {
 .details-view__container {
   max-width: 56rem; /* max-w-4xl */
   margin: 0 auto;
-  padding: var(--space-12) var(--space-8);
+  padding: var(--space-8) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
+  gap: var(--space-8);
 }
 
 @media (min-width: 768px) {
   .details-view__container {
-    padding: var(--space-16);
+    padding: var(--space-10) var(--space-8);
   }
 }
 
 /* ── Header ──────────────────────────────────────────────── */
 .details-view__header {
+  margin-bottom: var(--space-2);
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--color-primary);
+  font-family: var(--font-family-body);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  background: transparent;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-5);
   margin-bottom: var(--space-4);
+  width: fit-content;
+  transition: all var(--transition-fast);
+}
+
+.back-btn:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.back-btn .material-symbols-outlined {
+  font-size: 1.25rem;
 }
 
 .details-view__step {
@@ -168,17 +200,17 @@ function handleConfirm() {
 
 .details-view__title {
   font-family: var(--font-family-headline);
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 800; /* extrabold */
   line-height: 1;
   letter-spacing: -0.05em; /* tracking-tighter */
   color: var(--color-primary);
-  margin: 0 0 var(--space-6) 0;
+  margin: 0 0 var(--space-4) 0;
 }
 
 .details-view__subtitle {
   font-family: var(--font-family-body);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   color: var(--color-text-secondary); /* on-surface-variant approx */
   line-height: var(--line-height-loose);
   max-width: 42rem; /* max-w-2xl */
@@ -210,14 +242,14 @@ function handleConfirm() {
 .details-view__content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
+  gap: var(--space-8);
 }
 
 /* ── Profile Card ────────────────────────────────────────── */
 .profile-card {
   background-color: var(--color-surface-container-low);
-  border-radius: var(--radius-3xl);
-  padding: var(--space-10);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(192, 200, 204, 0.3); /* border-outline-variant/30 */
 }
@@ -228,7 +260,7 @@ function handleConfirm() {
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-4);
-  margin-bottom: var(--space-12);
+  margin-bottom: var(--space-8);
 }
 
 @media (min-width: 640px) {
@@ -240,7 +272,7 @@ function handleConfirm() {
 .profile-card__title {
   font-family: var(--font-family-headline);
   font-weight: 700;
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   color: var(--color-primary);
   margin: 0;
 }
@@ -278,8 +310,8 @@ function handleConfirm() {
 .profile-card__grid {
   display: grid;
   grid-template-columns: 1fr;
-  column-gap: var(--space-12);
-  row-gap: var(--space-12);
+  column-gap: var(--space-8);
+  row-gap: var(--space-6);
 }
 
 @media (min-width: 768px) {
@@ -310,7 +342,7 @@ function handleConfirm() {
 .profile-card__value {
   font-family: var(--font-family-headline);
   font-weight: 800; /* extrabold */
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   color: var(--color-primary);
   margin: 0;
 }
@@ -346,14 +378,14 @@ function handleConfirm() {
 
 .requirements-section__textarea {
   width: 100%;
-  height: 10rem; /* h-40 */
+  height: 6rem; /* h-24 */
   background-color: var(--color-surface-container-low);
   border: 1px solid rgba(192, 200, 204, 0.3);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4) var(--space-5);
   color: var(--color-text-primary);
   font-family: var(--font-family-body);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   resize: none;
   outline: none;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
@@ -376,7 +408,7 @@ function handleConfirm() {
 
 /* ── Actions ─────────────────────────────────────────────── */
 .details-view__actions {
-  padding-top: var(--space-8);
+  padding-top: var(--space-4);
   display: flex;
   justify-content: flex-end;
 }

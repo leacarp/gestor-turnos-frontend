@@ -99,7 +99,7 @@ const router = createRouter({
       component: () => import('@/layouts/BookingLayout.vue'),
       redirect: '/booking/service',
       children: [
-        { path: '', redirect: { name: 'booking-schedule' } },
+        { path: '', redirect: { name: 'booking-service' } },
         {
           path: 'service',
           name: 'booking-service',

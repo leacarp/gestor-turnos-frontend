@@ -111,6 +111,10 @@ function selectTime(time: string) {
   <div class="select-date-view">
     <!-- Header Section -->
     <header class="select-date-view__header">
+      <button class="back-btn" @click="router.push({ name: 'booking-service' })">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver atrás
+      </button>
       <span class="select-date-view__step-indicator">Paso 2 de 4</span>
       <h2 class="select-date-view__title">
         Seleccioná tu <br />fecha preferida.
@@ -264,9 +268,9 @@ function selectTime(time: string) {
 .select-date-view {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
-  padding: var(--space-12) var(--space-6);
-  padding-bottom: 6rem; /* Separar más del borde inferior */
+  gap: var(--space-8);
+  padding: var(--space-6);
+  padding-bottom: 2rem; /* Separar más del borde inferior */
   max-width: var(--container-max-width);
   margin: 0 auto;
   width: 100%;
@@ -274,15 +278,15 @@ function selectTime(time: string) {
 
 @media (min-width: 768px) {
   .select-date-view {
-    padding: var(--space-16) var(--space-16);
-    padding-bottom: 8rem; /* Separar aún más del fondo en pantallas grandes */
+    padding: var(--space-8) var(--space-10);
+    padding-bottom: 4rem; /* Separar aún más del fondo en pantallas grandes */
   }
 }
 
 @media (min-width: 1280px) {
   .select-date-view {
-    padding-left: 10rem; /* Empujar el contenido fuertemente a la derecha */
-    padding-right: 10rem;
+    padding-left: 8rem; /* Empujar el contenido fuertemente a la derecha */
+    padding-right: 8rem;
   }
 }
 
@@ -290,8 +294,36 @@ function selectTime(time: string) {
 .select-date-view__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
   max-width: 56rem; /* max-w-4xl */
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--color-primary);
+  font-family: var(--font-family-body);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  background: transparent;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-5);
+  margin-bottom: var(--space-2);
+  width: fit-content;
+  transition: all var(--transition-fast);
+}
+
+.back-btn:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.back-btn .material-symbols-outlined {
+  font-size: 1.25rem;
 }
 
 .select-date-view__step-indicator {
@@ -306,7 +338,7 @@ function selectTime(time: string) {
 .select-date-view__title {
   color: var(--color-primary);
   font-family: var(--font-family-headline);
-  font-size: 2.25rem; /* 36px - 4xl */
+  font-size: 1.75rem; /* Reduced */
   font-weight: 800;
   letter-spacing: -0.025em;
   line-height: var(--line-height-tight);
@@ -314,14 +346,14 @@ function selectTime(time: string) {
 
 @media (min-width: 768px) {
   .select-date-view__title {
-    font-size: 3rem; /* 48px - 5xl */
+    font-size: 2.5rem; /* Reduced from 3rem */
   }
 }
 
 .select-date-view__subtitle {
   color: var(--color-secondary);
   font-family: var(--font-family-body);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base); /* Reduced */
   max-width: 36rem; /* max-w-xl */
 }
 
@@ -366,8 +398,8 @@ function selectTime(time: string) {
 /* ── Calendar Card ─────────────────────────────────────── */
 .calendar-card {
   background-color: var(--color-surface-container-low);
-  border-radius: var(--radius-3xl);
-  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
   box-shadow: var(--shadow-sm);
 }
 
@@ -375,13 +407,13 @@ function selectTime(time: string) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-10);
+  margin-bottom: var(--space-6);
 }
 
 .calendar-card__title {
   color: var(--color-primary);
   font-family: var(--font-family-headline);
-  font-size: var(--font-size-xl); /* Reduced from 2xl */
+  font-size: var(--font-size-lg); /* Reduced */
   font-weight: var(--font-weight-bold);
   margin: 0;
 }
@@ -422,7 +454,7 @@ function selectTime(time: string) {
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
 }
 
 .calendar-card__day-wrapper {
@@ -433,8 +465,8 @@ function selectTime(time: string) {
   color: var(--color-secondary);
   font-family: var(--font-family-body);
   font-weight: 500;
-  padding: var(--space-4) 0;
-  border-radius: var(--radius-xl);
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-base);
   display: flex;
@@ -513,8 +545,8 @@ function selectTime(time: string) {
   font-family: var(--font-family-body);
   font-weight: var(--font-weight-bold);
   border: none;
-  border-radius: var(--radius-xl);
-  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-full);
+  padding: var(--space-3) var(--space-5);
   font-size: var(--font-size-sm);
   cursor: pointer;
   text-align: center;
@@ -544,12 +576,12 @@ function selectTime(time: string) {
 .summary-card {
   background-color: var(--color-primary);
   color: #ffffff;
-  border-radius: var(--radius-3xl);
-  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+  gap: var(--space-6);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .summary-card__content {
@@ -569,7 +601,7 @@ function selectTime(time: string) {
 
 .summary-card__service-name {
   font-family: var(--font-family-headline);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   margin: 0;
 }
@@ -578,7 +610,7 @@ function selectTime(time: string) {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-4);
+  margin-top: var(--space-2);
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -615,7 +647,7 @@ function selectTime(time: string) {
 
 .summary-card__pricing-amount {
   font-family: var(--font-family-body);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-bold);
 }
 
@@ -651,8 +683,8 @@ function selectTime(time: string) {
 /* ── Info Note ─────────────────────────────────────────── */
 .info-note {
   background-color: rgba(231, 232, 233, 0.4); /* bg-surface-container-high/40 */
-  border-radius: var(--radius-3xl);
-  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
   display: flex;
   align-items: flex-start;
   gap: var(--space-4);

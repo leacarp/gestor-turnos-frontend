@@ -25,6 +25,11 @@ const formattedDate = computed(() => {
 
 const formattedTime = computed(() => {
   if (!bookingStore.selectedTime) return '—'
+  // Si el string ya tiene AM/PM, lo devolvemos tal cual
+  if (bookingStore.selectedTime.toLowerCase().includes('am') || bookingStore.selectedTime.toLowerCase().includes('pm')) {
+    return bookingStore.selectedTime
+  }
+  // Si viene en formato 24h (ej "14:30")
   const [h = 0, m = 0] = bookingStore.selectedTime.split(':').map(Number)
   const suffix = h >= 12 ? 'PM' : 'AM'
   const hour   = h % 12 || 12
@@ -192,6 +197,17 @@ function handlePayDeposit() {
       <!-- ── Action buttons ──────────────────────────────── -->
       <div class="confirmation-view__actions">
 
+        <!-- Acción secundaria — volver -->
+        <button
+          id="btn-back"
+          class="confirmation-view__btn confirmation-view__btn--secondary"
+          type="button"
+          @click="handleBack"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+          Modificar datos
+        </button>
+
         <!-- CTA principal — bifurca según seña -->
         <button
           v-if="!requiresDeposit"
@@ -213,17 +229,6 @@ function handlePayDeposit() {
         >
           <span class="material-symbols-outlined" aria-hidden="true">payments</span>
           Pagar seña · ${{ depositAmount.toLocaleString('es-AR') }}
-        </button>
-
-        <!-- Acción secundaria — volver -->
-        <button
-          id="btn-back"
-          class="confirmation-view__btn confirmation-view__btn--secondary"
-          type="button"
-          @click="handleBack"
-        >
-          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
-          Modificar datos
         </button>
 
       </div>
@@ -257,10 +262,10 @@ function handlePayDeposit() {
 .confirmation-view__canvas {
   width: 100%;
   max-width: 56rem;
-  padding: var(--space-16) var(--space-12);
+  padding: var(--space-8) var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: var(--space-16);
+  gap: var(--space-8);
 }
 
 /* ── Hero ─────────────────────────────────────────────────── */
@@ -269,12 +274,12 @@ function handlePayDeposit() {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .confirmation-view__hero-icon {
-  width: 6rem;
-  height: 6rem;
+  width: 5rem;
+  height: 5rem;
   border-radius: var(--radius-full);
   background: var(--gradient-primary);
   display: flex;
@@ -282,7 +287,7 @@ function handlePayDeposit() {
   justify-content: center;
   box-shadow: var(--shadow-xl), var(--shadow-primary-xl);
   animation: icon-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
 }
 
 @keyframes icon-pop {
@@ -291,13 +296,13 @@ function handlePayDeposit() {
 }
 
 .confirmation-view__hero-check {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: #ffffff;
 }
 
 .confirmation-view__hero-title {
   font-family: var(--font-family-headline);
-  font-size: var(--font-size-display);
+  font-size: 2.5rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--color-primary);
@@ -343,7 +348,7 @@ function handlePayDeposit() {
 .confirmation-view__label {
   display: block;
   font-family: var(--font-family-label);
-  font-size: var(--font-size-sm);
+  font-size: 0.75rem;
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -358,12 +363,12 @@ function handlePayDeposit() {
 /* ── Service card (2 cols) ────────────────────────────────── */
 .confirmation-view__card--service {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-8);
-  box-shadow: var(--shadow-lg);
+  padding: var(--space-6) var(--space-7);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--space-8);
+  gap: var(--space-6);
 }
 
 @media (min-width: 640px) {
@@ -383,7 +388,7 @@ function handlePayDeposit() {
 
 .confirmation-view__service-name {
   font-family: var(--font-family-headline);
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 800;
   color: var(--color-primary);
   margin: 0 0 var(--space-2);
@@ -399,7 +404,7 @@ function handlePayDeposit() {
 
 .confirmation-view__service-price {
   font-family: var(--font-family-headline);
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 800;
   color: var(--color-primary);
   white-space: nowrap;
@@ -436,13 +441,13 @@ function handlePayDeposit() {
 /* ── DateTime card (1 col) ────────────────────────────────── */
 .confirmation-view__card--datetime {
   background-color: var(--color-surface-container-low);
-  padding: var(--space-8);
+  padding: var(--space-6) var(--space-7);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .confirmation-view__datetime-icon-wrap {
@@ -453,7 +458,7 @@ function handlePayDeposit() {
 }
 
 .confirmation-view__datetime-icon {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: var(--color-primary);
 }
 
@@ -468,7 +473,7 @@ function handlePayDeposit() {
 
 .confirmation-view__datetime-time-pill {
   display: inline-block;
-  padding: var(--space-2) var(--space-6);
+  padding: var(--space-2) var(--space-5);
   background-color: var(--color-surface-container-lowest);
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-sm);
@@ -481,8 +486,8 @@ function handlePayDeposit() {
 /* ── Guest card (full width) ──────────────────────────────── */
 .confirmation-view__card--guest {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-8);
-  box-shadow: var(--shadow-lg);
+  padding: var(--space-6) var(--space-7);
+  box-shadow: var(--shadow-sm);
 }
 
 @media (min-width: 640px) {
@@ -494,13 +499,13 @@ function handlePayDeposit() {
 .confirmation-view__guest-row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-6) var(--space-12);
+  gap: var(--space-4) var(--space-8);
 }
 
 /* ── Deposit card (full width) ────────────────────────────── */
 .confirmation-view__card--deposit {
   background-color: var(--color-primary-fixed);
-  padding: var(--space-8);
+  padding: var(--space-6) var(--space-7);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -558,7 +563,7 @@ function handlePayDeposit() {
 
 .confirmation-view__deposit-value {
   font-family: var(--font-family-headline);
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 800;
   color: var(--color-primary);
   line-height: 1;
@@ -567,7 +572,7 @@ function handlePayDeposit() {
 /* ── Location banner (full width) ─────────────────────────── */
 .confirmation-view__card--location {
   position: relative;
-  height: 12rem;
+  height: 10rem;
   background-color: var(--color-surface-container-high);
   display: flex;
   align-items: center;
@@ -591,20 +596,20 @@ function handlePayDeposit() {
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-5);
   background-color: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  padding: var(--space-6);
+  padding: var(--space-5) var(--space-6);
   border-radius: 0.75rem;
   max-width: 28rem;
   width: 90%;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .confirmation-view__location-icon-wrap {
-  width: 3rem;
-  height: 3rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: var(--radius-md);
   background: var(--gradient-primary);
   display: flex;
@@ -616,7 +621,7 @@ function handlePayDeposit() {
 
 .confirmation-view__location-eyebrow {
   font-family: var(--font-family-label);
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -626,7 +631,7 @@ function handlePayDeposit() {
 
 .confirmation-view__location-address {
   font-family: var(--font-family-body);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
   margin: 0;
@@ -638,8 +643,9 @@ function handlePayDeposit() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-6);
+  gap: var(--space-4);
   animation: slide-up 0.4s ease 0.45s both;
+  margin-top: var(--space-4);
 }
 
 @media (min-width: 480px) {
@@ -653,7 +659,7 @@ function handlePayDeposit() {
   align-items: center;
   justify-content: center;
   gap: var(--space-3);
-  padding: var(--space-5) var(--space-10);
+  padding: var(--space-4) var(--space-8);
   border-radius: var(--radius-full);
   font-family: var(--font-family-headline);
   font-size: var(--font-size-lg);
@@ -719,8 +725,8 @@ function handlePayDeposit() {
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
-  padding-top: var(--space-8);
+  gap: var(--space-4);
+  padding-top: var(--space-4);
   animation: slide-up 0.4s ease 0.55s both;
 }
 

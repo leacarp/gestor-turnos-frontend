@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 interface BookingStep {
   id: number
@@ -10,6 +10,7 @@ interface BookingStep {
 }
 
 const route = useRoute()
+const router = useRouter()
 
 const steps: BookingStep[] = [
   { id: 1, label: 'Selección de Servicio', icon: 'content_cut', routeNames: ['booking-service'] },
@@ -46,6 +47,7 @@ const currentStepIndex = computed(() => {
               'booking-layout__step--active':    index === currentStepIndex,
               'booking-layout__step--pending':   index > currentStepIndex,
             }"
+            @click="index < currentStepIndex ? router.push({ name: step.routeNames[0] }) : null"
           >
             <span
               class="material-symbols-outlined booking-layout__step-icon"
@@ -193,6 +195,7 @@ const currentStepIndex = computed(() => {
 
 .booking-layout__step--completed {
   color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
 }
 
 .booking-layout__step--completed:hover {
