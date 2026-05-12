@@ -10,8 +10,13 @@ const router = createRouter({
       children: [
         {
           path: '',
-          name: 'dashboard',
+          name: 'home',
           component: () => import('@/views/ProviderView.vue'), // Ahora la vista por defecto es el perfil
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: () => import('@/views/DashboardView.vue'),
         },
         {
           path: 'services',

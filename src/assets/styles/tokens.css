@@ -62,11 +62,15 @@
   --color-text-disabled: #70787c;
 
   --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
   --color-success: #10b981;
-<<<<<<< HEAD
-=======
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-600: #059669;
   
->>>>>>> 7b968528c0698c659990f5609c69d5c7c7198817
+  --color-on-surface: #191b23;
+  --color-on-surface-variant: #424754;
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
   /* ── Gradientes ──────────────────────────────────────── */
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
 
@@ -98,14 +102,12 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-<<<<<<< HEAD
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-=======
   --shadow-xl: 0 40px 40px -10px rgba(81, 95, 119, 0.06);
->>>>>>> 7b968528c0698c659990f5609c69d5c7c7198817
   --shadow-primary: 0 4px 14px 0 rgba(0, 50, 86, 0.2);
   --shadow-primary-soft: 0 20px 25px -5px rgba(0, 50, 86, 0.1), 0 8px 10px -6px rgba(0, 50, 86, 0.1);
   --shadow-primary-xl: 0 20px 25px -5px rgba(0, 50, 86, 0.2);
+  --shadow-dashboard-card: 0 40px 40px -10px rgba(81, 95, 119, 0.06);
 
   /* ── Transiciones ────────────────────────────────────── */
   --transition-fast: 150ms ease;
