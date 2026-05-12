@@ -455,8 +455,11 @@ function selectTime(time: string) {
 }
 
 .calendar-card__day--selected {
-  color: #ffffff;
+  color: floralwhite;
   font-weight: 700;
+  background-color: var(--color-primary);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
 }
 
 .calendar-card__day--selected::before {
@@ -521,16 +524,20 @@ function selectTime(time: string) {
 .slot-btn:hover:not(.slot-btn--selected) {
   background-color: var(--color-primary);
   color: #ffffff;
+  cursor: pointer;
 }
 
 .slot-btn--selected {
-  background: var(--gradient-primary);
+  background: var(--color-primary);
   color: #ffffff;
   box-shadow: 0 10px 15px -3px rgba(0, 50, 86, 0.2);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
 }
 
 .slot-btn--selected:hover {
-  background: var(--gradient-primary);
+  background: var(--color-primary);
+  color: #ffffff;
 }
 
 /* ── Summary Card ──────────────────────────────────────── */
