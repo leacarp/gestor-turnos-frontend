@@ -27,7 +27,7 @@ function handleSubmit() {
 <template>
   <div class="guest-details-view">
     <div class="guest-details-view__container">
-      
+
       <!-- Title Section -->
       <div class="guest-details-view__header">
         <h2 class="guest-details-view__title">Datos del Invitado</h2>
@@ -39,48 +39,48 @@ function handleSubmit() {
         <!-- Name -->
         <div class="guest-form__field">
           <label class="guest-form__label">Nombre</label>
-          <input 
+          <input
             v-model="form.firstName"
-            class="guest-form__input" 
-            placeholder="ej. Julián" 
-            type="text" 
-            required 
+            class="guest-form__input"
+            placeholder="ej. Julián"
+            type="text"
+            required
           />
         </div>
 
         <!-- Last Name -->
         <div class="guest-form__field">
           <label class="guest-form__label">Apellido</label>
-          <input 
+          <input
             v-model="form.lastName"
-            class="guest-form__input" 
-            placeholder="ej. Pérez" 
-            type="text" 
-            required 
+            class="guest-form__input"
+            placeholder="ej. Pérez"
+            type="text"
+            required
           />
         </div>
 
         <!-- Email -->
         <div class="guest-form__field guest-form__field--full">
           <label class="guest-form__label">Correo Electrónico</label>
-          <input 
+          <input
             v-model="form.email"
-            class="guest-form__input" 
-            placeholder="julian@meridian.com" 
-            type="email" 
-            required 
+            class="guest-form__input"
+            placeholder="julian@meridian.com"
+            type="email"
+            required
           />
         </div>
 
         <!-- Phone -->
         <div class="guest-form__field guest-form__field--full">
           <label class="guest-form__label">Número de Teléfono</label>
-          <input 
+          <input
             v-model="form.phone"
-            class="guest-form__input" 
-            placeholder="+54 11 1234-5678" 
-            type="tel" 
-            required 
+            class="guest-form__input"
+            placeholder="+54 11 1234-5678"
+            type="tel"
+            required
           />
         </div>
 
@@ -227,8 +227,8 @@ function handleSubmit() {
 .guest-form__submit-btn {
   width: 100%;
   padding: var(--space-5) var(--space-10);
-  background: var(--gradient-primary);
-  color: #ffffff;
+  background: var(--color-primary);
+  color: floralwhite;
   font-family: var(--font-family-headline);
   font-weight: var(--font-weight-bold);
   border-radius: var(--radius-full);
