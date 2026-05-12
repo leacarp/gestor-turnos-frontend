@@ -41,9 +41,9 @@ function handleServiceSelect(service: BookingService) {
     </div>
 
     <div v-else class="select-service-view__grid">
-      <ServiceCard 
-        v-for="service in services" 
-        :key="service.id" 
+      <ServiceCard
+        v-for="service in services"
+        :key="service.id"
         :service="service"
         @select="handleServiceSelect"
       />
@@ -58,7 +58,7 @@ function handleServiceSelect(service: BookingService) {
   display: flex;
   flex-direction: column;
   padding: var(--space-12) var(--space-6);
-  padding-bottom: 6rem; 
+  padding-bottom: 6rem;
   max-width: var(--container-max-width);
   margin: 0 auto;
   width: 100%;
@@ -137,21 +137,8 @@ function handleServiceSelect(service: BookingService) {
 /* ── Grid ──────────────────────────────────────────────── */
 .select-service-view__grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: var(--space-8);
 }
-
-@media (min-width: 768px) {
-  .select-service-view__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .select-service-view__grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 
 </style>
