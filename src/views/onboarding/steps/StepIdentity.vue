@@ -8,7 +8,7 @@ const store = useOnboardingStore()
 <template>
   <div class="step-identity">
     <div class="step-identity__header">
-      <span class="step-identity__badge" v-if="store.role === 'proveedor'">Paso 1 de 4</span>
+      <span class="step-identity__badge" v-if="store.role === 'provider'">Paso 1 de 4</span>
       <h2 class="step-identity__title">Creá tu cuenta</h2>
     </div>
 
@@ -16,8 +16,8 @@ const store = useOnboardingStore()
       <button 
         type="button" 
         class="role-btn" 
-        :class="{ 'role-btn--active': store.role === 'cliente' }"
-        @click="store.role = 'cliente'"
+        :class="{ 'role-btn--active': store.role === 'client' }"
+        @click="store.role = 'client'"
       >
         <span class="material-symbols-outlined">person</span>
         Soy Cliente
@@ -25,8 +25,8 @@ const store = useOnboardingStore()
       <button 
         type="button" 
         class="role-btn" 
-        :class="{ 'role-btn--active': store.role === 'proveedor' }"
-        @click="store.role = 'proveedor'"
+        :class="{ 'role-btn--active': store.role === 'provider' }"
+        @click="store.role = 'provider'"
       >
         <span class="material-symbols-outlined">storefront</span>
         Soy Proveedor
@@ -35,7 +35,7 @@ const store = useOnboardingStore()
 
     <form class="step-identity__form" @submit.prevent>
       <AppInput
-        v-model="store.identity.nombre"
+        v-model="store.identity.name"
         label="Nombre completo"
         iconLeft="person"
         placeholder="Ej: Juan Pérez"
@@ -50,11 +50,11 @@ const store = useOnboardingStore()
       />
       
       <AppInput
-        v-model="store.identity.telefono"
+        v-model="store.identity.phone"
         type="tel"
         label="Teléfono (WhatsApp)"
         iconLeft="call"
-        placeholder="+54 9 11 1234-5678"
+        placeholder="5491112345678 (11+ dígitos)"
       />
       
       <AppInput
@@ -62,7 +62,7 @@ const store = useOnboardingStore()
         type="password"
         label="Contraseña"
         iconLeft="lock"
-        placeholder="Mínimo 8 caracteres"
+        placeholder="Mínimo 6 caracteres"
       />
     </form>
     
