@@ -5,6 +5,7 @@ defineProps<{
   showBack?: boolean
   continueText?: string
   isFinalStep?: boolean
+  isLoading?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -31,6 +32,8 @@ const emit = defineEmits<{
       size="lg" 
       class="onboarding-footer__continue-btn"
       :iconRight="!isFinalStep ? '' : 'arrow_forward'"
+      :isLoading="isLoading"
+      :disabled="isLoading"
       @click="emit('continue')"
     >
       {{ continueText || 'Continuar' }}
