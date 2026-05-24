@@ -31,7 +31,7 @@ const store = useOnboardingStore()
           <div class="step-finalize__bento-header">
             <div>
               <p class="step-finalize__bento-label">Resumen del Negocio</p>
-              <h3 class="step-finalize__bento-title">{{ store.business.nombre || 'Sin nombre' }}</h3>
+              <h3 class="step-finalize__bento-title">{{ store.business.publicInfo || 'Sin nombre' }}</h3>
             </div>
             <span class="step-finalize__bento-badge">Verificado</span>
           </div>
@@ -39,11 +39,11 @@ const store = useOnboardingStore()
           <div class="step-finalize__bento-details">
             <div class="step-finalize__bento-detail">
               <p class="step-finalize__detail-label">Categoría</p>
-              <p class="step-finalize__detail-value">{{ store.business.categoria || 'No especificada' }}</p>
+              <p class="step-finalize__detail-value">{{ store.business.serviceType || 'No especificada' }}</p>
             </div>
             <div class="step-finalize__bento-detail">
               <p class="step-finalize__detail-label">Ubicación</p>
-              <p class="step-finalize__detail-value">{{ store.business.direccion || 'No especificada' }}</p>
+              <p class="step-finalize__detail-value">{{ store.business.address || 'No especificada' }}</p>
             </div>
           </div>
         </div>

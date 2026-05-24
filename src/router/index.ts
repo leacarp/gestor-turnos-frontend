@@ -10,8 +10,13 @@ const router = createRouter({
       children: [
         {
           path: '',
-          name: 'dashboard',
+          name: 'home',
           component: () => import('@/views/ProviderView.vue'), // Ahora la vista por defecto es el perfil
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: () => import('@/views/DashboardView.vue'),
         },
         {
           path: 'services',
@@ -92,6 +97,42 @@ const router = createRouter({
           name: 'onboarding-finalize',
           component: () => import('@/views/onboarding/steps/StepFinalize.vue')
         }
+      ]
+    },
+    {
+      path: '/booking',
+      component: () => import('@/layouts/BookingLayout.vue'),
+      redirect: '/booking/service',
+      children: [
+        { path: '', redirect: { name: 'booking-service' } },
+        {
+          path: 'service',
+          name: 'booking-service',
+          component: () => import('@/views/AppointmentSelectServiceView.vue')
+        },
+        {
+          path: 'schedule',
+          name: 'booking-schedule',
+          component: () => import('@/views/AppointmentSelectDateView.vue')
+        },
+        { path: 'details', name: 'booking-details', redirect: { name: 'booking-confirmation' } },
+        {
+          path: 'details',
+          name: 'booking-details',
+          component: () => import('@/views/AppointmentDetailsView.vue')
+        },
+        {
+          path: 'guest-details',
+          name: 'booking-guest-details',
+          component: () => import('@/views/AppointmentDetailsGuestView.vue')
+        },
+        {
+          path: 'confirmation',
+          name: 'booking-confirmation',
+          component: () => import('@/views/AppointmentConfirmationView.vue')
+        },
+        { path: 'payment', name: 'booking-payment', redirect: { name: 'booking-confirmation' } },
+        { path: 'success', name: 'booking-success', redirect: { name: 'booking-confirmation' } }
       ]
     },
     {

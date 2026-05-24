@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -10,7 +9,7 @@ const navItems = [
   { name: 'Agenda', icon: 'calendar_today', path: '/agenda' },
   { name: 'Servicios', icon: 'inventory_2', path: '/services' },
   { name: 'Clientes', icon: 'group', path: '/clientes' },
-  { name: 'Dashboard', icon: 'grid_view', path: '/' },
+  { name: 'Dashboard', icon: 'grid_view', path: '/dashboard' },
   { name: 'Configuración', icon: 'settings', path: '/configuracion' },
 ]
 
@@ -47,7 +46,7 @@ function handleLogout() {
         class="app-sidebar__nav-item"
         :class="{ 'app-sidebar__nav-item--active': isActive(item.path) }"
       >
-        <span 
+        <span
           class="material-symbols-outlined app-sidebar__nav-icon"
           :style="isActive(item.path) ? 'font-variation-settings: \'FILL\' 1;' : ''"
         >
@@ -261,11 +260,10 @@ function handleLogout() {
 }
 
 .app-sidebar__logout-btn:hover {
-  border: 2px, red;
-  background-color: #f75959;
-  color: #ffffff;
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(186, 26, 26, 0.2);
+  background-color: var(--color-surface-container-low);
+  color: var(--color-text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .app-sidebar__logout-label {

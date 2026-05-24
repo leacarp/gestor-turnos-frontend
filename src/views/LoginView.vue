@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
-const email = ref('')
-const password = ref('')
-const isLoading = ref(false)
+const form = reactive({
+  email: '',
+  password: '',
+})
 
-function handleLogin() {
-  isLoading.value = true
-  // TODO: Implementar lógica de autenticación
-  setTimeout(() => {
-    isLoading.value = false
-    router.push('/')
-  }, 1000)
+async function handleLogin() {
+  try {
+    await authStore.login(form)
+    await router.push({ name: 'home' })
+  } catch {
+    // error en authStore.error
+  }
 }
 </script>
 
@@ -30,36 +33,39 @@ function handleLogin() {
 
       <form class="login-view__form" @submit.prevent="handleLogin">
         <AppInput
-          v-model="email"
+          v-model="form.email"
           type="email"
           label="Email"
           iconLeft="mail"
           placeholder="hola@tunegocio.com"
           required
         />
-        
+
         <AppInput
-          v-model="password"
+          v-model="form.password"
           type="password"
           label="Contraseña"
           iconLeft="lock"
-          placeholder="Tu contraseña"
+          placeholder="Mínimo 6 caracteres"
           required
         />
-        
-        <AppButton 
-          type="submit" 
-          variant="gradient" 
-          fullWidth 
-          :isLoading="isLoading"
+
+        <p v-if="authStore.error" class="login-view__error">{{ authStore.error }}</p>
+
+        <AppButton
+          type="submit"
+          variant="gradient"
+          fullWidth
+          :isLoading="authStore.isLoading"
+          :disabled="authStore.isLoading"
         >
           Iniciar sesión
         </AppButton>
       </form>
-      
+
       <div class="login-view__register-link">
         <p>
-          ¿No tenés cuenta? 
+          ¿No tenés cuenta?
           <router-link to="/register/onboarding" class="login-view__link">Crear cuenta</router-link>
         </p>
       </div>
@@ -108,6 +114,12 @@ function handleLogin() {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+}
+
+.login-view__error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  margin: 0;
 }
 
 .login-view__register-link {

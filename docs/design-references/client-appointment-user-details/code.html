@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#edeeef",
+                    "tertiary": "#4c2700",
+                    "outline-variant": "#c0c8cc",
+                    "secondary": "#48626e",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#673c11",
+                    "surface": "#ffffff",
+                    "on-surface-variant": "#40484c",
+                    "outline": "#70787c",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#021f29",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-container": "#7bb9fa",
+                    "surface-tint": "#12629d",
+                    "on-tertiary-container": "#e5a874",
+                    "secondary-fixed": "#cbe7f5",
+                    "secondary-container": "#cbe7f5",
+                    "surface-dim": "#d9dadb",
+                    "on-surface": "#191c1d",
+                    "on-secondary-container": "#4e6874",
+                    "surface-variant": "#e1e3e4",
+                    "surface-container-low": "#f3f4f5",
+                    "primary-fixed-dim": "#9ccaff",
+                    "tertiary-fixed": "#ffdcc1",
+                    "on-secondary-fixed-variant": "#304a55",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#afcbd8",
+                    "on-tertiary-fixed-variant": "#683c11",
+                    "on-primary": "#ffffff",
+                    "inverse-primary": "#9ccaff",
+                    "background": "#ffffff",
+                    "surface-container-highest": "#e1e3e4",
+                    "primary-fixed": "#d0e4ff",
+                    "primary": "#003256",
+                    "inverse-surface": "#2e3132",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9fa",
+                    "on-background": "#191c1d",
+                    "tertiary-fixed-dim": "#f9b984",
+                    "surface-container-high": "#e7e8e9",
+                    "on-tertiary-fixed": "#2e1500",
+                    "on-primary-fixed-variant": "#00497a",
+                    "primary-container": "#00497a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "display": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body antialiased">
+<!-- TopAppBar Fragment - Hidden on Desktop -->
+<header class="md:hidden flex justify-between items-center px-8 h-16 w-full bg-white shadow-lg shadow-blue-900/5 fixed top-0 z-50">
+<div class="font-manrope font-extrabold tracking-tight text-[#003256] text-2xl">Azure Meridian</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-slate-500">help</span>
+<span class="material-symbols-outlined text-slate-500">notifications</span>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar Shared Component -->
+<aside class="hidden md:flex flex-col h-screen w-80 fixed left-0 top-0 bg-[#003256] py-12 px-6 space-y-8 shadow-xl shadow-blue-900/20 z-40">
+<div class="flex flex-col space-y-2 mb-8">
+<span class="text-white font-manrope font-bold text-xl">Booking Concierge</span>
+<span class="font-inter text-[10px] uppercase tracking-[0.1em] text-blue-200/60">Professional Services</span>
+</div>
+<nav class="flex flex-col space-y-4 flex-grow">
+<!-- Select Service -->
+<div class="flex items-center gap-4 px-4 py-3 rounded-xl text-blue-200/60 hover:text-white hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-inter text-sm uppercase tracking-[0.1em]">Select Service</span>
+</div>
+<!-- Choose Date -->
+<div class="flex items-center gap-4 px-4 py-3 rounded-xl text-blue-200/60 hover:text-white hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-inter text-sm uppercase tracking-[0.1em]">Choose Date</span>
+</div>
+<!-- Guest Details (Active) -->
+<div class="flex items-center gap-4 px-4 py-3 rounded-xl bg-gradient-to-br from-[#003256] to-[#00497a] text-white font-bold ring-1 ring-white/10 translate-x-1 duration-200">
+<span class="material-symbols-outlined active-nav-fill" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-inter text-sm uppercase tracking-[0.1em]">Guest Details</span>
+</div>
+<!-- Confirmation -->
+<div class="flex items-center gap-4 px-4 py-3 rounded-xl text-blue-200/60 hover:text-white hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">check_circle</span>
+<span class="font-inter text-sm uppercase tracking-[0.1em]">Confirmation</span>
+</div>
+</nav>
+<div class="pt-8 border-t border-white/10">
+<button class="flex items-center gap-2 text-blue-200/60 hover:text-white transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-sm">help</span>
+                Need help?
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow ml-0 md:ml-80 bg-white min-h-screen">
+<div class="max-w-4xl mx-auto px-8 md:px-16 py-12 md:py-24">
+<!-- Editorial Header Section -->
+<header class="mb-16">
+<p class="font-inter text-sm uppercase tracking-[0.2em] text-secondary mb-4">Step 03 of 04</p>
+<h1 class="font-headline font-extrabold text-[2.5rem] leading-none tracking-tighter text-primary mb-6">Verify your details.</h1>
+<p class="font-body text-lg text-on-surface-variant leading-relaxed max-w-2xl">
+                    We've retrieved your account information to streamline your booking process. Please ensure everything is accurate before proceeding to final confirmation.
+                </p>
+</header>
+<div class="space-y-12">
+<!-- Guest Information Bento Section (Full Width) -->
+<div class="bg-surface-container-low rounded-3xl p-10 shadow-sm border border-outline-variant/30">
+<div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-12">
+<div>
+<h3 class="font-headline font-bold text-2xl text-primary">Logged-in Profile</h3>
+<p class="text-on-surface-variant text-sm mt-1">Information automatically linked from your TurnoPro ID</p>
+</div>
+<button class="flex items-center gap-2 text-primary font-bold text-sm hover:opacity-80 transition-opacity bg-white px-4 py-2 rounded-full border border-outline-variant/50 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                            Edit Profile
+                        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
+<div class="space-y-2">
+<label class="font-inter text-[11px] uppercase tracking-[0.15em] text-outline font-bold">Full Legal Name</label>
+<p class="font-headline font-extrabold text-xl text-primary">Alexander J. Sterling</p>
+</div>
+<div class="space-y-2">
+<label class="font-inter text-[11px] uppercase tracking-[0.15em] text-outline font-bold">Email Address</label>
+<p class="font-headline font-extrabold text-xl text-primary">a.sterling@meridian-corp.com</p>
+</div>
+<div class="space-y-2 md:col-span-2">
+<label class="font-inter text-[11px] uppercase tracking-[0.15em] text-outline font-bold">Phone Number</label>
+<p class="font-headline font-extrabold text-xl text-primary">+1 (555) 012-3456</p>
+</div>
+</div>
+</div>
+<!-- Secondary Task: Additional Requirements (Full Width) -->
+<div class="space-y-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">notes</span>
+<h3 class="font-headline font-bold text-xl text-primary">Special Requirements</h3>
+</div>
+<div class="relative">
+<textarea class="w-full h-40 bg-surface-container-low border border-outline-variant/30 rounded-2xl px-6 py-5 text-on-surface focus:ring-2 focus:ring-primary/10 focus:border-primary/30 placeholder:text-outline-variant resize-none font-body text-lg" placeholder="Add any specific instructions or requirements for your professional service provider..."></textarea>
+</div>
+<p class="text-sm text-outline">Optional: Any details provided here will be shared with your assigned professional.</p>
+</div>
+<!-- Action Button -->
+<div class="pt-8 flex justify-end">
+<button class="bg-primary text-white font-headline font-bold px-10 py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-100 transition-all flex items-center gap-3">
+                        Confirm &amp; Continue
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
