@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authService } from '@/services/authService'
+import { userService } from '@/services/userService'
 import { AUTH_TOKEN_KEY } from '@/lib/axios'
 import type { LoginDto, RegisterDto, AuthResponse, AuthUser } from '@/types/auth'
 
@@ -46,6 +47,25 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem(AUTH_TOKEN_KEY)
   }
 
+  /** Restaura user desde API si hay token pero se perdió el estado (ej. F5) */
+  async function restoreSession(): Promise<boolean> {
+    if (!token.value) return false
+    if (user.value?.id) return true
+    try {
+      const { data } = await userService.getMe()
+      user.value = {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+      }
+      return true
+    } catch {
+      logout()
+      return false
+    }
+  }
+
   function _setSession(data: AuthResponse) {
     token.value = data.accessToken
     user.value = data.user
@@ -85,5 +105,6 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     logout,
+    restoreSession,
   }
 })

@@ -1,75 +1,62 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import ServiceCard from '@/components/ServiceCard.vue'
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import type { ServiceItem } from '@/components/ServiceCard.vue'
+import { useServiciosStore } from '@/stores/useServiciosStore'
+import { computeDepositAmount, isDepositPercent } from '@/types/servicios'
+import { validateServiceForm, isServiceFormValid } from '@/utils/serviceFormValidation'
 
 type ServiceDraft = Pick<ServiceItem, 'title' | 'category' | 'description' | 'duration' | 'price'>
 
 const route = useRoute()
 const router = useRouter()
+const store = useServiciosStore()
 
 const searchQuery = ref('')
 const selectedCategory = ref('Todas las categorías')
 
-const categories = [
-  'Todas las categorías',
-  'Cabello',
-  'Uñas',
-  'Spa',
-  'Maquillaje'
-]
+const COLOR_THEMES = ['default', 'secondary', 'tertiary', 'primary', 'surface'] as const
 
-const services = ref<ServiceItem[]>([
-  {
-    id: '1',
-    category: 'Cabello',
-    title: 'Corte de cabello',
-    description: 'Corte profesional personalizado según la forma de tu rostro y últimas tendencias.',
-    duration: 45,
-    price: 2500,
-    colorTheme: 'default'
-  },
-  {
-    id: '2',
-    category: 'Cabello',
-    title: 'Corte + Color',
-    description: 'Coloración uniforme de raíz a puntas con productos premium de larga duración.',
-    duration: 120,
-    price: 6500,
-    colorTheme: 'tertiary'
-  },
-  {
-    id: '3',
-    category: 'Spa',
-    title: 'Masaje Relax',
-    description: 'Tratamiento relajante con aceites esenciales para liberar tensión muscular.',
-    duration: 60,
-    price: 6000,
-    colorTheme: 'secondary'
-  },
-  {
-    id: '4',
-    category: 'Uñas',
-    title: 'Manicura Gel',
-    description: 'Limpieza profunda y esmaltado semipermanente con acabado espejo.',
-    duration: 90,
-    price: 2500,
-    colorTheme: 'primary'
-  },
-  {
-    id: '5',
-    category: 'Tratamiento',
-    title: 'Tratamiento Capilar',
-    description: 'Mascarilla intensiva reparadora para cabellos dañados o secos.',
-    duration: 60,
-    price: 4000,
-    colorTheme: 'surface'
+const categories = computed(() => {
+  const unique = [...new Set(store.items.map((s) => s.category))].sort()
+  return ['Todas las categorías', ...unique]
+})
+
+const services = computed((): ServiceItem[] => {
+  let list = store.items.map((s, index) => ({
+    id: s.id,
+    title: s.name,
+    category: s.category,
+    description: s.description,
+    duration: s.duration,
+    price: s.price,
+    colorTheme: COLOR_THEMES[index % COLOR_THEMES.length],
+    depositAmount: computeDepositAmount(s.price, store.depositPercent),
+  }))
+
+  const query = searchQuery.value.trim().toLowerCase()
+  if (query) {
+    list = list.filter(
+      (s) =>
+        s.title.toLowerCase().includes(query) ||
+        s.description.toLowerCase().includes(query) ||
+        s.category.toLowerCase().includes(query),
+    )
   }
-])
+
+  if (selectedCategory.value !== 'Todas las categorías') {
+    list = list.filter((s) => s.category === selectedCategory.value)
+  }
+
+  return list
+})
+
+const hasAnyServices = computed(() => store.items.length > 0)
+const isFilteredEmpty = computed(() => hasAnyServices.value && services.value.length === 0)
 
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
@@ -82,89 +69,112 @@ const editingService = ref<ServiceDraft>({
   price: 0,
 })
 
+const formError = ref<string | null>(null)
+
+const isFormValid = computed(() => isServiceFormValid(editingService.value))
+
+watch(editingService, () => {
+  if (formError.value) {
+    formError.value = validateServiceForm(editingService.value)
+  }
+}, { deep: true })
+
 function handleNewService() {
-  // Para simplificar, abre el modal de edición vacío
   selectedService.value = null
   editingService.value = {
     title: '',
-    category: 'Cabello',
+    category: categories.value[1] ?? 'Cabello',
     description: '',
     duration: 60,
-    price: 0
+    price: 0,
   }
+  formError.value = null
   showEditModal.value = true
 }
 
 function handleEdit(id: string | number) {
-  const srv = services.value.find(s => s.id === id)
-  if (srv) {
-    selectedService.value = srv
-    editingService.value = {
-      title: srv.title,
-      category: srv.category,
-      description: srv.description,
-      duration: srv.duration,
-      price: srv.price,
-    }
-    showEditModal.value = true
+  const srv = store.items.find((s) => s.id === id)
+  if (!srv) return
+
+  selectedService.value = services.value.find((s) => s.id === id) ?? null
+  editingService.value = {
+    title: srv.name,
+    category: srv.category,
+    description: srv.description,
+    duration: srv.duration,
+    price: srv.price,
   }
+  formError.value = null
+  showEditModal.value = true
 }
 
-function saveEdit() {
-  if (selectedService.value) {
-    const index = services.value.findIndex(s => s.id === selectedService.value!.id)
-    if (index !== -1) {
-      services.value[index] = { ...services.value[index], ...editingService.value } as ServiceItem
-      toast.success('Cambios realizados')
-    }
-  } else {
-    // Es uno nuevo
-    const newId = String(Date.now())
-    services.value.push({
-      id: newId,
-      colorTheme: 'default',
-      ...editingService.value
-    } as ServiceItem)
-    toast.success('Servicio creado')
+async function saveEdit() {
+  const validationError = validateServiceForm(editingService.value)
+  if (validationError) {
+    formError.value = validationError
+    return
   }
-  showEditModal.value = false
+
+  const dto = {
+    name: editingService.value.title.trim(),
+    description: editingService.value.description.trim(),
+    duration: Number(editingService.value.duration),
+    price: Number(editingService.value.price),
+    category: editingService.value.category.trim(),
+  }
+
+  try {
+    if (selectedService.value) {
+      await store.update(String(selectedService.value.id), dto)
+      toast.success('Cambios realizados')
+    } else {
+      await store.create(dto)
+      toast.success('Servicio creado')
+    }
+    showEditModal.value = false
+  } catch {
+    formError.value = store.error
+    toast.error(store.error ?? 'Error al guardar el servicio')
+  }
 }
 
 function handleDelete(id: string | number) {
-  const srv = services.value.find(s => s.id === id)
+  const srv = services.value.find((s) => s.id === id)
   if (srv) {
     selectedService.value = srv
     showDeleteModal.value = true
   }
 }
 
-function confirmDelete() {
-  if (selectedService.value) {
-    services.value = services.value.filter(s => s.id !== selectedService.value!.id)
+async function confirmDelete() {
+  if (!selectedService.value) return
+  try {
+    await store.remove(String(selectedService.value.id))
     toast.success('Servicio eliminado')
     showDeleteModal.value = false
     selectedService.value = null
-    
-    // Clean up query param if it was there
+
     if (route.query.delete) {
       router.replace({ path: route.path, query: {} })
     }
+  } catch {
+    toast.error(store.error ?? 'Error al eliminar el servicio')
   }
 }
 
 function cancelDelete() {
   showDeleteModal.value = false
   selectedService.value = null
-  // Clean up query param if it was there
   if (route.query.delete) {
     router.replace({ path: route.path, query: {} })
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await store.fetchAll()
+
   if (route.query.delete) {
-    const serviceIdToDel = route.query.delete as string
-    handleDelete(serviceIdToDel)
+    handleDelete(route.query.delete as string)
   }
 })
 </script>
@@ -177,6 +187,14 @@ onMounted(() => {
         <div class="services-view__title-group">
           <h1 class="services-view__title">Catálogo de Servicios</h1>
           <p class="services-view__subtitle">Gestiona los servicios que ofreces a tus clientes</p>
+          <p v-if="store.depositPercent" class="services-view__subtitle">
+            <template v-if="isDepositPercent(store.depositPercent)">
+              Seña global activa: {{ store.depositPercent }}% sobre el precio de cada servicio
+            </template>
+            <template v-else>
+              Seña global activa: ${{ store.depositPercent?.toLocaleString('es-AR') }} por reserva
+            </template>
+          </p>
         </div>
         <AppButton variant="gradient" iconLeft="add" @click="handleNewService">
           Nuevo servicio
@@ -210,7 +228,22 @@ onMounted(() => {
 
     <!-- Service Grid -->
     <section class="services-view__grid-section">
-      <div class="services-view__grid">
+      <p v-if="store.isLoading" class="services-view__subtitle">Cargando...</p>
+      <p v-else-if="store.error" class="services-view__subtitle">{{ store.error }}</p>
+
+      <div v-else-if="!hasAnyServices" class="services-view__grid">
+        <div class="services-view__add-card" style="grid-column: 1 / -1; min-height: 200px;">
+          <p class="services-view__add-card-title">No hay servicios creados</p>
+          <p class="services-view__add-card-subtitle">Creá tu primer servicio para que tus clientes puedan reservar</p>
+          <AppButton variant="gradient" iconLeft="add" @click="handleNewService">
+            Nuevo servicio
+          </AppButton>
+        </div>
+      </div>
+
+      <p v-else-if="isFilteredEmpty" class="services-view__subtitle">No se encontraron servicios</p>
+
+      <div v-else class="services-view__grid">
         <ServiceCard 
           v-for="service in services" 
           :key="service.id" 
@@ -245,11 +278,34 @@ onMounted(() => {
             <AppInput v-model="editingService.duration" type="number" label="Duración (min)" />
             <AppInput v-model="editingService.price" type="number" label="Precio ($)" />
           </div>
+          <p v-if="formError" class="services-view__modal-desc" style="color: #ba1a1a; margin-bottom: 0;">
+            {{ formError }}
+          </p>
+          <p
+            v-if="store.depositPercent && Number(editingService.price) > 0"
+            class="services-view__modal-desc"
+          >
+            <template v-if="isDepositPercent(store.depositPercent)">
+            Con tu seña del {{ store.depositPercent }}%:
+            </template>
+            <template v-else>
+            Con tu seña fija de ${{ store.depositPercent?.toLocaleString('es-AR') }}:
+            </template>
+            precio ${{ Number(editingService.price).toLocaleString('es-AR') }} —
+            seña ${{ computeDepositAmount(Number(editingService.price), store.depositPercent)?.toLocaleString('es-AR') }}
+          </p>
         </div>
 
         <div class="services-view__modal-actions">
           <AppButton variant="outline" @click="showEditModal = false">Cancelar</AppButton>
-          <AppButton variant="solid" @click="saveEdit">Guardar</AppButton>
+          <AppButton
+            variant="solid"
+            :disabled="!isFormValid || store.isSaving"
+            :is-loading="store.isSaving"
+            @click="saveEdit"
+          >
+            Guardar
+          </AppButton>
         </div>
       </div>
     </div>
@@ -264,7 +320,14 @@ onMounted(() => {
 
         <div class="services-view__modal-actions">
           <AppButton variant="outline" @click="cancelDelete">Cancelar</AppButton>
-          <AppButton style="background-color: rgba(186, 26, 26, 0.1); color: #ba1a1a; border: none;" @click="confirmDelete">Eliminar</AppButton>
+          <AppButton
+            style="background-color: rgba(186, 26, 26, 0.1); color: #ba1a1a; border: none;"
+            :disabled="store.isSaving"
+            :is-loading="store.isSaving"
+            @click="confirmDelete"
+          >
+            Eliminar
+          </AppButton>
         </div>
       </div>
     </div>

@@ -80,6 +80,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     return Number(business.servicePrice) || 0
   }
 
+  /** Monto calculado para vista previa en onboarding */
   function getAdvanceAmount(): number | undefined {
     if (!advance.value.enabled || advance.value.value <= 0) return undefined
 
@@ -87,6 +88,15 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     if (advance.value.type === 'percentage') {
       if (basePrice <= 0) return undefined
       return Math.round((basePrice * advance.value.value) / 100)
+    }
+    return advance.value.value
+  }
+
+  /** Valor persistido en minimumAdvance: % (1–100) o monto fijo */
+  function getMinimumAdvanceForStorage(): number | undefined {
+    if (!advance.value.enabled || advance.value.value <= 0) return undefined
+    if (advance.value.type === 'percentage') {
+      return advance.value.value
     }
     return advance.value.value
   }
@@ -139,9 +149,9 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         socialMedia: socialMedia.length > 0 ? socialMedia : undefined,
       }
 
-      const advanceAmount = getAdvanceAmount()
-      if (advanceAmount !== undefined) {
-        providerData.minimumAdvance = advanceAmount
+      const minimumAdvance = getMinimumAdvanceForStorage()
+      if (minimumAdvance !== undefined) {
+        providerData.minimumAdvance = minimumAdvance
       }
 
       dto.providerData = providerData
