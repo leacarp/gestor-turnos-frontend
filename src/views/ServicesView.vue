@@ -7,7 +7,7 @@ import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import type { ServiceItem } from '@/components/ServiceCard.vue'
 import { useServiciosStore } from '@/stores/useServiciosStore'
-import { computeDepositAmount, isDepositPercent } from '@/types/servicios'
+import { computeDepositAmount } from '@/types/servicios'
 import { validateServiceForm, isServiceFormValid } from '@/utils/serviceFormValidation'
 
 type ServiceDraft = Pick<ServiceItem, 'title' | 'category' | 'description' | 'duration' | 'price'>
@@ -27,16 +27,25 @@ const categories = computed(() => {
 })
 
 const services = computed((): ServiceItem[] => {
-  let list = store.items.map((s, index) => ({
-    id: s.id,
-    title: s.name,
-    category: s.category,
-    description: s.description,
-    duration: s.duration,
-    price: s.price,
-    colorTheme: COLOR_THEMES[index % COLOR_THEMES.length],
-    depositAmount: computeDepositAmount(s.price, store.depositPercent),
-  }))
+  let list = store.items.map((s, index) => {
+    let depositAmount: number | undefined = undefined
+    if (s.requiereSeña === true) {
+      depositAmount = s.montoSeña ?? s.porcentajeSeña
+    } else if (s.requiereSeña === undefined && store.depositPercent !== undefined) {
+      depositAmount = computeDepositAmount(s.price, store.depositPercent)
+    }
+
+    return {
+      id: s.id,
+      title: s.name,
+      category: s.category,
+      description: s.description,
+      duration: s.duration,
+      price: s.price,
+      colorTheme: COLOR_THEMES[index % COLOR_THEMES.length],
+      depositAmount,
+    }
+  })
 
   const query = searchQuery.value.trim().toLowerCase()
   if (query) {
@@ -71,11 +80,11 @@ const editingService = ref<ServiceDraft>({
 
 const formError = ref<string | null>(null)
 
-const isFormValid = computed(() => isServiceFormValid(editingService.value))
+const isFormValid = computed(() => isServiceFormValid(editingService.value, store.depositPercent))
 
 watch(editingService, () => {
   if (formError.value) {
-    formError.value = validateServiceForm(editingService.value)
+    formError.value = validateServiceForm(editingService.value, store.depositPercent)
   }
 }, { deep: true })
 
@@ -109,7 +118,7 @@ function handleEdit(id: string | number) {
 }
 
 async function saveEdit() {
-  const validationError = validateServiceForm(editingService.value)
+  const validationError = validateServiceForm(editingService.value, store.depositPercent)
   if (validationError) {
     formError.value = validationError
     return
@@ -188,12 +197,7 @@ onMounted(async () => {
           <h1 class="services-view__title">Catálogo de Servicios</h1>
           <p class="services-view__subtitle">Gestiona los servicios que ofreces a tus clientes</p>
           <p v-if="store.depositPercent" class="services-view__subtitle">
-            <template v-if="isDepositPercent(store.depositPercent)">
-              Seña global activa: {{ store.depositPercent }}% sobre el precio de cada servicio
-            </template>
-            <template v-else>
-              Seña global activa: ${{ store.depositPercent?.toLocaleString('es-AR') }} por reserva
-            </template>
+            Seña fija activa: ${{ store.depositPercent?.toLocaleString('es-AR') }} por reserva
           </p>
         </div>
         <AppButton variant="gradient" iconLeft="add" @click="handleNewService">
@@ -285,12 +289,7 @@ onMounted(async () => {
             v-if="store.depositPercent && Number(editingService.price) > 0"
             class="services-view__modal-desc"
           >
-            <template v-if="isDepositPercent(store.depositPercent)">
-            Con tu seña del {{ store.depositPercent }}%:
-            </template>
-            <template v-else>
             Con tu seña fija de ${{ store.depositPercent?.toLocaleString('es-AR') }}:
-            </template>
             precio ${{ Number(editingService.price).toLocaleString('es-AR') }} —
             seña ${{ computeDepositAmount(Number(editingService.price), store.depositPercent)?.toLocaleString('es-AR') }}
           </p>

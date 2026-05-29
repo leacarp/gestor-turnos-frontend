@@ -6,7 +6,7 @@ export interface ServiceFormFields {
   price: number | string
 }
 
-export function validateServiceForm(fields: ServiceFormFields): string | null {
+export function validateServiceForm(fields: ServiceFormFields, depositPercent?: number): string | null {
   if (!fields.title.trim()) {
     return 'El nombre del servicio es obligatorio'
   }
@@ -27,9 +27,15 @@ export function validateServiceForm(fields: ServiceFormFields): string | null {
     return 'El precio debe ser mayor a 0'
   }
 
+  if (depositPercent != null && depositPercent > 0) {
+    if (price < depositPercent) {
+      return `El precio del servicio debe ser igual o mayor al de la seña ($${depositPercent.toLocaleString('es-AR')})`
+    }
+  }
+
   return null
 }
 
-export function isServiceFormValid(fields: ServiceFormFields): boolean {
-  return validateServiceForm(fields) === null
+export function isServiceFormValid(fields: ServiceFormFields, depositPercent?: number): boolean {
+  return validateServiceForm(fields, depositPercent) === null
 }

@@ -12,7 +12,7 @@ export const useServiciosStore = defineStore('servicios', () => {
   const isLoading = ref(false)
   const isSaving = ref(false)
   const error = ref<string | null>(null)
-  /** Global deposit: % (1–100) or fixed amount (>100, legacy) */
+  /** Global fixed deposit from providerData.minimumAdvance */
   const depositPercent = ref<number | undefined>(undefined)
 
   async function fetchDepositPercent() {

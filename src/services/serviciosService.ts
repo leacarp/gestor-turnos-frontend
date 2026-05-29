@@ -11,6 +11,9 @@ interface ServicioApi {
   categoria: string
   createdAt: string
   description?: string
+  requiereSeña?: boolean
+  porcentajeSeña?: number
+  montoSeña?: number
 }
 
 function toService(raw: ServicioApi): Service {
@@ -26,6 +29,9 @@ function toService(raw: ServicioApi): Service {
       typeof raw.createdAt === 'string'
         ? raw.createdAt
         : new Date(raw.createdAt).toISOString(),
+    requiereSeña: raw.requiereSeña,
+    porcentajeSeña: raw.porcentajeSeña,
+    montoSeña: raw.montoSeña,
   }
 }
 

@@ -23,7 +23,7 @@ export interface ScheduleDay {
   timeRanges: TimeRange[]
 }
 
-export type AdvanceType = 'amount' | 'percentage'
+export type AdvanceType = 'amount'
 
 export const useOnboardingStore = defineStore('onboarding', () => {
   const role = ref<UserRole>('provider')
@@ -83,21 +83,12 @@ export const useOnboardingStore = defineStore('onboarding', () => {
   /** Monto calculado para vista previa en onboarding */
   function getAdvanceAmount(): number | undefined {
     if (!advance.value.enabled || advance.value.value <= 0) return undefined
-
-    const basePrice = getServicePrice()
-    if (advance.value.type === 'percentage') {
-      if (basePrice <= 0) return undefined
-      return Math.round((basePrice * advance.value.value) / 100)
-    }
     return advance.value.value
   }
 
-  /** Valor persistido en minimumAdvance: % (1–100) o monto fijo */
+  /** Valor persistido en minimumAdvance: monto fijo */
   function getMinimumAdvanceForStorage(): number | undefined {
     if (!advance.value.enabled || advance.value.value <= 0) return undefined
-    if (advance.value.type === 'percentage') {
-      return advance.value.value
-    }
     return advance.value.value
   }
 
@@ -109,11 +100,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
       return 'Ingresá un precio de referencia para configurar la seña.'
     }
 
-    if (advance.value.type === 'percentage') {
-      if (advance.value.value < 1 || advance.value.value > 100) {
-        return 'El porcentaje de la seña debe estar entre 1 y 100.'
-      }
-    } else if (advance.value.value > basePrice) {
+    if (advance.value.value > basePrice) {
       return 'La seña no puede ser mayor al precio del servicio.'
     }
 
