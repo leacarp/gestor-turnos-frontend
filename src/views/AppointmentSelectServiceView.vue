@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import type { BookingService } from '@/stores/useAppointmentBookingStore'
 import ServiceCard from '@/components/booking/ServiceCard.vue'
@@ -9,16 +9,24 @@ import { storeToRefs } from 'pinia'
 
 const servicesStore = useServicesStore()
 const router = useRouter()
+const route = useRoute()
 const bookingStore = useAppointmentBookingStore()
 const { services, isLoading, error } = storeToRefs(servicesStore)
 
+// Obtenemos el providerId de los parámetros o usamos un fallback temporal
+const providerId = (route.params.providerId as string) || 'default-provider'
+
 onMounted(async () => {
-  await servicesStore.fetchServices()
+  await servicesStore.fetchServices(providerId)
 })
 
 function handleServiceSelect(service: BookingService) {
   bookingStore.setService(service)
   router.push({ name: 'booking-schedule' })
+}
+
+function handleRetry() {
+  servicesStore.fetchServices(providerId)
 }
 </script>
 
@@ -39,7 +47,7 @@ function handleServiceSelect(service: BookingService) {
     <div v-else-if="error" class="select-service-view__error">
       <span class="material-symbols-outlined">error</span>
       <p>{{ error }}</p>
-      <button @click="storeToRefs(servicesStore)" class="select-service-view__retry-btn">Reintentar</button>
+      <button @click="handleRetry" class="select-service-view__retry-btn">Reintentar</button>
     </div>
 
     <div v-else class="select-service-view__grid">

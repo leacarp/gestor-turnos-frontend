@@ -32,8 +32,11 @@ function handleEditProfile() {
 
 function handleConfirm() {
   if (userProfile.value) {
+    const [firstName = '', ...lastNameParts] = userProfile.value.name.trim().split(' ')
+
     store.setGuestDetails({
-      name: userProfile.value.name,
+      firstName,
+      lastName: lastNameParts.join(' '),
       email: userProfile.value.email,
       phone: userProfile.value.phone,
       notes: notes.value

@@ -18,3 +18,8 @@ export interface WeeklyScheduleResponse {
   createdAt: string
   updatedAt: string
 }
+
+export interface AvailableSlot {
+  startTime: string
+  endTime: string
+}

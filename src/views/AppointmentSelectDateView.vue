@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
+import { useAvailabilityStore } from '@/stores/useAvailabilityStore'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const store = useAppointmentBookingStore()
@@ -29,7 +31,9 @@ function changeMonth(offset: number) {
 }
 
 // --- SELECCIÓN Y TURNOS ---
-const availableTimes = ref(['09:00 AM', '10:30 AM', '12:00 PM', '02:30 PM'])
+const availabilityStore = useAvailabilityStore()
+const { availableSlots, isLoadingSlots, slotsError } = storeToRefs(availabilityStore)
+
 const localSelectedDate = ref<string>('')
 const localSelectedTime = ref<string>('')
 
@@ -49,9 +53,9 @@ function handleContinue() {
   }
 }
 
-const serviceName = computed(() => store.selectedService?.name || 'Corte y Barba')
-const serviceDuration = computed(() => store.selectedService?.duration || 45)
-const servicePrice = computed(() => store.selectedService?.price || 2500)
+const serviceName = computed(() => store.selectedService?.name || 'Sin seleccionar')
+const serviceDuration = computed(() => store.selectedService?.duration || 0)
+const servicePrice = computed(() => store.selectedService?.price || 0)
 
 
 const today = new Date()
@@ -96,14 +100,41 @@ const calendarDays = computed(() => {
 })
 
 
-function selectDate(item: CalendarDay) {
+async function selectDate(item: CalendarDay) {
   if (item.isCurrentMonth && !item.isPast) {
     localSelectedDate.value = item.fullDate
+    localSelectedTime.value = ''
+    await fetchAvailableSlots(item.fullDate)
   }
 }
 
 function selectTime(time: string) {
   localSelectedTime.value = time
+}
+
+async function fetchAvailableSlots(date: string) {
+  const selectedService = store.selectedService
+
+  if (!selectedService) {
+    router.push({ name: 'booking-service' })
+    return
+  }
+
+  try {
+    await availabilityStore.fetchAvailableSlots(
+      selectedService.providerId,
+      selectedService.id,
+      date
+    )
+  } catch (error) {
+    console.error('[AppointmentSelectDateView] Error al cargar horarios', error)
+  }
+}
+
+function retryFetchAvailableSlots() {
+  if (localSelectedDate.value) {
+    void fetchAvailableSlots(localSelectedDate.value)
+  }
 }
 </script>
 
@@ -198,15 +229,35 @@ function selectTime(time: string) {
           <h4 class="slots-section__title">
             Horarios disponibles para {{ formattedSelectedDate }}
           </h4>
-          <div class="slots-section__grid">
+
+          <div v-if="!localSelectedDate" class="slots-section__state">
+            Elegí una fecha para ver los horarios.
+          </div>
+
+          <div v-else-if="isLoadingSlots" class="slots-section__state">
+            Cargando horarios...
+          </div>
+
+          <div v-else-if="slotsError" class="slots-section__state slots-section__state--error">
+            <p>{{ slotsError }}</p>
+            <button class="slots-section__retry-btn" type="button" @click="retryFetchAvailableSlots">
+              Reintentar
+            </button>
+          </div>
+
+          <div v-else-if="availableSlots.length === 0" class="slots-section__state">
+            No hay horarios disponibles para esta fecha.
+          </div>
+
+          <div v-else class="slots-section__grid">
             <button
-              v-for="time in availableTimes"
-              :key="time"
+              v-for="slot in availableSlots"
+              :key="`${slot.startTime}-${slot.endTime}`"
               class="slot-btn"
-              :class="{ 'slot-btn--selected': localSelectedTime === time }"
-              @click="selectTime(time)"
+              :class="{ 'slot-btn--selected': localSelectedTime === slot.startTime }"
+              @click="selectTime(slot.startTime)"
             >
-              {{ time }}
+              {{ slot.startTime }}
             </button>
           </div>
         </div>
@@ -531,6 +582,40 @@ function selectTime(time: string) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: var(--space-2);
+}
+
+.slots-section__state {
+  background-color: var(--color-surface-container-low);
+  border-radius: var(--radius-xl);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.slots-section__state--error {
+  color: var(--color-error);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.slots-section__state--error p {
+  margin: 0;
+}
+
+.slots-section__retry-btn {
+  align-self: center;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  cursor: pointer;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-2) var(--space-5);
 }
 
 @media (min-width: 640px) {

@@ -1,37 +1,27 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type { BookingService } from '@/types/services'
 
-export interface BookingService {
-  id: string
-  name: string
-  description: string
-  price: number
-  duration: number
-  /** Si el servicio requiere pagar una seña para confirmar el turno */
-  requiresDeposit?: boolean
-  /** Monto de la seña en la misma moneda que `price` */
-  depositAmount?: number
-  /** Indica si es un servicio destacado */
-  isPopular?: boolean
-}
+export type { BookingService } from '@/types/services'
 
 export interface BookingGuestDetails {
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   notes?: string
 }
 
 export const useAppointmentBookingStore = defineStore('appointmentBooking', () => {
-  // ── State ────────────────────────────────────────────────
-  const selectedService  = ref<BookingService | null>(null)
-  const selectedDate     = ref<string>('')   // ISO 8601 date string, e.g. '2024-10-12'
-  const selectedTime     = ref<string>('')   // HH:MM format, e.g. '10:00'
-  const guestDetails     = ref<BookingGuestDetails | null>(null)
+  const selectedService = ref<BookingService | null>(null)
+  const selectedDate = ref('')
+  const selectedTime = ref('')
+  const guestDetails = ref<BookingGuestDetails | null>(null)
 
-  // ── Actions ──────────────────────────────────────────────
   function setService(service: BookingService) {
     selectedService.value = service
+    selectedDate.value = ''
+    selectedTime.value = ''
   }
 
   function setDateTime(date: string, time: string) {
@@ -45,9 +35,9 @@ export const useAppointmentBookingStore = defineStore('appointmentBooking', () =
 
   function reset() {
     selectedService.value = null
-    selectedDate.value    = ''
-    selectedTime.value    = ''
-    guestDetails.value    = null
+    selectedDate.value = ''
+    selectedTime.value = ''
+    guestDetails.value = null
   }
 
   return {

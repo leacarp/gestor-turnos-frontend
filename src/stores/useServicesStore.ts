@@ -22,12 +22,12 @@ export const useServicesStore = defineStore('services', () => {
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  async function fetchServices() {
+  async function fetchServices(providerId: string) {
     isLoading.value = true
     error.value = null
 
     try {
-      const { data } = await servicesService.getServices()
+      const { data } = await servicesService.getServicesByProvider(providerId)
       services.value = data.map(mapServiceToBooking)
     } catch (err) {
       error.value = 'No pudimos cargar los servicios'

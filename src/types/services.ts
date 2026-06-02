@@ -18,7 +18,9 @@ export interface BookingService {
   description: string
   price: number
   duration: number
+  location?: string
   requiresDeposit: boolean
   depositAmount: number
   category: string
+  isPopular?: boolean
 }

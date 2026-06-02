@@ -100,9 +100,11 @@ const router = createRouter({
       ]
     },
     {
-      path: '/booking',
+      path: '/booking/:providerId',
       component: () => import('@/layouts/BookingLayout.vue'),
-      redirect: '/booking/service',
+      redirect: (to) => {
+        return { name: 'booking-service', params: { providerId: to.params.providerId } }
+      },
       children: [
         { path: '', redirect: { name: 'booking-service' } },
         {
