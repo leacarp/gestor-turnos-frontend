@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useServices } from '@/composables/useServices'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import type { BookingService } from '@/stores/useAppointmentBookingStore'
 import ServiceCard from '@/components/booking/ServiceCard.vue'
+import { useServicesStore } from '@/stores/useServicesStore'
+import { storeToRefs } from 'pinia'
 
+const servicesStore = useServicesStore()
 const router = useRouter()
 const bookingStore = useAppointmentBookingStore()
-const { services, isLoading, error, fetchServices } = useServices()
+const { services, isLoading, error } = storeToRefs(servicesStore)
 
 onMounted(async () => {
-  await fetchServices()
+  await servicesStore.fetchServices()
 })
 
 function handleServiceSelect(service: BookingService) {
@@ -37,7 +39,7 @@ function handleServiceSelect(service: BookingService) {
     <div v-else-if="error" class="select-service-view__error">
       <span class="material-symbols-outlined">error</span>
       <p>{{ error }}</p>
-      <button @click="fetchServices" class="select-service-view__retry-btn">Reintentar</button>
+      <button @click="storeToRefs(servicesStore)" class="select-service-view__retry-btn">Reintentar</button>
     </div>
 
     <div v-else class="select-service-view__grid">

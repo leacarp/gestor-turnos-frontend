@@ -7,7 +7,6 @@ export interface BookingService {
   description: string
   price: number
   duration: number
-  location: string
   /** Si el servicio requiere pagar una seña para confirmar el turno */
   requiresDeposit?: boolean
   /** Monto de la seña en la misma moneda que `price` */
@@ -17,8 +16,7 @@ export interface BookingService {
 }
 
 export interface BookingGuestDetails {
-  firstName: string
-  lastName: string
+  name: string
   email: string
   phone: string
   notes?: string
