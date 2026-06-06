@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { bookingService } from '@/services/bookingService'
 
 const router = useRouter()
 const bookingStore = useAppointmentBookingStore()
+const authStore = useAuthStore()
+
+// ── State ────────────────────────────────────────────────
+const isSubmitting = ref(false)
+const submitError = ref<string | null>(null)
 
 // ── Computed ─────────────────────────────────────────────
 const service = computed(() => bookingStore.selectedService)
@@ -41,10 +48,48 @@ function handleBack() {
   router.back()
 }
 
-function handleConfirm() {
-  // TODO: llamar al endpoint cuando esté disponible
-  bookingStore.reset()
-  router.push({ name: 'booking-success' })
+async function handleConfirm() {
+  if (!service.value || !guest.value) return
+
+  submitError.value = null
+  isSubmitting.value = true
+
+  try {
+    if (authStore.user?.id) {
+      // Autenticado
+      const payload = {
+        fecha: bookingStore.selectedDate,
+        horaInicio: bookingStore.selectedTime,
+        proveedorId: service.value.providerId,
+        servicioId: String(service.value.id),
+        clienteId: authStore.user.id,
+        notas: guest.value.notes || undefined
+      }
+      await bookingService.createAppointment(payload)
+    } else {
+      // Invitado
+      const payloadGuest = {
+        fecha: bookingStore.selectedDate,
+        horaInicio: bookingStore.selectedTime,
+        proveedorId: service.value.providerId,
+        servicioId: String(service.value.id),
+        guestNombre: guest.value.firstName,
+        guestApellido: guest.value.lastName,
+        guestEmail: guest.value.email,
+        guestTelefono: guest.value.phone,
+        notas: guest.value.notes || undefined
+      }
+      await bookingService.createGuestAppointment(payloadGuest)
+    }
+
+    bookingStore.reset()
+    router.push({ name: 'booking-success' })
+  } catch (error) {
+    console.error('Error al confirmar la reserva:', error)
+    submitError.value = 'Ocurrió un error al confirmar la reserva. Por favor logueate e inténtalo de nuevo.'
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 function handlePayDeposit() {
@@ -202,6 +247,7 @@ function handlePayDeposit() {
           id="btn-back"
           class="confirmation-view__btn confirmation-view__btn--secondary"
           type="button"
+          :disabled="isSubmitting"
           @click="handleBack"
         >
           <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
@@ -214,10 +260,12 @@ function handlePayDeposit() {
           id="btn-confirm"
           class="confirmation-view__btn confirmation-view__btn--primary"
           type="button"
+          :disabled="isSubmitting"
           @click="handleConfirm"
         >
-          <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-          Confirmar turno
+          <span v-if="!isSubmitting" class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+          <span v-else class="material-symbols-outlined spin" aria-hidden="true">sync</span>
+          {{ isSubmitting ? 'Confirmando...' : 'Confirmar turno' }}
         </button>
 
         <button
@@ -225,12 +273,18 @@ function handlePayDeposit() {
           id="btn-pay-deposit"
           class="confirmation-view__btn confirmation-view__btn--primary"
           type="button"
+          :disabled="isSubmitting"
           @click="handlePayDeposit"
         >
           <span class="material-symbols-outlined" aria-hidden="true">payments</span>
           Pagar seña · ${{ depositAmount.toLocaleString('es-AR') }}
         </button>
 
+      </div>
+      
+      <!-- Error Message -->
+      <div v-if="submitError" class="confirmation-view__error">
+        {{ submitError }}
       </div>
 
       <!-- ── Footer ──────────────────────────────────────── -->
@@ -755,5 +809,24 @@ function handlePayDeposit() {
   color: var(--color-text-secondary);
   opacity: 0.5;
   margin: 0;
+}
+
+/* ── Error & Loading ────────────────────────────────────────── */
+@keyframes spin-anim {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin-anim 1s linear infinite;
+}
+
+.confirmation-view__error {
+  text-align: center;
+  color: var(--color-error);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-4);
+  font-weight: var(--font-weight-semibold);
 }
 </style>
