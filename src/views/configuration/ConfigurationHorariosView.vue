@@ -1,35 +1,86 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import AppButton from '@/components/AppButton.vue'
+import { useAvailabilityStore } from '@/stores/useAvailabilityStore'
+import type { DaySlotDto } from '@/types/availability'
 
-const days = ref([
-  { id: 'lunes', name: 'Lunes', active: true, start: '09:00', end: '18:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' },
-  { id: 'martes', name: 'Martes', active: true, start: '09:00', end: '18:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' },
-  { id: 'miercoles', name: 'Miércoles', active: true, start: '09:00', end: '18:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' },
-  { id: 'jueves', name: 'Jueves', active: true, start: '09:00', end: '18:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' },
-  { id: 'viernes', name: 'Viernes', active: true, start: '09:00', end: '18:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' },
-  { id: 'sabado', name: 'Sábado', active: false, start: '09:00', end: '13:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' },
-  { id: 'domingo', name: 'Domingo', active: false, start: '09:00', end: '13:00', hasBreak: false, breakStart: '13:00', breakEnd: '14:00' }
-])
+interface ScheduleDay {
+  id: string
+  name: string
+  dayOfWeek: number
+  active: boolean
+  start: string
+  end: string
+}
+
+const availabilityStore = useAvailabilityStore()
+
+const defaultDays: ScheduleDay[] = [
+  { id: 'lunes', name: 'Lunes', dayOfWeek: 1, active: false, start: '09:00', end: '18:00' },
+  { id: 'martes', name: 'Martes', dayOfWeek: 2, active: false, start: '09:00', end: '18:00' },
+  { id: 'miercoles', name: 'Miercoles', dayOfWeek: 3, active: false, start: '09:00', end: '18:00' },
+  { id: 'jueves', name: 'Jueves', dayOfWeek: 4, active: false, start: '09:00', end: '18:00' },
+  { id: 'viernes', name: 'Viernes', dayOfWeek: 5, active: false, start: '09:00', end: '18:00' },
+  { id: 'sabado', name: 'Sabado', dayOfWeek: 6, active: false, start: '09:00', end: '13:00' },
+  { id: 'domingo', name: 'Domingo', dayOfWeek: 0, active: false, start: '09:00', end: '13:00' },
+]
+
+function cloneDefaultDays(): ScheduleDay[] {
+  return defaultDays.map((day) => ({ ...day }))
+}
+
+function serializeDays(value: ScheduleDay[]): string {
+  return JSON.stringify(
+    value.map((day) => ({
+      dayOfWeek: day.dayOfWeek,
+      startTime: day.start,
+      endTime: day.end,
+      isActive: day.active,
+    })),
+  )
+}
+
+const days = ref<ScheduleDay[]>(cloneDefaultDays())
+const savedSnapshot = ref(serializeDays(days.value))
 
 const turnMargin = ref<number | 'custom'>(15)
 const previousTurnMargin = ref<number | 'custom'>(15)
 const customTurnMarginValue = ref<number>(60)
 
-function copyToAll(sourceDay: typeof days.value[0]) {
+const hasChanges = computed(() => serializeDays(days.value) !== savedSnapshot.value)
+const footerText = computed(() => {
+  if (availabilityStore.isLoading) return 'Cargando horarios...'
+  if (availabilityStore.error) return availabilityStore.error
+  if (!availabilityStore.hasSchedule) return 'Carga tus horarios para habilitar tu calendario público.'
+  return 'Los cambios se aplicarán inmediatamente a tu calendario público.'
+})
+
+function applyScheduleSlots(slots: DaySlotDto[]) {
+  days.value = cloneDefaultDays().map((day) => {
+    const slot = slots.find((item) => item.dayOfWeek === day.dayOfWeek)
+    if (!slot) return day
+
+    return {
+      ...day,
+      active: slot.isActive,
+      start: slot.startTime,
+      end: slot.endTime,
+    }
+  })
+  savedSnapshot.value = serializeDays(days.value)
+}
+
+function copyToAll(sourceDay: ScheduleDay) {
   days.value.forEach(day => {
     if (day.id !== sourceDay.id && day.active) {
       day.start = sourceDay.start
       day.end = sourceDay.end
-      day.hasBreak = sourceDay.hasBreak
-      day.breakStart = sourceDay.breakStart
-      day.breakEnd = sourceDay.breakEnd
     }
   })
 }
 
-function updateDayTime(day: typeof days.value[0], field: 'start' | 'end', event: Event) {
+function updateDayTime(day: ScheduleDay, field: 'start' | 'end', event: Event) {
   const target = event.target as HTMLInputElement
   const newValue = target.value
 
@@ -49,49 +100,27 @@ function updateDayTime(day: typeof days.value[0], field: 'start' | 'end', event:
     day.end = newValue
   }
 
-  if (day.hasBreak) {
-    if (day.breakStart < day.start || day.breakEnd > day.end) {
-      toast.warning('Atención: El nuevo horario de la jornada invalida el descanso. Por favor configúrelo nuevamente.')
-      day.hasBreak = false
-    }
+}
+
+async function saveSchedule() {
+  try {
+    const saved = await availabilityStore.saveSchedule({
+      slots: days.value.map((day) => ({
+        dayOfWeek: day.dayOfWeek,
+        startTime: day.start,
+        endTime: day.end,
+        isActive: day.active,
+      })),
+    })
+    applyScheduleSlots(saved.slots)
+    toast.success('Horarios guardados')
+  } catch {
+    toast.error(availabilityStore.error ?? 'Error al guardar los horarios')
   }
 }
 
-// Modal Descanso/Almuerzo
-const showBreakModal = ref(false)
-const selectedDayForBreak = ref<typeof days.value[0] | null>(null)
-const tempBreakStart = ref('')
-const tempBreakEnd = ref('')
-
-function openBreakModal(day: typeof days.value[0]) {
-  selectedDayForBreak.value = day
-  tempBreakStart.value = day.breakStart || '13:00'
-  tempBreakEnd.value = day.breakEnd || '14:00'
-  showBreakModal.value = true
-}
-
-function saveBreak() {
-  if (selectedDayForBreak.value) {
-    if (tempBreakStart.value >= tempBreakEnd.value) {
-      toast.error('La hora de inicio del descanso debe ser menor a la hora de fin.')
-      return
-    }
-    if (tempBreakStart.value < selectedDayForBreak.value.start || tempBreakEnd.value > selectedDayForBreak.value.end) {
-      toast.error(`El descanso debe estar dentro del horario de la jornada (${selectedDayForBreak.value.start} a ${selectedDayForBreak.value.end}).`)
-      return
-    }
-    selectedDayForBreak.value.hasBreak = true
-    selectedDayForBreak.value.breakStart = tempBreakStart.value
-    selectedDayForBreak.value.breakEnd = tempBreakEnd.value
-  }
-  showBreakModal.value = false
-}
-
-function removeBreak() {
-  if (selectedDayForBreak.value) {
-    selectedDayForBreak.value.hasBreak = false
-  }
-  showBreakModal.value = false
+function discardChanges() {
+  applyScheduleSlots(availabilityStore.slots)
 }
 
 // Modal Margen Personalizado
@@ -141,6 +170,11 @@ function removeHoliday(index: number) {
 function closeHolidaysModal() {
   showHolidaysModal.value = false
 }
+
+onMounted(async () => {
+  await availabilityStore.fetchSchedule()
+  applyScheduleSlots(availabilityStore.slots)
+})
 </script>
 
 <template>
@@ -202,21 +236,6 @@ function closeHolidaysModal() {
                 />
               </div>
 
-              <!-- Break / Almuerzo -->
-              <div class="config-horarios__break-container">
-                <button 
-                  class="config-horarios__break-btn" 
-                  :class="{ 'config-horarios__break-btn--active': day.hasBreak }"
-                  @click="openBreakModal(day)"
-                  title="Configurar descanso o almuerzo"
-                >
-                  <span class="material-symbols-outlined" style="font-size: 16px">lunch_dining</span>
-                  <span v-if="day.hasBreak" class="config-horarios__break-text">
-                    {{ day.breakStart }} - {{ day.breakEnd }}
-                  </span>
-                </button>
-              </div>
-
               <button class="config-horarios__copy-btn" @click="copyToAll(day)" title="Copiar a los demás días activos">
                 <span class="material-symbols-outlined">content_copy</span>
               </button>
@@ -253,10 +272,17 @@ function closeHolidaysModal() {
         </div>
 
         <div class="config-horarios__footer">
-          <p class="config-horarios__footer-text">Los cambios se aplicarán inmediatamente a tu calendario público.</p>
+          <p class="config-horarios__footer-text">{{ footerText }}</p>
           <div class="config-horarios__footer-actions">
-            <AppButton variant="outline">Descartar</AppButton>
-            <AppButton variant="gradient">Guardar horarios</AppButton>
+            <AppButton variant="outline" :disabled="!hasChanges || availabilityStore.isSaving" @click="discardChanges">Descartar</AppButton>
+            <AppButton
+              variant="gradient"
+              :disabled="!hasChanges || availabilityStore.isLoading || availabilityStore.isSaving"
+              :is-loading="availabilityStore.isSaving"
+              @click="saveSchedule"
+            >
+              Guardar horarios
+            </AppButton>
           </div>
         </div>
       </div>
@@ -272,42 +298,6 @@ function closeHolidaysModal() {
         </div>
       </div>
 
-    </div>
-
-    <!-- Modal Descanso -->
-    <div v-if="showBreakModal" class="config-horarios__modal-overlay" @click.self="showBreakModal = false">
-      <div class="config-horarios__modal">
-        <h3 class="config-horarios__modal-title">Horario de descanso</h3>
-        <p class="config-horarios__modal-desc">
-          Configura el horario de almuerzo o descanso para el {{ selectedDayForBreak?.name.toLowerCase() }}.
-        </p>
-        
-        <div class="config-horarios__modal-body">
-          <div class="config-horarios__modal-row">
-            <div class="config-horarios__modal-field">
-              <label>Desde</label>
-              <div class="config-horarios__time-input">
-                <input type="time" v-model="tempBreakStart" class="config-horarios__time-field" />
-              </div>
-            </div>
-            <div class="config-horarios__modal-field">
-              <label>Hasta</label>
-              <div class="config-horarios__time-input">
-                <input type="time" v-model="tempBreakEnd" class="config-horarios__time-field" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="config-horarios__modal-actions">
-          <AppButton v-if="selectedDayForBreak?.hasBreak" @click="removeBreak" style="color: #ba1a1a; background: rgba(186, 26, 26, 0.1);">
-            Eliminar
-          </AppButton>
-          <div style="flex-grow: 1"></div>
-          <AppButton variant="outline" @click="showBreakModal = false">Cancelar</AppButton>
-          <AppButton variant="solid" @click="saveBreak">Guardar</AppButton>
-        </div>
-      </div>
     </div>
 
     <!-- Modal Margen Personalizado -->

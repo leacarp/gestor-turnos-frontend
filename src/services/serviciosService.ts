@@ -52,6 +52,8 @@ function toUpdatePayload(dto: UpdateServiceDto) {
   if (dto.duration !== undefined) payload.duracion = dto.duration
   if (dto.price !== undefined) payload.precio = dto.price
   if (dto.category !== undefined) payload.categoria = dto.category
+  if (dto.requiereSeña !== undefined) payload.requiereSeña = dto.requiereSeña
+  if (dto.montoSeña !== undefined) payload.montoSeña = dto.montoSeña
   return payload
 }
 

@@ -28,6 +28,8 @@ export interface UpdateServiceDto {
   duration?: number
   price?: number
   category?: string
+  requiereSeña?: boolean
+  montoSeña?: number
 }
 
 /**

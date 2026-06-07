@@ -7,14 +7,23 @@ export interface DaySlotDto {
   isActive: boolean
 }
 
-export interface WeeklyScheduleDto {
+export interface WeeklyScheduleRequestDto {
   slots: DaySlotDto[]
 }
 
-export interface WeeklyScheduleResponse {
+export interface WeeklyScheduleResponseDto {
   id: string
   providerId: string
   slots: DaySlotDto[]
   createdAt: string
   updatedAt: string
+}
+
+export type WeeklyScheduleDto = WeeklyScheduleRequestDto
+export type WeeklyScheduleResponse = WeeklyScheduleResponseDto
+
+export interface AvailabilityState {
+  schedule: WeeklyScheduleResponseDto | null
+  slots: DaySlotDto[]
+  hasSchedule: boolean
 }

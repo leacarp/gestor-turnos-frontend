@@ -1,7 +1,55 @@
 <script setup lang="ts">
+import { ref, onMounted, watch, computed } from 'vue'
+import { toast } from 'vue3-toastify'
 import { Icon } from '@iconify/vue'
 import AppButton from '@/components/AppButton.vue'
-// Logic for Pagos
+import { usePagosStore } from '@/stores/usePagosStore'
+import { useServiciosStore } from '@/stores/useServiciosStore'
+
+const pagosStore = usePagosStore()
+const serviciosStore = useServiciosStore()
+
+onMounted(async () => {
+  await Promise.all([
+    pagosStore.fetchMontoSeña(),
+    serviciosStore.fetchAll()
+  ])
+})
+
+/** Input local — se inicializa desde el store cuando carga */
+const inputMonto = ref<number | null>(null)
+
+watch(
+  () => pagosStore.montoSeña,
+  (val) => {
+    if (val !== null && inputMonto.value === null) {
+      inputMonto.value = val
+    }
+  },
+  { immediate: true }
+)
+
+const isDirty = computed(() => pagosStore.isDirty)
+
+function onMontoInput() {
+  pagosStore.markDirty()
+}
+
+async function handleSaveMontoSeña() {
+  if (inputMonto.value == null || inputMonto.value < 0) {
+    toast.error('Ingresa un monto válido.')
+    return
+  }
+  
+  try {
+    // 1. Guardar la configuración global (monto de seña)
+    await pagosStore.saveMontoSeña(inputMonto.value)
+    
+    toast.success('Configuración de pagos guardada correctamente.')
+  } catch {
+    toast.error(pagosStore.error ?? serviciosStore.error ?? 'Error al guardar.')
+  }
+}
 </script>
 
 <template>
@@ -42,53 +90,6 @@ import AppButton from '@/components/AppButton.vue'
           </div>
         </div>
 
-        <!-- Policies Card -->
-        <div class="config-pagos__policies config-pagos__card">
-          <h3 class="config-pagos__policies-title">Políticas de Reserva</h3>
-          <div class="config-pagos__policies-list">
-            
-            <label class="config-pagos__policy-item">
-              <div class="config-pagos__policy-info">
-                <div class="config-pagos__policy-icon">
-                  <span class="material-symbols-outlined">book_online</span>
-                </div>
-                <div>
-                  <span class="config-pagos__policy-name">Requerir seña</span>
-                  <span class="config-pagos__policy-desc">Solicita un pago parcial para confirmar</span>
-                </div>
-              </div>
-              <input type="checkbox" checked class="config-pagos__checkbox" />
-            </label>
-
-            <label class="config-pagos__policy-item">
-              <div class="config-pagos__policy-info">
-                <div class="config-pagos__policy-icon">
-                  <span class="material-symbols-outlined">payments</span>
-                </div>
-                <div>
-                  <span class="config-pagos__policy-name">Aceptar pago total</span>
-                  <span class="config-pagos__policy-desc">Permite liquidar el 100% por adelantado</span>
-                </div>
-              </div>
-              <input type="checkbox" class="config-pagos__checkbox" />
-            </label>
-
-            <label class="config-pagos__policy-item">
-              <div class="config-pagos__policy-info">
-                <div class="config-pagos__policy-icon">
-                  <span class="material-symbols-outlined">cancel</span>
-                </div>
-                <div>
-                  <span class="config-pagos__policy-name">Permitir cancelación</span>
-                  <span class="config-pagos__policy-desc">Habilita devoluciones automáticas</span>
-                </div>
-              </div>
-              <input type="checkbox" checked class="config-pagos__checkbox" />
-            </label>
-
-          </div>
-        </div>
-
         <!-- Financial Controls Card -->
         <div class="config-pagos__controls config-pagos__card config-pagos__card--shadow">
           <div class="config-pagos__controls-inner">
@@ -98,30 +99,37 @@ import AppButton from '@/components/AppButton.vue'
                 <p class="config-pagos__controls-desc">Define los montos o porcentajes fijos que los clientes deben abonar para asegurar su lugar.</p>
               </div>
               
-              <div class="config-pagos__inputs-grid">
+              <div class="config-pagos__inputs-grid" style="grid-template-columns: 1fr;">
                 <div class="config-pagos__input-group">
                   <label class="config-pagos__label">Monto de seña ($)</label>
                   <div class="config-pagos__input-wrapper">
                     <span class="config-pagos__input-prefix">$</span>
-                    <input type="number" placeholder="0.00" class="config-pagos__input config-pagos__input--prefix" />
+                    <input 
+                      type="number" 
+                      min="0"
+                      placeholder="0.00" 
+                      class="config-pagos__input config-pagos__input--prefix"
+                      v-model.number="inputMonto"
+                      @input="onMontoInput"
+                      :disabled="pagosStore.isLoading"
+                    />
                   </div>
-                  <p class="config-pagos__input-hint">Monto fijo sugerido para servicios estándar.</p>
-                </div>
-                
-                <div class="config-pagos__input-group">
-                  <label class="config-pagos__label">% de seña</label>
-                  <div class="config-pagos__input-wrapper">
-                    <span class="config-pagos__input-suffix">%</span>
-                    <input type="number" value="30" class="config-pagos__input" />
-                  </div>
-                  <p class="config-pagos__input-hint">Calculado sobre el valor total del servicio.</p>
+                  <p v-if="pagosStore.isLoading" class="config-pagos__input-hint">Cargando...</p>
+                  <p v-else-if="pagosStore.error" class="config-pagos__input-hint" style="color: var(--color-error);">{{ pagosStore.error }}</p>
+                  <p v-else class="config-pagos__input-hint">Monto fijo que el cliente paga al reservar. Al guardarse afectará a todos los servicios. Dejar en 0 para no requerir seña.</p>
                 </div>
               </div>
             </div>
           </div>
           
           <div class="config-pagos__actions">
-            <AppButton variant="gradient" iconLeft="save">
+            <AppButton 
+              variant="gradient" 
+              iconLeft="save"
+              :disabled="!isDirty || pagosStore.isSaving || serviciosStore.isSaving"
+              :is-loading="pagosStore.isSaving || serviciosStore.isSaving"
+              @click="handleSaveMontoSeña"
+            >
               Guardar configuración de pagos
             </AppButton>
           </div>
@@ -193,7 +201,7 @@ import AppButton from '@/components/AppButton.vue'
 
 @media (min-width: 1024px) {
   .config-pagos__integration {
-    grid-column: span 5;
+    grid-column: span 12;
   }
 }
 
