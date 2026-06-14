@@ -177,25 +177,6 @@ const previewMessage = computed(() => {
         </div>
       </div>
 
-      <!-- Bottom Bento info -->
-      <div class="config-recs__info-grid">
-        <div class="config-recs__info-card">
-          <span class="material-symbols-outlined config-recs__info-icon">sms_failed</span>
-          <h4 class="config-recs__info-title">Mensajes fallidos</h4>
-          <p class="config-recs__info-text">Recibirás un email si un mensaje de WhatsApp no se pudo entregar por número incorrecto.</p>
-        </div>
-        <div class="config-recs__info-card">
-          <span class="material-symbols-outlined config-recs__info-icon">history</span>
-          <h4 class="config-recs__info-title">Historial de envíos</h4>
-          <p class="config-recs__info-text">Puedes revisar todos los recordatorios enviados en los últimos 30 días en el panel de analíticas.</p>
-        </div>
-        <div class="config-recs__info-card">
-          <span class="material-symbols-outlined config-recs__info-icon">auto_fix_high</span>
-          <h4 class="config-recs__info-title">Ahorro inteligente</h4>
-          <p class="config-recs__info-text">El sistema detecta automáticamente si el cliente ya confirmó por otro canal para evitar spam.</p>
-        </div>
-      </div>
-
     </div>
   </div>
 </template>

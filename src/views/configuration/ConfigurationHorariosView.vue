@@ -44,11 +44,22 @@ function serializeDays(value: ScheduleDay[]): string {
 const days = ref<ScheduleDay[]>(cloneDefaultDays())
 const savedSnapshot = ref(serializeDays(days.value))
 
+const PRESET_MARGINS = [0, 5, 10, 15, 30, 60]
+
 const turnMargin = ref<number | 'custom'>(15)
 const previousTurnMargin = ref<number | 'custom'>(15)
 const customTurnMarginValue = ref<number>(60)
 
-const hasChanges = computed(() => serializeDays(days.value) !== savedSnapshot.value)
+function resolvedMarginValue(): number {
+  if (turnMargin.value === 'custom') return customTurnMarginValue.value
+  return turnMargin.value
+}
+
+const hasChanges = computed(
+  () =>
+    serializeDays(days.value) !== savedSnapshot.value ||
+    resolvedMarginValue() !== availabilityStore.appointmentGap,
+)
 const footerText = computed(() => {
   if (availabilityStore.isLoading) return 'Cargando horarios...'
   if (availabilityStore.error) return availabilityStore.error
@@ -69,6 +80,18 @@ function applyScheduleSlots(slots: DaySlotDto[]) {
     }
   })
   savedSnapshot.value = serializeDays(days.value)
+}
+
+function applyMarginFromStore() {
+  const gap = availabilityStore.appointmentGap
+  if (PRESET_MARGINS.includes(gap)) {
+    turnMargin.value = gap
+    previousTurnMargin.value = gap
+  } else {
+    customTurnMarginValue.value = gap
+    turnMargin.value = 'custom'
+    previousTurnMargin.value = 'custom'
+  }
 }
 
 function copyToAll(sourceDay: ScheduleDay) {
@@ -111,6 +134,7 @@ async function saveSchedule() {
         endTime: day.end,
         isActive: day.active,
       })),
+      appointmentGap: resolvedMarginValue(),
     })
     applyScheduleSlots(saved.slots)
     toast.success('Horarios guardados')
@@ -121,6 +145,7 @@ async function saveSchedule() {
 
 function discardChanges() {
   applyScheduleSlots(availabilityStore.slots)
+  applyMarginFromStore()
 }
 
 // Modal Margen Personalizado
@@ -146,34 +171,49 @@ function cancelCustomMargin() {
 
 // Modal Feriados
 const showHolidaysModal = ref(false)
-const holidays = ref<{ date: string, description: string }[]>([])
 const newHolidayDate = ref('')
 const newHolidayDesc = ref('')
+const holidayError = ref<string | null>(null)
+
+const holidays = computed(() => availabilityStore.exceptions)
 
 function openHolidaysModal() {
+  const now = new Date()
+  availabilityStore.fetchExceptionsByMonth(now.getFullYear(), now.getMonth() + 1)
   showHolidaysModal.value = true
 }
 
-function addHoliday() {
-  if (newHolidayDate.value) {
-    holidays.value.push({ date: newHolidayDate.value, description: newHolidayDesc.value })
-    holidays.value.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+async function addHoliday() {
+  if (!newHolidayDate.value) return
+  holidayError.value = null
+  try {
+    await availabilityStore.addException(newHolidayDate.value, newHolidayDesc.value || undefined)
     newHolidayDate.value = ''
     newHolidayDesc.value = ''
+  } catch (err) {
+    holidayError.value = typeof err === 'string' ? err : 'Error al guardar el feriado'
   }
 }
 
-function removeHoliday(index: number) {
-  holidays.value.splice(index, 1)
+async function removeHoliday(exceptionId: string) {
+  try {
+    await availabilityStore.removeException(exceptionId)
+  } catch {
+    // silent
+  }
 }
 
 function closeHolidaysModal() {
   showHolidaysModal.value = false
+  holidayError.value = null
 }
 
 onMounted(async () => {
   await availabilityStore.fetchSchedule()
   applyScheduleSlots(availabilityStore.slots)
+  applyMarginFromStore()
+  const now = new Date()
+  await availabilityStore.fetchExceptionsByMonth(now.getFullYear(), now.getMonth() + 1)
 })
 </script>
 
@@ -254,6 +294,7 @@ onMounted(async () => {
               <span class="material-symbols-outlined">event_busy</span>
               Excepciones de feriados
               <span v-if="holidays.length > 0" class="config-horarios__badge">{{ holidays.length }}</span>
+
             </div>
             <div class="config-horarios__tag config-horarios__tag--input">
               <span class="material-symbols-outlined">update</span>
@@ -329,28 +370,33 @@ onMounted(async () => {
         <p class="config-horarios__modal-desc">
           Agrega fechas en las que no estarás disponible (feriados, vacaciones, etc.).
         </p>
-        
+
         <div class="config-horarios__modal-body">
           <div class="config-horarios__holiday-form">
             <input type="date" v-model="newHolidayDate" class="config-horarios__input-text" />
             <input type="text" v-model="newHolidayDesc" placeholder="Descripción (ej. Feriado)" class="config-horarios__input-text" @keyup.enter="addHoliday" />
-            <AppButton variant="solid" :disabled="!newHolidayDate" @click="addHoliday">
+            <AppButton variant="solid" :disabled="!newHolidayDate || availabilityStore.isSavingException" :is-loading="availabilityStore.isSavingException" @click="addHoliday">
               Añadir
             </AppButton>
           </div>
 
+          <p v-if="holidayError" class="config-horarios__holiday-error">{{ holidayError }}</p>
+
           <div class="config-horarios__holiday-list">
-            <div v-if="holidays.length === 0" class="config-horarios__holiday-empty">
+            <div v-if="availabilityStore.isLoadingExceptions" class="config-horarios__holiday-empty">
+              Cargando...
+            </div>
+            <div v-else-if="holidays.length === 0" class="config-horarios__holiday-empty">
               No hay feriados configurados.
             </div>
-            <div v-for="(holiday, index) in holidays" :key="index" class="config-horarios__holiday-item">
+            <div v-for="holiday in holidays" :key="holiday.id" class="config-horarios__holiday-item">
               <div class="config-horarios__holiday-info">
                 <span class="config-horarios__holiday-date">
                   {{ new Date(holiday.date + 'T00:00:00').toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
                 </span>
-                <span class="config-horarios__holiday-desc">{{ holiday.description || 'Feriado' }}</span>
+                <span class="config-horarios__holiday-desc">{{ holiday.reason || 'Feriado' }}</span>
               </div>
-              <button class="config-horarios__holiday-delete" @click="removeHoliday(index)">
+              <button class="config-horarios__holiday-delete" @click="removeHoliday(holiday.id)">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </div>
@@ -909,6 +955,11 @@ onMounted(async () => {
 }
 
 /* Feriados */
+.config-horarios__holiday-error {
+  font-size: var(--font-size-sm);
+  color: #ba1a1a;
+}
+
 .config-horarios__holiday-form {
   display: flex;
   gap: var(--space-2);

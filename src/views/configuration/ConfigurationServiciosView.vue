@@ -352,7 +352,8 @@ onMounted(() => {
 
 @media (min-width: 768px) {
   .config-servicios__bento {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    justify-items: center;
   }
 }
 
@@ -362,8 +363,11 @@ onMounted(() => {
   border-radius: var(--radius-xl);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   height: 12rem;
+  width: 100%;
   border: 1px solid rgba(192, 200, 204, 0.1);
   position: relative;
   overflow: hidden;
@@ -371,7 +375,7 @@ onMounted(() => {
 
 .config-servicios__bento-card--span-2 {
   background-color: var(--color-surface-container-lowest);
-  grid-column: span 2;
+  grid-column: unset;
   box-shadow: var(--shadow-sm);
 }
 
@@ -395,6 +399,7 @@ onMounted(() => {
 .config-servicios__bento-content {
   position: relative;
   z-index: 10;
+  text-align: center;
 }
 
 .config-servicios__bento-title {
