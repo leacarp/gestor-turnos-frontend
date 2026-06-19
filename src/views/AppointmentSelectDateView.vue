@@ -3,10 +3,12 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import { useAvailabilityStore } from '@/stores/useAvailabilityStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const store = useAppointmentBookingStore()
+const authStore = useAuthStore()
 
 interface CalendarDay {
   day: number;
@@ -49,7 +51,11 @@ const formattedSelectedDate = computed(() => {
 function handleContinue() {
   if (localSelectedDate.value && localSelectedTime.value) {
     store.setDateTime(localSelectedDate.value, localSelectedTime.value)
-    router.push({ name: 'booking-details' })
+    if (authStore.isAuthenticated) {
+      router.push({ name: 'booking-details' })
+    } else {
+      router.push({ name: 'booking-guest-details' })
+    }
   }
 }
 

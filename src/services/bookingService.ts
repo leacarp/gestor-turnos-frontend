@@ -5,7 +5,10 @@ export interface CreateTurnoRequestDto {
   horaInicio: string
   proveedorId: string
   servicioId: string
-  clienteId: string
+  cliente: {
+    tipo: 'REGISTRADO'
+    id: string
+  }
   notas?: string
 }
 
@@ -14,10 +17,12 @@ export interface CreateGuestTurnoRequestDto {
   horaInicio: string
   proveedorId: string
   servicioId: string
-  guestNombre: string
-  guestApellido: string
-  guestEmail: string
-  guestTelefono: string
+  clienteDetails: {
+    tipo: 'INVITADO'
+    nombre?: string
+    email?: string
+    celular?: string
+  }
   notas?: string
 }
 

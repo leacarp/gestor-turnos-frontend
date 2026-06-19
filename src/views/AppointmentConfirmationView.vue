@@ -3,11 +3,13 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { useUserStore } from '@/stores/useUserStore'
 import { bookingService } from '@/services/bookingService'
 
 const router = useRouter()
 const bookingStore = useAppointmentBookingStore()
 const authStore = useAuthStore()
+const userStore = useUserStore()
 
 // ── State ────────────────────────────────────────────────
 const isSubmitting = ref(false)
@@ -55,14 +57,17 @@ async function handleConfirm() {
   isSubmitting.value = true
 
   try {
-    if (authStore.user?.id) {
+    if (authStore.isAuthenticated && userStore.user?.id) {
       // Autenticado
       const payload = {
         fecha: bookingStore.selectedDate,
         horaInicio: bookingStore.selectedTime,
         proveedorId: service.value.providerId,
         servicioId: String(service.value.id),
-        clienteId: authStore.user.id,
+        cliente: {
+          tipo: 'REGISTRADO' as const,
+          id: userStore.user.id
+        },
         notas: guest.value.notes || undefined
       }
       await bookingService.createAppointment(payload)
@@ -73,20 +78,36 @@ async function handleConfirm() {
         horaInicio: bookingStore.selectedTime,
         proveedorId: service.value.providerId,
         servicioId: String(service.value.id),
-        guestNombre: guest.value.firstName,
-        guestApellido: guest.value.lastName,
-        guestEmail: guest.value.email,
-        guestTelefono: guest.value.phone,
+        clienteDetails: {
+          tipo: 'INVITADO',
+          nombre: `${guest.value.firstName} ${guest.value.lastName}`.trim(),
+          email: guest.value.email,
+          celular: guest.value.phone
+        },
         notas: guest.value.notes || undefined
       }
+      console.log('Payload enviado desde frontend (Invitado):', payloadGuest)
       await bookingService.createGuestAppointment(payloadGuest)
     }
 
     bookingStore.reset()
     router.push({ name: 'booking-success' })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al confirmar la reserva:', error)
-    submitError.value = 'Ocurrió un error al confirmar la reserva. Por favor logueate e inténtalo de nuevo.'
+    
+    // Intenta extraer el mensaje de error del backend
+    let backendMessage = ''
+    if (error.response?.data?.message) {
+      backendMessage = Array.isArray(error.response.data.message) 
+        ? error.response.data.message.join('. ') 
+        : error.response.data.message
+    }
+
+    if (backendMessage) {
+      submitError.value = `Error del servidor: ${backendMessage}`
+    } else {
+      submitError.value = 'No se pudo conectar con el servidor para confirmar el turno.'
+    }
   } finally {
     isSubmitting.value = false
   }
@@ -218,22 +239,6 @@ function handlePayDeposit() {
             <span class="confirmation-view__deposit-value">
               ${{ depositAmount.toLocaleString('es-AR') }}
             </span>
-          </div>
-        </div>
-
-        <!-- Location banner (full width) -->
-        <div class="confirmation-view__card confirmation-view__card--location">
-          <div class="confirmation-view__location-overlay" aria-hidden="true"></div>
-          <div class="confirmation-view__location-inner">
-            <div class="confirmation-view__location-icon-wrap" aria-hidden="true">
-              <span class="material-symbols-outlined">map</span>
-            </div>
-            <div>
-              <p class="confirmation-view__location-eyebrow">Ubicación</p>
-              <p class="confirmation-view__location-address">
-                {{ service?.location ?? '—' }}
-              </p>
-            </div>
           </div>
         </div>
 
@@ -417,7 +422,7 @@ function handlePayDeposit() {
 /* ── Service card (2 cols) ────────────────────────────────── */
 .confirmation-view__card--service {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -495,7 +500,7 @@ function handlePayDeposit() {
 /* ── DateTime card (1 col) ────────────────────────────────── */
 .confirmation-view__card--datetime {
   background-color: var(--color-surface-container-low);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -540,7 +545,7 @@ function handlePayDeposit() {
 /* ── Guest card (full width) ──────────────────────────────── */
 .confirmation-view__card--guest {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8);
   box-shadow: var(--shadow-sm);
 }
 
@@ -559,7 +564,7 @@ function handlePayDeposit() {
 /* ── Deposit card (full width) ────────────────────────────── */
 .confirmation-view__card--deposit {
   background-color: var(--color-primary-fixed);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -621,74 +626,6 @@ function handlePayDeposit() {
   font-weight: 800;
   color: var(--color-primary);
   line-height: 1;
-}
-
-/* ── Location banner (full width) ─────────────────────────── */
-.confirmation-view__card--location {
-  position: relative;
-  height: 10rem;
-  background-color: var(--color-surface-container-high);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (min-width: 640px) {
-  .confirmation-view__card--location {
-    grid-column: span 3;
-  }
-}
-
-.confirmation-view__location-overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--gradient-primary);
-  opacity: 0.08;
-}
-
-.confirmation-view__location-inner {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: var(--space-5) var(--space-6);
-  border-radius: 0.75rem;
-  max-width: 28rem;
-  width: 90%;
-  box-shadow: var(--shadow-sm);
-}
-
-.confirmation-view__location-icon-wrap {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-md);
-  background: var(--gradient-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #ffffff;
-}
-
-.confirmation-view__location-eyebrow {
-  font-family: var(--font-family-label);
-  font-size: 0.65rem;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-1);
-}
-
-.confirmation-view__location-address {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-primary);
-  margin: 0;
 }
 
 /* ── Actions ──────────────────────────────────────────────── */

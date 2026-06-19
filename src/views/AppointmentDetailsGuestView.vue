@@ -13,12 +13,50 @@ const form = ref({
   phone: ''
 })
 
+const errors = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: ''
+})
+
+function validateForm(): boolean {
+  let isValid = true
+  errors.value = { firstName: '', lastName: '', email: '', phone: '' }
+
+  if (form.value.firstName.trim().length < 2) {
+    errors.value.firstName = 'El nombre debe tener al menos 2 caracteres.'
+    isValid = false
+  }
+  
+  if (form.value.lastName.trim().length < 2) {
+    errors.value.lastName = 'El apellido debe tener al menos 2 caracteres.'
+    isValid = false
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(form.value.email)) {
+    errors.value.email = 'Ingresá un correo electrónico válido.'
+    isValid = false
+  }
+
+  const phoneRegex = /^\+?[0-9\s\-]{8,15}$/
+  if (!phoneRegex.test(form.value.phone)) {
+    errors.value.phone = 'Ingresá un teléfono válido (entre 8 y 15 números).'
+    isValid = false
+  }
+
+  return isValid
+}
+
 function handleSubmit() {
+  if (!validateForm()) return
+
   store.setGuestDetails({
-    firstName: form.value.firstName,
-    lastName: form.value.lastName,
-    email: form.value.email,
-    phone: form.value.phone,
+    firstName: form.value.firstName.trim(),
+    lastName: form.value.lastName.trim(),
+    email: form.value.email.trim(),
+    phone: form.value.phone.trim(),
   })
   router.push({ name: 'booking-confirmation' })
 }
@@ -42,10 +80,13 @@ function handleSubmit() {
           <input
             v-model="form.firstName"
             class="guest-form__input"
+            :class="{ 'guest-form__input--error': errors.firstName }"
             placeholder="ej. Julián"
             type="text"
             required
+            @input="errors.firstName = ''"
           />
+          <span v-if="errors.firstName" class="guest-form__error">{{ errors.firstName }}</span>
         </div>
 
         <!-- Last Name -->
@@ -54,10 +95,13 @@ function handleSubmit() {
           <input
             v-model="form.lastName"
             class="guest-form__input"
+            :class="{ 'guest-form__input--error': errors.lastName }"
             placeholder="ej. Pérez"
             type="text"
             required
+            @input="errors.lastName = ''"
           />
+          <span v-if="errors.lastName" class="guest-form__error">{{ errors.lastName }}</span>
         </div>
 
         <!-- Email -->
@@ -66,10 +110,13 @@ function handleSubmit() {
           <input
             v-model="form.email"
             class="guest-form__input"
+            :class="{ 'guest-form__input--error': errors.email }"
             placeholder="julian@meridian.com"
             type="email"
             required
+            @input="errors.email = ''"
           />
+          <span v-if="errors.email" class="guest-form__error">{{ errors.email }}</span>
         </div>
 
         <!-- Phone -->
@@ -78,10 +125,13 @@ function handleSubmit() {
           <input
             v-model="form.phone"
             class="guest-form__input"
+            :class="{ 'guest-form__input--error': errors.phone }"
             placeholder="+54 11 1234-5678"
             type="tel"
             required
+            @input="errors.phone = ''"
           />
+          <span v-if="errors.phone" class="guest-form__error">{{ errors.phone }}</span>
         </div>
 
         <div class="guest-form__footer">
@@ -198,6 +248,22 @@ function handleSubmit() {
 
 .guest-form__input:focus {
   box-shadow: 0 0 0 2px rgba(0, 50, 86, 0.2); /* focus:ring-2 focus:ring-primary/20 */
+}
+
+.guest-form__input--error {
+  border: 1px solid var(--color-error, #ba1a1a);
+  box-shadow: 0 0 0 1px var(--color-error, #ba1a1a);
+}
+
+.guest-form__input--error:focus {
+  box-shadow: 0 0 0 2px var(--color-error, #ba1a1a);
+}
+
+.guest-form__error {
+  font-size: 0.75rem;
+  color: var(--color-error, #ba1a1a);
+  margin-top: 0.25rem;
+  font-family: var(--font-family-body);
 }
 
 /* ── Footer ──────────────────────────────────────────────── */
