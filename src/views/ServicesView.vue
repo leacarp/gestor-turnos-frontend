@@ -28,12 +28,7 @@ const categories = computed(() => {
 
 const services = computed((): ServiceItem[] => {
   let list = store.items.map((s, index) => {
-    let depositAmount: number | undefined = undefined
-    if (s.requiereSeña === true) {
-      depositAmount = s.montoSeña ?? s.porcentajeSeña
-    } else if (s.requiereSeña === undefined && store.depositPercent !== undefined) {
-      depositAmount = computeDepositAmount(s.price, store.depositPercent)
-    }
+    const depositAmount = computeDepositAmount(s.price, store.depositPercent)
 
     return {
       id: s.id,

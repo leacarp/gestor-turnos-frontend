@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { Icon } from '@iconify/vue'
+import { userService } from '@/services/userService'
 
 const whatsappActive = ref(true)
 const emailActive = ref(false)
@@ -17,26 +18,56 @@ const emailReminders = ref({
 
 const messageTemplate = ref('Hola {nombre}, te recordamos tu turno para mañana a las {hora}. En caso de no poder asistir, por favor avísanos con tiempo. ¡Te esperamos!')
 
+const saving = ref(false)
+const saveError = ref<string | null>(null)
+const saveSuccess = ref(false)
+const isDirty = ref(false)
+
+watch(
+  [whatsappActive, emailActive, wpReminders, emailReminders, messageTemplate],
+  () => { isDirty.value = true },
+  { deep: true }
+)
+
 function insertVariable(variable: string) {
   messageTemplate.value += ` ${variable}`
 }
 
 const previewMessage = computed(() => {
   let result = messageTemplate.value
-  
+
   const variables: Record<string, string> = {
     '{nombre}': '<span class="config-recs__preview-highlight">Julián</span>',
     '{hora}': '<span class="config-recs__preview-highlight">15:30</span>',
     '{servicio}': '<span class="config-recs__preview-highlight">Corte de Cabello</span>',
     '{fecha}': '<span class="config-recs__preview-highlight">25 de Octubre</span>'
   }
-  
+
   for (const [key, value] of Object.entries(variables)) {
     result = result.replaceAll(key, value)
   }
-  
+
   return result
 })
+
+async function saveConfig() {
+  saving.value = true
+  saveError.value = null
+  saveSuccess.value = false
+  try {
+    await userService.updateReminderSettings({
+      whatsapp: { enabled: whatsappActive.value, t24h: wpReminders.value.t24h, t2h: wpReminders.value.t2h },
+      email: { enabled: emailActive.value, t24h: emailReminders.value.t24h },
+      messageTemplate: messageTemplate.value,
+    })
+    saveSuccess.value = true
+    isDirty.value = false
+  } catch {
+    saveError.value = 'Ocurrió un error al guardar. Intentá de nuevo.'
+  } finally {
+    saving.value = false
+  }
+}
 </script>
 
 <template>
@@ -169,30 +200,16 @@ const previewMessage = computed(() => {
               <div class="config-recs__preview-bubble" v-html="previewMessage"></div>
             </div>
 
+            <p v-if="saveSuccess" class="config-recs__save-success">Configuración guardada correctamente.</p>
+            <p v-if="saveError" class="config-recs__save-error">{{ saveError }}</p>
+
             <div class="config-recs__actions">
-              <AppButton variant="outline">Cancelar</AppButton>
-              <AppButton variant="gradient">Guardar configuración</AppButton>
+              <AppButton variant="outline" :disabled="saving || !isDirty">Cancelar</AppButton>
+              <AppButton variant="gradient" :disabled="saving || !isDirty" @click="saveConfig">
+                {{ saving ? 'Guardando...' : 'Guardar configuración' }}
+              </AppButton>
             </div>
           </section>
-        </div>
-      </div>
-
-      <!-- Bottom Bento info -->
-      <div class="config-recs__info-grid">
-        <div class="config-recs__info-card">
-          <span class="material-symbols-outlined config-recs__info-icon">sms_failed</span>
-          <h4 class="config-recs__info-title">Mensajes fallidos</h4>
-          <p class="config-recs__info-text">Recibirás un email si un mensaje de WhatsApp no se pudo entregar por número incorrecto.</p>
-        </div>
-        <div class="config-recs__info-card">
-          <span class="material-symbols-outlined config-recs__info-icon">history</span>
-          <h4 class="config-recs__info-title">Historial de envíos</h4>
-          <p class="config-recs__info-text">Puedes revisar todos los recordatorios enviados en los últimos 30 días en el panel de analíticas.</p>
-        </div>
-        <div class="config-recs__info-card">
-          <span class="material-symbols-outlined config-recs__info-icon">auto_fix_high</span>
-          <h4 class="config-recs__info-title">Ahorro inteligente</h4>
-          <p class="config-recs__info-text">El sistema detecta automáticamente si el cliente ya confirmó por otro canal para evitar spam.</p>
         </div>
       </div>
 
@@ -579,8 +596,20 @@ const previewMessage = computed(() => {
   font-weight: var(--font-weight-semibold);
 }
 
+.config-recs__save-success {
+  font-size: var(--font-size-sm);
+  color: #16a34a;
+  margin-top: var(--space-4);
+}
+
+.config-recs__save-error {
+  font-size: var(--font-size-sm);
+  color: firebrick;
+  margin-top: var(--space-4);
+}
+
 .config-recs__actions {
-  margin-top: var(--space-12);
+  margin-top: var(--space-4);
   display: flex;
   justify-content: flex-end;
   gap: var(--space-5);
