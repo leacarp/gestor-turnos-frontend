@@ -1,22 +1,26 @@
 <script setup lang="ts">
 export interface Client {
-  id: number
+  id: string
   name: string
   email: string
   phone: string
-  appointmentsCount: number
+  turnosCount: number
+  ultimoTurno: string | null
 }
 
-defineProps<{
-  client: Client
-}>()
+defineProps<{ client: Client }>()
+
+function fechaCorta(iso: string | null): string {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' })
+}
 </script>
 
 <template>
   <article class="client-card">
     <div class="client-card__content">
       <h3 class="client-card__name">{{ client.name }}</h3>
-      
+
       <div class="client-card__contact">
         <div class="client-card__contact-item">
           <span class="material-symbols-outlined client-card__icon" aria-hidden="true">mail</span>
@@ -30,11 +34,14 @@ defineProps<{
 
       <div class="client-card__footer">
         <span class="client-card__appointments">
-          {{ client.appointmentsCount }} turnos realizados
+          {{ client.turnosCount }} {{ client.turnosCount === 1 ? 'turno' : 'turnos' }}
+        </span>
+        <span class="client-card__last">
+          Último: {{ fechaCorta(client.ultimoTurno) }}
         </span>
       </div>
     </div>
-    
+
     <div class="client-card__hover-bar"></div>
   </article>
 </template>
@@ -107,11 +114,15 @@ defineProps<{
   font-family: var(--font-family-body);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .client-card__footer {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-top: auto;
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-surface-container-high);
@@ -121,7 +132,7 @@ defineProps<{
   font-family: var(--font-family-body);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-primary-container);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -134,6 +145,11 @@ defineProps<{
   height: 6px;
   border-radius: var(--radius-full);
   background-color: var(--color-primary);
+}
+
+.client-card__last {
+  font-size: var(--font-size-xs);
+  color: var(--color-on-surface-variant);
 }
 
 .client-card__hover-bar {

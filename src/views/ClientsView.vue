@@ -1,97 +1,183 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import ClientCard from '@/components/ClientCard.vue'
 import type { Client } from '@/components/ClientCard.vue'
+import { dashboardService } from '@/services/dashboardService'
 
-// Mock data based on the design reference
-const mockClients: Client[] = [
-  {
-    id: 1,
-    name: 'María López',
-    email: 'maria@email.com',
-    phone: '11-2345-6789',
-    appointmentsCount: 12
-  },
-  {
-    id: 2,
-    name: 'Juan Pérez',
-    email: 'juan@email.com',
-    phone: '11-9876-5432',
-    appointmentsCount: 8
-  },
-  {
-    id: 3,
-    name: 'Ana García',
-    email: 'ana@email.com',
-    phone: '11-5555-1234',
-    appointmentsCount: 5
-  },
-  {
-    id: 4,
-    name: 'Carlos Ruiz',
-    email: 'carlos@email.com',
-    phone: '11-4444-5678',
-    appointmentsCount: 3
-  }
-]
+const PAGE_SIZE = 10
 
+const allClients  = ref<Client[]>([])
+const isLoading   = ref(true)
+const error       = ref<string | null>(null)
 const searchQuery = ref('')
-const clients = ref<Client[]>(mockClients)
+const currentPage = ref(1)
+
+onMounted(async () => {
+  try {
+    const data = await dashboardService.getClientes()
+    allClients.value = data.map(c => ({
+      id:          c.id,
+      name:        c.name,
+      email:       c.email,
+      phone:       c.phone,
+      turnosCount: c.turnosCount,
+      ultimoTurno: c.ultimoTurno,
+    }))
+  } catch {
+    error.value = 'No se pudieron cargar los clientes.'
+  } finally {
+    isLoading.value = false
+  }
+})
+
+// Al escribir en el buscador, volvemos a la primera página
+function onSearch() {
+  currentPage.value = 1
+}
 
 const filteredClients = computed(() => {
-  const query = searchQuery.value.toLowerCase().trim()
-  if (!query) return clients.value
-  
-  return clients.value.filter(client => 
-    client.name.toLowerCase().includes(query) ||
-    client.email.toLowerCase().includes(query) ||
-    client.phone.includes(query)
+  const q = searchQuery.value.toLowerCase().trim()
+  if (!q) return allClients.value
+  return allClients.value.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.email.toLowerCase().includes(q) ||
+    c.phone.includes(q),
   )
+})
+
+const totalPages = computed(() => Math.ceil(filteredClients.value.length / PAGE_SIZE))
+
+const pagedClients = computed(() => {
+  const start = (currentPage.value - 1) * PAGE_SIZE
+  return filteredClients.value.slice(start, start + PAGE_SIZE)
+})
+
+function goTo(page: number) {
+  if (page >= 1 && page <= totalPages.value) currentPage.value = page
+}
+
+// Páginas visibles: máximo 5 botones con elipsis
+const visiblePages = computed(() => {
+  const total = totalPages.value
+  const cur   = currentPage.value
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+
+  const pages: (number | '...')[] = [1]
+  if (cur > 3) pages.push('...')
+  for (let p = Math.max(2, cur - 1); p <= Math.min(total - 1, cur + 1); p++) pages.push(p)
+  if (cur < total - 2) pages.push('...')
+  pages.push(total)
+  return pages
 })
 </script>
 
 <template>
   <div class="clients-view">
-    <!-- Header Section -->
+    <!-- Header -->
     <header class="clients-view__header">
       <div class="clients-view__header-content">
         <div class="clients-view__title-group">
           <h1 class="clients-view__title">Clientes</h1>
           <p class="clients-view__subtitle">Gestiona la información y el historial de tus clientes</p>
         </div>
+        <div v-if="!isLoading && !error" class="clients-view__count">
+          {{ filteredClients.length }} cliente{{ filteredClients.length !== 1 ? 's' : '' }}
+        </div>
       </div>
     </header>
 
-    <!-- Search & Filter Controls -->
+    <!-- Search -->
     <section class="clients-view__filters">
       <div class="clients-view__filters-content">
         <div class="clients-view__search">
           <span class="material-symbols-outlined clients-view__search-icon">search</span>
-          <input 
+          <input
             v-model="searchQuery"
-            type="text" 
-            class="clients-view__search-input" 
-            placeholder="Buscar cliente por nombre, email o teléfono..." 
+            type="text"
+            class="clients-view__search-input"
+            placeholder="Buscar por nombre, email o teléfono…"
+            @input="onSearch"
           />
+          <button
+            v-if="searchQuery"
+            class="clients-view__search-clear"
+            @click="searchQuery = ''; onSearch()"
+            title="Limpiar búsqueda"
+          >
+            <span class="material-symbols-outlined" style="font-size:18px">close</span>
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- Client Grid -->
-    <section class="clients-view__grid-section">
-      <div class="clients-view__grid">
-        <ClientCard
-          v-for="client in filteredClients"
-          :key="client.id"
-          :client="client"
-        />
-      </div>
+    <!-- Loading -->
+    <div v-if="isLoading" class="clients-view__loading">
+      <span class="material-symbols-outlined spin">progress_activity</span>
+      <p>Cargando clientes…</p>
+    </div>
 
-      <div v-if="filteredClients.length === 0" class="clients-view__empty">
-        <span class="material-symbols-outlined clients-view__empty-icon">group_off</span>
-        <p>No se encontraron clientes que coincidan con la búsqueda.</p>
-      </div>
-    </section>
+    <!-- Error -->
+    <div v-else-if="error" class="clients-view__empty">
+      <span class="material-symbols-outlined clients-view__empty-icon">error</span>
+      <p>{{ error }}</p>
+    </div>
+
+    <template v-else>
+      <!-- Grid -->
+      <section class="clients-view__grid-section">
+        <div v-if="pagedClients.length > 0" class="clients-view__grid">
+          <ClientCard
+            v-for="client in pagedClients"
+            :key="client.id"
+            :client="client"
+          />
+        </div>
+
+        <div v-else class="clients-view__empty">
+          <span class="material-symbols-outlined clients-view__empty-icon">group_off</span>
+          <p>No se encontraron clientes que coincidan con la búsqueda.</p>
+        </div>
+      </section>
+
+      <!-- Paginación -->
+      <nav v-if="totalPages > 1" class="pagination" aria-label="Paginación de clientes">
+        <button
+          class="pagination__btn pagination__btn--arrow"
+          :disabled="currentPage === 1"
+          @click="goTo(currentPage - 1)"
+          aria-label="Página anterior"
+        >
+          <span class="material-symbols-outlined" style="font-size:18px">chevron_left</span>
+        </button>
+
+        <template v-for="page in visiblePages" :key="String(page)">
+          <span v-if="page === '...'" class="pagination__ellipsis">…</span>
+          <button
+            v-else
+            class="pagination__btn"
+            :class="{ 'pagination__btn--active': page === currentPage }"
+            @click="goTo(page as number)"
+          >
+            {{ page }}
+          </button>
+        </template>
+
+        <button
+          class="pagination__btn pagination__btn--arrow"
+          :disabled="currentPage === totalPages"
+          @click="goTo(currentPage + 1)"
+          aria-label="Página siguiente"
+        >
+          <span class="material-symbols-outlined" style="font-size:18px">chevron_right</span>
+        </button>
+      </nav>
+
+      <!-- Info de página -->
+      <p v-if="filteredClients.length > 0" class="pagination__info">
+        Mostrando {{ (currentPage - 1) * PAGE_SIZE + 1 }}–{{ Math.min(currentPage * PAGE_SIZE, filteredClients.length) }}
+        de {{ filteredClients.length }} clientes
+      </p>
+    </template>
   </div>
 </template>
 
@@ -104,7 +190,7 @@ const filteredClients = computed(() => {
   font-family: var(--font-family-base);
 }
 
-/* ── Header ──────────────────────────────────────────── */
+/* ── Header ───────────────────────────────────────────── */
 .clients-view__header {
   padding: var(--space-12) var(--space-12) var(--space-8);
 }
@@ -114,7 +200,7 @@ const filteredClients = computed(() => {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
 @media (min-width: 768px) {
@@ -145,7 +231,17 @@ const filteredClients = computed(() => {
   margin: 0;
 }
 
-/* ── Filters & Search ────────────────────────────────── */
+.clients-view__count {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-on-surface-variant);
+  background-color: var(--color-surface-container);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* ── Search ───────────────────────────────────────────── */
 .clients-view__filters {
   padding: 0 var(--space-12) var(--space-6);
 }
@@ -153,14 +249,10 @@ const filteredClients = computed(() => {
 .clients-view__filters-content {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
 }
 
 .clients-view__search {
   position: relative;
-  flex: 1;
   display: flex;
   align-items: center;
   max-width: 480px;
@@ -172,6 +264,7 @@ const filteredClients = computed(() => {
   color: var(--color-outline);
   transition: color var(--transition-fast);
   pointer-events: none;
+  font-size: 20px;
 }
 
 .clients-view__search:focus-within .clients-view__search-icon {
@@ -180,7 +273,7 @@ const filteredClients = computed(() => {
 
 .clients-view__search-input {
   width: 100%;
-  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-12);
+  padding: var(--space-3) var(--space-10) var(--space-3) var(--space-12);
   background-color: var(--color-surface-container-low);
   border: none;
   border-radius: var(--radius-full);
@@ -188,7 +281,7 @@ const filteredClients = computed(() => {
   font-family: inherit;
   font-size: var(--font-size-base);
   outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: box-shadow var(--transition-fast), background-color var(--transition-fast);
 }
 
 .clients-view__search-input::placeholder {
@@ -196,14 +289,46 @@ const filteredClients = computed(() => {
 }
 
 .clients-view__search-input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(0, 50, 86, 0.1);
+  box-shadow: 0 0 0 2px rgba(0, 50, 86, 0.15);
   background-color: var(--color-surface-container-lowest);
 }
 
-/* ── Grid ────────────────────────────────────────────── */
+.clients-view__search-clear {
+  position: absolute;
+  right: var(--space-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-on-surface-variant);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: var(--radius-full);
+  transition: color var(--transition-fast);
+}
+
+.clients-view__search-clear:hover {
+  color: var(--color-on-surface);
+}
+
+/* ── Loading / Error ──────────────────────────────────── */
+.clients-view__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-16);
+  color: var(--color-on-surface-variant);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spin { animation: spin 1s linear infinite; }
+
+/* ── Grid ─────────────────────────────────────────────── */
 .clients-view__grid-section {
-  padding: 0 var(--space-12) var(--space-16);
+  padding: 0 var(--space-12) var(--space-8);
 }
 
 .clients-view__grid {
@@ -211,22 +336,18 @@ const filteredClients = computed(() => {
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-8);
+  gap: var(--space-6);
 }
 
 @media (min-width: 768px) {
-  .clients-view__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .clients-view__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (min-width: 1280px) {
-  .clients-view__grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .clients-view__grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* ── Empty State ─────────────────────────────────────── */
+/* ── Empty ────────────────────────────────────────────── */
 .clients-view__empty {
   display: flex;
   flex-direction: column;
@@ -234,18 +355,79 @@ const filteredClients = computed(() => {
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-16);
-  background-color: transparent;
   border: 2px dashed var(--color-border);
   border-radius: var(--radius-2xl);
   color: var(--color-text-secondary);
-  font-family: var(--font-family-body);
   text-align: center;
   max-width: var(--container-max-width);
-  margin: 0 auto;
+  margin: 0 var(--space-12);
 }
 
 .clients-view__empty-icon {
   font-size: 48px;
   color: var(--color-outline-variant);
+}
+
+/* ── Pagination ───────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-12) 0;
+}
+
+.pagination__btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-surface-container);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.pagination__btn:hover:not(:disabled) {
+  background-color: var(--color-primary-fixed);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.pagination__btn--active {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.pagination__btn--arrow {
+  color: var(--color-on-surface-variant);
+}
+
+.pagination__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pagination__ellipsis {
+  color: var(--color-on-surface-variant);
+  padding: 0 var(--space-1);
+  font-size: var(--font-size-sm);
+  user-select: none;
+}
+
+.pagination__info {
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-on-surface-variant);
+  padding: var(--space-3) 0 var(--space-8);
+  margin: 0;
 }
 </style>
