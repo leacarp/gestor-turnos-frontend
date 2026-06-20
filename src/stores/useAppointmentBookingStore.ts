@@ -17,6 +17,11 @@ export const useAppointmentBookingStore = defineStore('appointmentBooking', () =
   const selectedDate = ref('')
   const selectedTime = ref('')
   const guestDetails = ref<BookingGuestDetails | null>(null)
+  const providerProfile = ref<any | null>(null)
+
+  function setProviderProfile(profile: any) {
+    providerProfile.value = profile
+  }
 
   function setService(service: BookingService) {
     selectedService.value = service
@@ -38,6 +43,7 @@ export const useAppointmentBookingStore = defineStore('appointmentBooking', () =
     selectedDate.value = ''
     selectedTime.value = ''
     guestDetails.value = null
+    providerProfile.value = null
   }
 
   return {
@@ -45,9 +51,11 @@ export const useAppointmentBookingStore = defineStore('appointmentBooking', () =
     selectedDate,
     selectedTime,
     guestDetails,
+    providerProfile,
     setService,
     setDateTime,
     setGuestDetails,
+    setProviderProfile,
     reset,
   }
 })

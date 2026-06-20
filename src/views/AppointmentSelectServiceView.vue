@@ -5,6 +5,7 @@ import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import type { BookingService } from '@/stores/useAppointmentBookingStore'
 import ServiceCard from '@/components/booking/ServiceCard.vue'
 import { useServicesStore } from '@/stores/useServicesStore'
+import { userService } from '@/services/userService'
 import { storeToRefs } from 'pinia'
 
 const servicesStore = useServicesStore()
@@ -18,6 +19,12 @@ const providerId = (route.params.providerId as string) || 'default-provider'
 
 onMounted(async () => {
   await servicesStore.fetchServices(providerId)
+  try {
+    const { data } = await userService.getPublicProfile(providerId)
+    bookingStore.setProviderProfile(data)
+  } catch (err) {
+    console.error('No se pudo cargar el perfil del profesional', err)
+  }
 })
 
 function handleServiceSelect(service: BookingService) {

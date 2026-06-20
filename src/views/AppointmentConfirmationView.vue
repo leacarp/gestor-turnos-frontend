@@ -18,6 +18,7 @@ const submitError = ref<string | null>(null)
 // ── Computed ─────────────────────────────────────────────
 const service = computed(() => bookingStore.selectedService)
 const guest   = computed(() => bookingStore.guestDetails)
+const provider = computed(() => bookingStore.providerProfile)
 
 const requiresDeposit = computed(() => !!service.value?.requiresDeposit)
 const depositAmount   = computed(() => service.value?.depositAmount ?? 0)
@@ -171,7 +172,9 @@ function handlePayDeposit() {
             </div>
             <div class="confirmation-view__meta-item">
               <span class="material-symbols-outlined confirmation-view__meta-icon" aria-hidden="true">location_on</span>
-              <span class="confirmation-view__meta-text">{{ service?.location ?? '—' }}</span>
+              <span class="confirmation-view__meta-text">
+                {{ provider?.providerData?.address || service?.location || 'Dirección a confirmar' }}
+              </span>
             </div>
           </div>
         </div>
