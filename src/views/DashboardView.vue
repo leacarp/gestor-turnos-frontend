@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Bar, Doughnut } from 'vue-chartjs'
 import {
@@ -10,65 +10,89 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
-  ArcElement
+  ArcElement,
 } from 'chart.js'
+import { dashboardService, type DashboardMetrics } from '@/services/dashboardService'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
 
 const router = useRouter()
 
+const metrics   = ref<DashboardMetrics | null>(null)
+const isLoading = ref(true)
+const error     = ref<string | null>(null)
+
+onMounted(async () => {
+  try {
+    metrics.value = await dashboardService.getMetrics()
+  } catch {
+    error.value = 'No se pudieron cargar las métricas.'
+  } finally {
+    isLoading.value = false
+  }
+})
+
+// ─── KPI helpers ──────────────────────────────────────────────────────────────
+const variacionLabel = computed(() => {
+  const v = metrics.value?.variacionMensual
+  if (v === null || v === undefined) return 'Sin datos previos'
+  return v >= 0 ? `+${v}% vs mes anterior` : `${v}% vs mes anterior`
+})
+
+const variacionPositiva = computed(() => (metrics.value?.variacionMensual ?? 0) >= 0)
+
+const ingresoFormateado = computed(() => {
+  const n = metrics.value?.ingresoEstimado ?? 0
+  return '$' + n.toLocaleString('es-AR')
+})
+
+// ─── Bar chart ────────────────────────────────────────────────────────────────
 const barChartData = computed(() => {
-  const currentMonth = new Date().getMonth()
-  const backgroundColors = Array(12).fill('#edeeef')
-  backgroundColors[currentMonth] = '#003256'
+  const mesActual = new Date().getMonth()
+  const data      = metrics.value?.turnosPorMes ?? []
+  const labels    = data.map(d => d.mes)
+  const valores   = data.map(d => d.cantidad)
+  const colors    = data.map((_, i) => (i === mesActual ? '#003256' : '#edeeef'))
 
   return {
-    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-    datasets: [
-      {
-        label: 'Turnos',
-        backgroundColor: backgroundColors,
-        hoverBackgroundColor: '#00497a',
-        borderRadius: 8,
-        data: [40, 55, 85, 65, 75, 90, 30, 20, 50, 70, 80, 95]
-      }
-    ]
+    labels,
+    datasets: [{
+      label: 'Turnos',
+      backgroundColor: colors,
+      hoverBackgroundColor: '#00497a',
+      borderRadius: 6,
+      data: valores,
+    }],
   }
 })
 
 const barChartOptions = {
   responsive: true,
   maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false
-    }
-  },
+  plugins: { legend: { display: false } },
   scales: {
-    y: {
-      display: false,
-      beginAtZero: true
-    },
-    x: {
-      grid: {
-        display: false,
-        drawBorder: false
-      }
-    }
-  }
+    y: { display: false, beginAtZero: true },
+    x: { grid: { display: false, drawBorder: false } },
+  },
 }
 
-const donutChartData = {
-  labels: ['Corte', 'Coloración', 'Manicura', 'Pedicura'],
-  datasets: [
-    {
-      backgroundColor: ['#003256', '#00497a', '#48626e', '#edeeef'],
-      data: [45, 25, 15, 15],
+// ─── Donut chart ──────────────────────────────────────────────────────────────
+const donutChartData = computed(() => {
+  const servicios = metrics.value?.serviciosMasPedidos ?? []
+  return {
+    labels: servicios.map(s => s.nombre),
+    datasets: [{
+      backgroundColor: ['#003256', '#00497a', '#48626e', '#8da9b6', '#edeeef'],
+      data: servicios.map(s => s.cantidad),
       borderWidth: 0,
-      cutout: '75%'
-    }
-  ]
-}
+      cutout: '72%',
+    }],
+  }
+})
+
+const donutTotal = computed(() =>
+  metrics.value?.serviciosMasPedidos.reduce((acc, s) => acc + s.cantidad, 0) ?? 0,
+)
 
 const donutChartOptions = {
   responsive: true,
@@ -78,188 +102,163 @@ const donutChartOptions = {
       position: 'bottom' as const,
       labels: {
         usePointStyle: true,
-        padding: 20,
-        font: {
-          family: "'Inter', sans-serif",
-          size: 12
-        }
-      }
+        padding: 14,
+        font: { family: "'Inter', sans-serif", size: 11 },
+      },
     },
     tooltip: {
-      callbacks: {
-        label: (context: any) => ` ${context.label}: ${context.raw}%`
-      }
-    }
-  }
+      callbacks: { label: (ctx: any) => ` ${ctx.label}: ${ctx.raw}` },
+    },
+  },
 }
 
-function goToClient() {
-  router.push('/clientes')
+// ─── Tabla ────────────────────────────────────────────────────────────────────
+function iniciales(nombre: string) {
+  return nombre
+    .split(' ')
+    .slice(0, 2)
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+}
+
+function fechaCorta(iso: string) {
+  return new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' })
 }
 </script>
 
 <template>
   <div class="dashboard-view">
     <div class="dashboard-content">
-      <!-- KPI Metrics Section -->
-      <section class="dashboard-kpi">
-        <article class="kpi-card kpi-card--highlight-success">
-          <div class="kpi-card__header">
-            <div class="kpi-card__icon-wrapper kpi-card__icon-wrapper--primary-fixed">
-              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
-            </div>
-            <span class="kpi-card__badge kpi-card__badge--success">+12% vs mes anterior</span>
-          </div>
-          <div class="kpi-card__body">
-            <p class="kpi-card__label">Turnos este mes</p>
-            <h3 class="kpi-card__value">68</h3>
-          </div>
-        </article>
-        
-        <article class="kpi-card kpi-card--highlight-secondary">
-          <div class="kpi-card__header">
-            <div class="kpi-card__icon-wrapper kpi-card__icon-wrapper--secondary-fixed">
-              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">how_to_reg</span>
-            </div>
-            <span class="kpi-card__badge kpi-card__badge--primary">Optima</span>
-          </div>
-          <div class="kpi-card__body">
-            <p class="kpi-card__label">Tasa de asistencia</p>
-            <h3 class="kpi-card__value">92%</h3>
-          </div>
-        </article>
-        
-        <article class="kpi-card kpi-card--highlight-primary">
-          <div class="kpi-card__header">
-            <div class="kpi-card__icon-wrapper kpi-card__icon-wrapper--primary-container">
-              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
-            </div>
-            <span class="kpi-card__badge kpi-card__badge--neutral">Estimado</span>
-          </div>
-          <div class="kpi-card__body">
-            <p class="kpi-card__label">Ingreso estimado</p>
-            <h3 class="kpi-card__value">$204.000</h3>
-          </div>
-        </article>
-      </section>
 
-      <!-- Charts Section -->
-      <section class="dashboard-charts">
-        <article class="chart-card chart-card--span-3">
-          <div class="chart-card__header-flex">
-            <h4 class="chart-card__title">Turnos por mes</h4>
-            <div class="chart-card__legend">
-              <span class="chart-card__legend-item">
-                <span class="chart-card__legend-dot chart-card__legend-dot--primary"></span> Este año
+      <!-- Loading -->
+      <div v-if="isLoading" class="loading-state">
+        <span class="material-symbols-outlined spin">progress_activity</span>
+        <p>Cargando métricas…</p>
+      </div>
+
+      <!-- Error -->
+      <div v-else-if="error" class="error-state">
+        <span class="material-symbols-outlined">error</span>
+        <p>{{ error }}</p>
+      </div>
+
+      <template v-else>
+        <!-- KPI -->
+        <section class="dashboard-kpi">
+          <article class="kpi-card kpi-card--success">
+            <div class="kpi-card__header">
+              <div class="kpi-card__icon kpi-card__icon--success">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:18px">calendar_today</span>
+              </div>
+              <span class="kpi-card__badge" :class="variacionPositiva ? 'badge--success' : 'badge--error'">
+                {{ variacionLabel }}
               </span>
             </div>
-          </div>
-          <div class="chart-container" style="height: 256px;">
-            <Bar :data="barChartData" :options="barChartOptions" />
-          </div>
-        </article>
+            <p class="kpi-card__label">Turnos este mes</p>
+            <h3 class="kpi-card__value">{{ metrics?.turnosEsteMes ?? 0 }}</h3>
+          </article>
 
-        <article class="chart-card chart-card--span-2 chart-card--flex">
-          <h4 class="chart-card__title chart-card__title--mb-6">Servicios más pedidos</h4>
-          <div class="donut-chart-wrapper" style="height: 256px; position: relative;">
-            <Doughnut :data="donutChartData" :options="donutChartOptions" />
-            <div class="donut-center-text">
-              <span class="donut-chart__value">1,284</span>
-              <p class="donut-chart__label">Total</p>
+          <article class="kpi-card kpi-card--secondary">
+            <div class="kpi-card__header">
+              <div class="kpi-card__icon kpi-card__icon--secondary">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:18px">how_to_reg</span>
+              </div>
+              <span class="kpi-card__badge badge--primary">Histórico</span>
             </div>
-          </div>
-        </article>
-      </section>
+            <p class="kpi-card__label">Tasa de asistencia</p>
+            <h3 class="kpi-card__value">{{ metrics?.tasaAsistencia ?? 0 }}%</h3>
+          </article>
 
-      <!-- Transactions Table Section -->
-      <section class="transactions-section">
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Cliente</th>
-                <th>Servicio</th>
-                <th>Monto</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr @click="goToClient" class="clickable-row">
-                <td class="data-table__id">#SL-2934</td>
-                <td>
-                  <div class="data-table__client">
-                    <div class="data-table__avatar data-table__avatar--primary">MA</div>
-                    <span class="data-table__client-name">Martina Alavez</span>
-                  </div>
-                </td>
-                <td class="data-table__service">Balayage Premium</td>
-                <td class="data-table__amount">$12.500</td>
-                <td>
-                  <span class="data-table__status data-table__status--success">
-                    <span class="data-table__status-dot data-table__status-dot--success"></span> Completado
-                  </span>
-                </td>
-              </tr>
-              <tr @click="goToClient" class="clickable-row">
-                <td class="data-table__id">#SL-2935</td>
-                <td>
-                  <div class="data-table__client">
-                    <div class="data-table__avatar data-table__avatar--primary">JR</div>
-                    <span class="data-table__client-name">Julián Rossi</span>
-                  </div>
-                </td>
-                <td class="data-table__service">Corte Clásico</td>
-                <td class="data-table__amount">$4.200</td>
-                <td>
-                  <span class="data-table__status data-table__status--success">
-                    <span class="data-table__status-dot data-table__status-dot--success"></span> Completado
-                  </span>
-                </td>
-              </tr>
-              <tr @click="goToClient" class="clickable-row">
-                <td class="data-table__id">#SL-2936</td>
-                <td>
-                  <div class="data-table__client">
-                    <div class="data-table__avatar data-table__avatar--error">SP</div>
-                    <span class="data-table__client-name">Sofia Paredes</span>
-                  </div>
-                </td>
-                <td class="data-table__service">Manicura Gel</td>
-                <td class="data-table__amount">$3.800</td>
-                <td>
-                  <span class="data-table__status data-table__status--error">
-                    <span class="data-table__status-dot data-table__status-dot--error"></span> Cancelado
-                  </span>
-                </td>
-              </tr>
-              <tr @click="goToClient" class="clickable-row">
-                <td class="data-table__id">#SL-2937</td>
-                <td>
-                  <div class="data-table__client">
-                    <div class="data-table__avatar data-table__avatar--primary">LG</div>
-                    <span class="data-table__client-name">Lucas Gómez</span>
-                  </div>
-                </td>
-                <td class="data-table__service">Coloración Global</td>
-                <td class="data-table__amount">$8.900</td>
-                <td>
-                  <span class="data-table__status data-table__status--success">
-                    <span class="data-table__status-dot data-table__status-dot--success"></span> Completado
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+          <article class="kpi-card kpi-card--primary">
+            <div class="kpi-card__header">
+              <div class="kpi-card__icon kpi-card__icon--primary">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:18px">payments</span>
+              </div>
+              <span class="kpi-card__badge badge--neutral">Estimado</span>
+            </div>
+            <p class="kpi-card__label">Ingreso este mes</p>
+            <h3 class="kpi-card__value kpi-card__value--sm">{{ ingresoFormateado }}</h3>
+          </article>
+        </section>
+
+        <!-- Charts -->
+        <section class="dashboard-charts">
+          <article class="chart-card chart-card--span-3">
+            <div class="chart-card__header">
+              <h4 class="chart-card__title">Turnos por mes</h4>
+              <div class="legend-item">
+                <span class="legend-dot legend-dot--primary"></span> Este año
+              </div>
+            </div>
+            <div class="chart-container">
+              <Bar :data="barChartData" :options="barChartOptions" />
+            </div>
+          </article>
+
+          <article class="chart-card chart-card--span-2 chart-card--flex">
+            <h4 class="chart-card__title" style="margin-bottom:var(--space-4)">Servicios más pedidos</h4>
+            <div class="donut-wrapper">
+              <Doughnut :data="donutChartData" :options="donutChartOptions" />
+              <div class="donut-center">
+                <span class="donut-center__value">{{ donutTotal }}</span>
+                <p class="donut-center__label">Total</p>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- Tabla últimos turnos -->
+        <section class="table-section">
+          <div class="table-header">
+            <h4 class="chart-card__title">Últimos turnos</h4>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
+                  <th>Fecha</th>
+                  <th>Monto</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="turno in metrics?.ultimosTurnos"
+                  :key="turno._id"
+                  class="clickable-row"
+                  @click="router.push('/clientes')"
+                >
+                  <td>
+                    <div class="client-cell">
+                      <div class="avatar">{{ iniciales(turno.clienteNombre) }}</div>
+                      <span class="client-name">{{ turno.clienteNombre }}</span>
+                    </div>
+                  </td>
+                  <td class="td-service">{{ turno.servicioNombre }}</td>
+                  <td class="td-date">{{ fechaCorta(turno.fecha) }} {{ turno.horaInicio }}</td>
+                  <td class="td-amount">${{ turno.precio.toLocaleString('es-AR') }}</td>
+                  <td>
+                    <span class="status-badge" :class="`status-badge--${turno.estado}`">
+                      <span class="status-dot" :class="`status-dot--${turno.estado}`"></span>
+                      {{ turno.estado.charAt(0).toUpperCase() + turno.estado.slice(1) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </template>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* ── layout ─────────────────────────────────────────────────────────────────── */
 .dashboard-view {
-  position: relative;
   min-height: 100vh;
   font-family: var(--font-family-base);
   background-color: var(--color-background);
@@ -267,221 +266,190 @@ function goToClient() {
 }
 
 .dashboard-content {
-  padding: var(--space-8);
+  padding: var(--space-6);
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-5);
 }
 
+/* ── loading / error ─────────────────────────────────────────────────────────── */
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-16);
+  color: var(--color-on-surface-variant);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spin { animation: spin 1s linear infinite; }
+
+/* ── KPI cards ───────────────────────────────────────────────────────────────── */
 .dashboard-kpi {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
 @media (min-width: 768px) {
-  .dashboard-kpi {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .dashboard-kpi { grid-template-columns: repeat(3, 1fr); }
 }
 
 .kpi-card {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-6);
+  padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-dashboard-card);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  border-left: 3px solid transparent;
   transition: transform var(--transition-slow);
 }
 
-.kpi-card:hover {
-  transform: scale(1.02);
-}
+.kpi-card:hover { transform: scale(1.015); }
 
-.kpi-card--highlight-success {
-  border-left: 4px solid var(--color-emerald-600);
-}
-
-.kpi-card--highlight-secondary {
-  border-left: 4px solid var(--color-secondary);
-}
-
-.kpi-card--highlight-primary {
-  border-left: 4px solid var(--color-primary);
-}
+.kpi-card--success   { border-left-color: var(--color-emerald-600); }
+.kpi-card--secondary { border-left-color: var(--color-secondary); }
+.kpi-card--primary   { border-left-color: var(--color-primary); }
 
 .kpi-card__header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  margin-bottom: var(--space-3);
 }
 
-.kpi-card__icon-wrapper {
-  padding: var(--space-3);
-  border-radius: var(--radius-xl);
+.kpi-card__icon {
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.kpi-card__icon-wrapper--primary-fixed {
-  background-color: var(--color-primary-fixed);
-  color: var(--color-primary);
-}
-
-.kpi-card__icon-wrapper--secondary-fixed {
-  background-color: var(--color-secondary-fixed);
-  color: var(--color-secondary);
-}
-
-.kpi-card__icon-wrapper--primary-container {
-  background-color: var(--color-primary-container);
-  color: var(--color-on-primary);
-}
+.kpi-card__icon--success   { background-color: var(--color-emerald-50);        color: var(--color-emerald-600); }
+.kpi-card__icon--secondary { background-color: var(--color-secondary-fixed);   color: var(--color-secondary); }
+.kpi-card__icon--primary   { background-color: var(--color-primary-container); color: var(--color-on-primary); }
 
 .kpi-card__badge {
-  font-size: var(--font-size-xs);
+  font-size: 10px;
   font-weight: var(--font-weight-bold);
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: var(--radius-full);
 }
 
-.kpi-card__badge--success {
-  background-color: var(--color-emerald-50);
-  color: var(--color-emerald-600);
-}
-
-.kpi-card__badge--primary {
-  background-color: var(--color-primary-fixed);
-  color: var(--color-primary);
-}
-
-.kpi-card__badge--neutral {
-  background-color: var(--color-surface-container);
-  color: var(--color-on-surface-variant);
-}
-
-.kpi-card__body {
-  margin-top: var(--space-8);
-}
+.badge--success { background-color: var(--color-emerald-50);         color: var(--color-emerald-600); }
+.badge--error   { background-color: var(--color-error-container);    color: var(--color-error); }
+.badge--primary { background-color: var(--color-primary-fixed);      color: var(--color-primary); }
+.badge--neutral { background-color: var(--color-surface-container);  color: var(--color-on-surface-variant); }
 
 .kpi-card__label {
+  font-size: var(--font-size-xs);
   color: var(--color-on-surface-variant);
   font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-sm);
-  margin: 0;
+  margin: 0 0 2px 0;
 }
 
 .kpi-card__value {
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 900;
   color: var(--color-on-surface);
-  margin: 4px 0 0 0;
+  margin: 0;
   letter-spacing: -0.02em;
 }
 
+.kpi-card__value--sm { font-size: 22px; }
+
+/* ── Charts ──────────────────────────────────────────────────────────────────── */
 .dashboard-charts {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
 @media (min-width: 1024px) {
-  .dashboard-charts {
-    grid-template-columns: repeat(5, 1fr);
-  }
+  .dashboard-charts { grid-template-columns: repeat(5, 1fr); }
 }
 
 .chart-card {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-8);
+  padding: var(--space-5);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-dashboard-card);
 }
 
-.chart-card--span-3 {
-  grid-column: span 3;
-}
+.chart-card--span-3 { grid-column: span 3; }
+.chart-card--span-2 { grid-column: span 2; }
+.chart-card--flex   { display: flex; flex-direction: column; }
 
-.chart-card--span-2 {
-  grid-column: span 2;
-}
-
-.chart-card--flex {
-  display: flex;
-  flex-direction: column;
-}
-
-.chart-card__header-flex {
+.chart-card__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-10);
+  margin-bottom: var(--space-4);
 }
 
 .chart-card__title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   color: var(--color-on-surface);
   margin: 0;
 }
 
-.chart-card__title--mb-6 {
-  margin-bottom: var(--space-6);
-}
-
-.chart-card__legend-item {
+.legend-item {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: var(--font-size-xs);
+  font-size: 10px;
   font-weight: var(--font-weight-medium);
   color: var(--color-on-surface-variant);
 }
 
-.chart-card__legend-dot {
-  width: 12px;
-  height: 12px;
+.legend-dot {
+  width: 10px;
+  height: 10px;
   border-radius: var(--radius-full);
 }
 
-.chart-card__legend-dot--primary {
-  background-color: var(--color-primary);
-}
+.legend-dot--primary { background-color: var(--color-primary); }
 
 .chart-container {
   width: 100%;
+  height: 180px;
 }
 
-.donut-chart-wrapper {
+.donut-wrapper {
   flex-grow: 1;
+  position: relative;
+  height: 190px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.donut-center-text {
+.donut-center {
   position: absolute;
-  top: 40%;
+  top: 38%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
   pointer-events: none;
 }
 
-.donut-chart__value {
-  font-size: 24px;
+.donut-center__value {
+  font-size: 20px;
   font-weight: 900;
   color: var(--color-on-surface);
   display: block;
 }
 
-.donut-chart__label {
-  font-size: 10px;
+.donut-center__label {
+  font-size: 9px;
   color: var(--color-on-surface-variant);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
@@ -489,64 +457,44 @@ function goToClient() {
   margin: 0;
 }
 
-.transactions-section {
+/* ── Table ───────────────────────────────────────────────────────────────────── */
+.table-section {
   background-color: var(--color-surface-container-lowest);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-dashboard-card);
   overflow: hidden;
 }
 
-.transactions-section__header {
-  padding: var(--space-6) var(--space-8);
-  border-bottom: 1px solid var(--color-surface-container);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.table-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-surface-container-low);
 }
 
-.transactions-section__title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-on-surface);
-  margin: 0;
-}
-
-.transactions-section__view-all {
-  color: var(--color-primary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.transactions-section__view-all:hover {
-  text-decoration: underline;
-}
-
-.table-responsive {
-  overflow-x: auto;
-}
+.table-responsive { overflow-x: auto; }
 
 .data-table {
   width: 100%;
-  text-align: left;
   border-collapse: collapse;
+  text-align: left;
 }
 
 .data-table thead tr {
-  color: var(--color-on-surface-variant);
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   font-weight: 900;
+  color: var(--color-on-surface-variant);
   border-bottom: 1px solid var(--color-surface-container-low);
   background-color: rgba(249, 249, 255, 0.5);
 }
 
 .data-table th {
-  padding: var(--space-4) var(--space-8);
+  padding: var(--space-3) var(--space-5);
   font-weight: 900;
+}
+
+.data-table td {
+  padding: var(--space-3) var(--space-5);
 }
 
 .data-table tbody tr {
@@ -554,116 +502,78 @@ function goToClient() {
   transition: background-color var(--transition-base);
 }
 
-.clickable-row {
-  cursor: pointer;
-}
+.data-table tbody tr:last-child { border-bottom: none; }
+
+.clickable-row { cursor: pointer; }
 
 .data-table tbody tr:hover {
   background-color: rgba(242, 243, 253, 0.5);
 }
 
-.data-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.data-table td {
-  padding: 20px var(--space-8);
-}
-
-.data-table__id {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-secondary);
-}
-
-.data-table__client {
+.client-cell {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
-.data-table__avatar {
-  width: 32px;
-  height: 32px;
+.avatar {
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-full);
+  background-color: rgba(0, 88, 190, 0.1);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-xs);
+  font-size: 10px;
+  flex-shrink: 0;
 }
 
-.data-table__avatar--primary {
-  background-color: rgba(0, 88, 190, 0.1);
-  color: var(--color-primary);
-}
-
-.data-table__avatar--error {
-  background-color: var(--color-error-container);
-  color: var(--color-error);
-}
-
-.data-table__client-name {
+.client-name {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   color: var(--color-on-surface);
 }
 
-.data-table__service {
+.td-service {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
   color: var(--color-on-surface-variant);
 }
 
-.data-table__amount {
+.td-date {
+  font-size: var(--font-size-xs);
+  color: var(--color-on-surface-variant);
+  white-space: nowrap;
+}
+
+.td-amount {
   font-size: var(--font-size-sm);
   font-weight: 900;
   color: var(--color-on-surface);
 }
 
-.data-table__method {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-secondary);
-  background-color: rgba(210, 224, 253, 0.3);
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
-}
-
-.data-table__method-icon {
-  font-size: 14px;
-}
-
-.data-table__status {
+.status-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: var(--font-size-xs);
+  font-size: 10px;
   font-weight: var(--font-weight-bold);
 }
 
-.data-table__status--success {
-  color: var(--color-emerald-600);
-}
+.status-badge--completado { color: var(--color-emerald-600); }
+.status-badge--cancelado  { color: var(--color-error); }
+.status-badge--confirmado { color: var(--color-primary); }
+.status-badge--pendiente  { color: var(--color-on-surface-variant); }
 
-.data-table__status--error {
-  color: var(--color-error);
-}
-
-.data-table__status-dot {
+.status-dot {
   width: 6px;
   height: 6px;
   border-radius: var(--radius-full);
 }
 
-.data-table__status-dot--success {
-  background-color: var(--color-emerald-600);
-}
-
-.data-table__status-dot--error {
-  background-color: var(--color-error);
-}
+.status-dot--completado { background-color: var(--color-emerald-600); }
+.status-dot--cancelado  { background-color: var(--color-error); }
+.status-dot--confirmado { background-color: var(--color-primary); }
+.status-dot--pendiente  { background-color: var(--color-on-surface-variant); }
 </style>

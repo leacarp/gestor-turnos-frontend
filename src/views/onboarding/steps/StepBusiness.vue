@@ -17,7 +17,7 @@ const categoryOptions = [
 ]
 
 const showAdvanceModal = ref(false)
-const modalAdvanceType = ref<'amount' | 'percentage'>('amount')
+const modalAdvanceType = ref<'amount'>('amount')
 const modalAdvanceValue = ref<number>(0)
 const advanceModalError = ref<string | null>(null)
 
@@ -25,17 +25,11 @@ const hasServicePrice = computed(() => store.getServicePrice() > 0)
 
 const advanceSummary = computed(() => {
   if (!store.advance.enabled) return ''
-  const base = store.getServicePrice()
-  if (store.advance.type === 'percentage' && base > 0) {
-    const amount = Math.round((base * store.advance.value) / 100)
-    return `Seña: ${store.advance.value}% ($${amount.toLocaleString('es-AR')})`
-  }
   return `Seña: $${store.advance.value.toLocaleString('es-AR')}`
 })
 
 const modalAdvanceMax = computed(() => {
   const base = store.getServicePrice()
-  if (modalAdvanceType.value === 'percentage') return 100
   return base > 0 ? base : undefined
 })
 
@@ -54,11 +48,7 @@ function validateModalAdvance(): string | null {
     return 'Ingresá un valor mayor a 0.'
   }
 
-  if (modalAdvanceType.value === 'percentage') {
-    if (value < 1 || value > 100) {
-      return 'El porcentaje debe estar entre 1 y 100.'
-    }
-  } else if (base > 0 && value > base) {
+  if (base > 0 && value > base) {
     return 'La seña no puede ser mayor al precio del servicio.'
   }
 
@@ -169,7 +159,7 @@ function clearAdvance() {
             <div>
               <p class="step-business__advance-title">Seña / anticipo (opcional)</p>
               <p v-if="advanceSummary" class="step-business__advance-summary">{{ advanceSummary }}</p>
-              <p v-else class="step-business__advance-summary">Configurá un monto fijo o porcentaje sobre el precio de referencia.</p>
+              <p v-else class="step-business__advance-summary">Configurá el monto fijo que se usará como seña en todos tus servicios.</p>
             </div>
           </div>
           <AppButton type="button" variant="outline" size="sm" @click="openAdvanceModal">
@@ -186,38 +176,16 @@ function clearAdvance() {
           Precio de referencia: ${{ Number(store.business.servicePrice).toLocaleString('es-AR') }}
         </p>
 
-        <div class="step-business__modal-tabs">
-          <button
-            type="button"
-            class="step-business__modal-tab"
-            :class="{ 'step-business__modal-tab--active': modalAdvanceType === 'amount' }"
-            @click="modalAdvanceType = 'amount'"
-          >
-            Monto fijo
-          </button>
-          <button
-            type="button"
-            class="step-business__modal-tab"
-            :class="{ 'step-business__modal-tab--active': modalAdvanceType === 'percentage' }"
-            @click="modalAdvanceType = 'percentage'"
-          >
-            Porcentaje
-          </button>
-        </div>
-
         <AppInput
           v-model="modalAdvanceValue"
           type="number"
-          :label="modalAdvanceType === 'amount' ? 'Monto de la seña ($)' : 'Porcentaje (%)'"
-          :placeholder="modalAdvanceType === 'amount' ? 'Ej: 3000' : 'Ej: 20'"
+          label="Monto de la seña ($)"
+          placeholder="Ej: 3000"
           :error="advanceModalError ?? undefined"
         />
 
-        <p v-if="modalAdvanceMax && modalAdvanceType === 'amount'" class="step-business__modal-hint">
+        <p v-if="modalAdvanceMax" class="step-business__modal-hint">
           Máximo: ${{ modalAdvanceMax.toLocaleString('es-AR') }}
-        </p>
-        <p v-else-if="modalAdvanceType === 'percentage'" class="step-business__modal-hint">
-          Entre 1% y 100%
         </p>
 
         <div class="step-business__modal-actions">
