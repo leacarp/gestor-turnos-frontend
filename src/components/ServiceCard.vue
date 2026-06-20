@@ -8,6 +8,7 @@ export interface ServiceItem {
   description: string
   duration: number // in minutes
   price: number
+  depositAmount?: number
   colorTheme?: 'secondary' | 'tertiary' | 'primary' | 'surface' | 'default'
 }
 
@@ -92,9 +93,14 @@ onBeforeUnmount(() => {
         <span class="material-symbols-outlined service-card__duration-icon">schedule</span>
         <span class="service-card__duration-text">{{ service.duration }} min</span>
       </div>
-      <div class="service-card__price">
-        <span class="service-card__price-currency">$</span>
-        {{ service.price }}
+      <div class="service-card__price-group">
+        <div class="service-card__price">
+          <span class="service-card__price-currency">$</span>
+          {{ service.price.toLocaleString('es-AR') }}
+        </div>
+        <p v-if="service.depositAmount != null" class="service-card__deposit">
+          Seña: ${{ service.depositAmount.toLocaleString('es-AR') }}
+        </p>
       </div>
     </div>
 
@@ -295,6 +301,20 @@ onBeforeUnmount(() => {
   font-size: var(--font-size-sm);
   color: var(--color-primary);
   margin-top: 4px;
+}
+
+.service-card__price-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.service-card__deposit {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
 }
 
 .service-card__hover-bar {

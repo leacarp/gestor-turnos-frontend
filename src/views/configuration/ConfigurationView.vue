@@ -28,25 +28,6 @@ const navItems = [
           </router-link>
         </nav>
       </div>
-
-      <div class="config-header__right">
-        <div class="config-search">
-          <span class="material-symbols-outlined config-search__icon">search</span>
-          <input class="config-search__input" placeholder="Buscar..." type="text" />
-        </div>
-        
-        <div class="config-actions">
-          <button class="config-action-btn">
-            <span class="material-symbols-outlined">notifications</span>
-          </button>
-          <button class="config-action-btn">
-            <span class="material-symbols-outlined">help_outline</span>
-          </button>
-          <div class="config-user-avatar">
-            <img src="https://i.pravatar.cc/150?u=aero" alt="User Avatar" />
-          </div>
-        </div>
-      </div>
     </header>
 
     <!-- Main Content Area -->

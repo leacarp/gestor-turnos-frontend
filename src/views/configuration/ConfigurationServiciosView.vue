@@ -1,13 +1,40 @@
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { useRouter } from 'vue-router'
+import { useServiciosStore } from '@/stores/useServiciosStore'
+import type { Service } from '@/types/servicios'
 
 const router = useRouter()
+const store = useServiciosStore()
+
+const totalServices = computed(() => store.items.length)
+
+function formatPrice(value: number) {
+  return value.toLocaleString('es-AR')
+}
+
+function capitalizeFirst(value: string) {
+  if (!value) return ''
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
+
+function goToServicesView() {
+  router.push({ path: '/services' })
+}
 
 function goToDeleteService(id: string) {
   router.push({ path: '/services', query: { delete: id } })
 }
-// Logic for Servicios
+
+function handleDeleteClick(event: MouseEvent, service: Service) {
+  event.stopPropagation()
+  goToDeleteService(service.id)
+}
+
+onMounted(() => {
+  store.fetchAll()
+})
 </script>
 
 <template>
@@ -37,114 +64,44 @@ function goToDeleteService(id: string) {
             </tr>
           </thead>
           <tbody class="config-servicios__table-body">
-            
-            <tr class="config-servicios__tr">
-              <td class="config-servicios__td">
-                <div class="config-servicios__item">
-                  <div class="config-servicios__icon-wrapper">
-                    <span class="material-symbols-outlined">content_cut</span>
-                  </div>
-                  <span class="config-servicios__item-name">Corte de cabello</span>
-                </div>
-              </td>
-              <td class="config-servicios__td">
-                <span class="config-servicios__tag">Belleza</span>
-              </td>
-              <td class="config-servicios__td">
-                <div class="config-servicios__duration">
-                  <span class="material-symbols-outlined config-servicios__duration-icon">schedule</span>
-                  <span>45 min</span>
-                </div>
-              </td>
-              <td class="config-servicios__td">
-                <span class="config-servicios__price">$2.500</span>
-              </td>
-              <td class="config-servicios__td config-servicios__td--right">
-                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="goToDeleteService('1')">
-                  <span class="material-symbols-outlined">delete</span>
-                </button>
-              </td>
+            <tr v-if="store.isLoading" class="config-servicios__tr">
+              <td class="config-servicios__td" colspan="5">Cargando servicios...</td>
             </tr>
 
-            <tr class="config-servicios__tr">
-              <td class="config-servicios__td">
-                <div class="config-servicios__item">
-                  <div class="config-servicios__icon-wrapper">
-                    <span class="material-symbols-outlined">palette</span>
-                  </div>
-                  <span class="config-servicios__item-name">Corte + Color</span>
-                </div>
-              </td>
-              <td class="config-servicios__td">
-                <span class="config-servicios__tag">Belleza</span>
-              </td>
-              <td class="config-servicios__td">
-                <div class="config-servicios__duration">
-                  <span class="material-symbols-outlined config-servicios__duration-icon">schedule</span>
-                  <span>120 min</span>
-                </div>
-              </td>
-              <td class="config-servicios__td">
-                <span class="config-servicios__price">$6.500</span>
-              </td>
-              <td class="config-servicios__td config-servicios__td--right">
-                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="goToDeleteService('1')">
-                  <span class="material-symbols-outlined">delete</span>
-                </button>
-              </td>
+            <tr v-else-if="store.error" class="config-servicios__tr">
+              <td class="config-servicios__td" colspan="5">{{ store.error }}</td>
             </tr>
 
-            <tr class="config-servicios__tr">
-              <td class="config-servicios__td">
-                <div class="config-servicios__item">
-                  <div class="config-servicios__icon-wrapper">
-                    <span class="material-symbols-outlined">face</span>
-                  </div>
-                  <span class="config-servicios__item-name">Barba y Perfilado</span>
-                </div>
-              </td>
-              <td class="config-servicios__td">
-                <span class="config-servicios__tag">Belleza</span>
-              </td>
-              <td class="config-servicios__td">
-                <div class="config-servicios__duration">
-                  <span class="material-symbols-outlined config-servicios__duration-icon">schedule</span>
-                  <span>30 min</span>
-                </div>
-              </td>
-              <td class="config-servicios__td">
-                <span class="config-servicios__price">$1.200</span>
-              </td>
-              <td class="config-servicios__td config-servicios__td--right">
-                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="goToDeleteService('1')">
-                  <span class="material-symbols-outlined">delete</span>
-                </button>
-              </td>
+            <tr v-else-if="store.items.length === 0" class="config-servicios__tr">
+              <td class="config-servicios__td" colspan="5">No hay servicios cargados.</td>
             </tr>
 
-            <tr class="config-servicios__tr">
+            <tr
+              v-for="service in store.items"
+              v-else
+              :key="service.id"
+              class="config-servicios__tr"
+              @click="goToServicesView"
+            >
               <td class="config-servicios__td">
                 <div class="config-servicios__item">
-                  <div class="config-servicios__icon-wrapper">
-                    <span class="material-symbols-outlined">auto_awesome</span>
-                  </div>
-                  <span class="config-servicios__item-name">Tratamiento Capilar</span>
+                  <span class="config-servicios__item-name">{{ capitalizeFirst(service.name) }}</span>
                 </div>
               </td>
               <td class="config-servicios__td">
-                <span class="config-servicios__tag">Belleza</span>
+                <span class="config-servicios__tag">{{ capitalizeFirst(service.category) }}</span>
               </td>
               <td class="config-servicios__td">
                 <div class="config-servicios__duration">
                   <span class="material-symbols-outlined config-servicios__duration-icon">schedule</span>
-                  <span>60 min</span>
+                  <span>{{ service.duration }} min</span>
                 </div>
               </td>
               <td class="config-servicios__td">
-                <span class="config-servicios__price">$4.000</span>
+                <span class="config-servicios__price">${{ formatPrice(service.price) }}</span>
               </td>
               <td class="config-servicios__td config-servicios__td--right">
-                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="goToDeleteService('1')">
+                <button class="config-servicios__delete-btn" aria-label="Eliminar servicio" @click="handleDeleteClick($event, service)">
                   <span class="material-symbols-outlined">delete</span>
                 </button>
               </td>
@@ -159,8 +116,7 @@ function goToDeleteService(id: string) {
         <div class="config-servicios__bento-card">
           <span class="config-servicios__bento-label">Servicios Totales</span>
           <div>
-            <span class="config-servicios__bento-value">12</span>
-            <p class="config-servicios__bento-subtext">+2 este mes</p>
+            <span class="config-servicios__bento-value">{{ totalServices }}</span>
           </div>
         </div>
 
@@ -396,7 +352,8 @@ function goToDeleteService(id: string) {
 
 @media (min-width: 768px) {
   .config-servicios__bento {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    justify-items: center;
   }
 }
 
@@ -406,8 +363,11 @@ function goToDeleteService(id: string) {
   border-radius: var(--radius-xl);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   height: 12rem;
+  width: 100%;
   border: 1px solid rgba(192, 200, 204, 0.1);
   position: relative;
   overflow: hidden;
@@ -415,7 +375,7 @@ function goToDeleteService(id: string) {
 
 .config-servicios__bento-card--span-2 {
   background-color: var(--color-surface-container-lowest);
-  grid-column: span 2;
+  grid-column: unset;
   box-shadow: var(--shadow-sm);
 }
 
@@ -439,6 +399,7 @@ function goToDeleteService(id: string) {
 .config-servicios__bento-content {
   position: relative;
   z-index: 10;
+  text-align: center;
 }
 
 .config-servicios__bento-title {
