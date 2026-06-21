@@ -100,9 +100,11 @@ const router = createRouter({
       ]
     },
     {
-      path: '/booking',
+      path: '/booking/:providerId',
       component: () => import('@/layouts/BookingLayout.vue'),
-      redirect: '/booking/service',
+      redirect: (to) => {
+        return { name: 'booking-service', params: { providerId: to.params.providerId } }
+      },
       children: [
         { path: '', redirect: { name: 'booking-service' } },
         {
@@ -115,7 +117,6 @@ const router = createRouter({
           name: 'booking-schedule',
           component: () => import('@/views/AppointmentSelectDateView.vue')
         },
-        { path: 'details', name: 'booking-details', redirect: { name: 'booking-confirmation' } },
         {
           path: 'details',
           name: 'booking-details',
@@ -132,7 +133,11 @@ const router = createRouter({
           component: () => import('@/views/AppointmentConfirmationView.vue')
         },
         { path: 'payment', name: 'booking-payment', redirect: { name: 'booking-confirmation' } },
-        { path: 'success', name: 'booking-success', redirect: { name: 'booking-confirmation' } }
+        { 
+          path: 'success', 
+          name: 'booking-success', 
+          component: () => import('@/views/AppointmentSuccessView.vue')
+        }
       ]
     },
     {

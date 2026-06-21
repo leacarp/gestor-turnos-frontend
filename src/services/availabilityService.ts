@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/axios'
+import type { AvailableSlot } from '@/types/availability'
 import type {
   WeeklyScheduleRequestDto,
   WeeklyScheduleResponseDto,
@@ -10,6 +11,13 @@ export const availabilityService = {
   getSchedule: () =>
     apiClient.get<WeeklyScheduleResponseDto>('/availability/schedule'),
 
+  getAvailableSlots: (providerId: string, serviceId: string, date: string) =>
+    apiClient.get<AvailableSlot[]>(`/availability/slots/${providerId}`, {
+      params: {
+        date,
+        servicioId: serviceId,
+      },
+    }),
   createSchedule: (dto: WeeklyScheduleRequestDto) =>
     apiClient.post<WeeklyScheduleResponseDto>('/availability/schedule', dto),
 

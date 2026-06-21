@@ -1,22 +1,39 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useServices } from '@/composables/useServices'
+import { useRouter, useRoute } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import type { BookingService } from '@/stores/useAppointmentBookingStore'
 import ServiceCard from '@/components/booking/ServiceCard.vue'
+import { useServicesStore } from '@/stores/useServicesStore'
+import { userService } from '@/services/userService'
+import { storeToRefs } from 'pinia'
 
+const servicesStore = useServicesStore()
 const router = useRouter()
+const route = useRoute()
 const bookingStore = useAppointmentBookingStore()
-const { services, isLoading, error, fetchServices } = useServices()
+const { services, isLoading, error } = storeToRefs(servicesStore)
+
+// Obtenemos el providerId de los parámetros o usamos un fallback temporal
+const providerId = (route.params.providerId as string) || 'default-provider'
 
 onMounted(async () => {
-  await fetchServices()
+  await servicesStore.fetchServices(providerId)
+  try {
+    const { data } = await userService.getPublicProfile(providerId)
+    bookingStore.setProviderProfile(data)
+  } catch (err) {
+    console.error('No se pudo cargar el perfil del profesional', err)
+  }
 })
 
 function handleServiceSelect(service: BookingService) {
   bookingStore.setService(service)
   router.push({ name: 'booking-schedule' })
+}
+
+function handleRetry() {
+  servicesStore.fetchServices(providerId)
 }
 </script>
 
@@ -37,7 +54,7 @@ function handleServiceSelect(service: BookingService) {
     <div v-else-if="error" class="select-service-view__error">
       <span class="material-symbols-outlined">error</span>
       <p>{{ error }}</p>
-      <button @click="fetchServices" class="select-service-view__retry-btn">Reintentar</button>
+      <button @click="handleRetry" class="select-service-view__retry-btn">Reintentar</button>
     </div>
 
     <div v-else class="select-service-view__grid">

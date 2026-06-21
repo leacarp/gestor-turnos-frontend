@@ -2,46 +2,41 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
-import { userService, type UserProfile } from '@/services/userService'
+import { useUserStore } from '@/stores/useUserStore'
 
 const router = useRouter()
 const store = useAppointmentBookingStore()
+const userStore = useUserStore()
 
-const isLoading = ref(true)
-const userProfile = ref<UserProfile | null>(null)
 const notes = ref('')
 
 onMounted(async () => {
-  try {
-    const { data } = await userService.getCurrentUserProfile()
-    userProfile.value = data
-    
-    // Si ya teníamos notas guardadas en el store, las recuperamos
-    if (store.guestDetails?.notes) {
-      notes.value = store.guestDetails.notes
-    }
-  } catch (error) {
-    console.error('Error fetching user profile:', error)
-  } finally {
-    isLoading.value = false
+  await userStore.fetchMe()
+  
+  if (store.guestDetails?.notes) {
+    notes.value = store.guestDetails.notes
   }
 })
 
+const isLoading = computed(() => userStore.isLoading)
+const userProfile = computed(() => userStore.user)
+
 const fullName = computed(() => {
   if (!userProfile.value) return ''
-  return `${userProfile.value.firstName} ${userProfile.value.lastName}`
+  return userProfile.value.name
 })
 
 function handleEditProfile() {
-  // Placeholder para la vista de edición de perfil
   router.push({ name: 'profile-edit' })
 }
 
 function handleConfirm() {
   if (userProfile.value) {
+    const [firstName = '', ...lastNameParts] = userProfile.value.name.trim().split(' ')
+
     store.setGuestDetails({
-      firstName: userProfile.value.firstName,
-      lastName: userProfile.value.lastName,
+      firstName,
+      lastName: lastNameParts.join(' '),
       email: userProfile.value.email,
       phone: userProfile.value.phone,
       notes: notes.value

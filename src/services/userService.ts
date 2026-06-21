@@ -29,6 +29,9 @@ export interface UserProfile {
 export const userService = {
   getMe: () => apiClient.get<CurrentUser>('/users/me'),
 
+  getPublicProfile: (id: string) =>
+    apiClient.get<any>(`/users/profile/${id}`),
+
   updateReminderSettings: (settings: ReminderSettings) =>
     apiClient.put<CurrentUser>('/users/me', { reminderSettings: settings }),
 

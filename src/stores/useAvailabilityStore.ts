@@ -8,6 +8,7 @@ import type {
   WeeklyScheduleResponseDto,
   AvailabilityExceptionResponseDto,
 } from '@/types/availability'
+import type { AvailableSlot } from '@/types/availability'
 
 function isNotFoundError(err: unknown): boolean {
   return (
@@ -19,6 +20,13 @@ function isNotFoundError(err: unknown): boolean {
 }
 
 export const useAvailabilityStore = defineStore('availability', () => {
+  // --- Client booking state ---
+  const availableSlots = ref<AvailableSlot[]>([])
+  const isLoadingSlots = ref(false)
+  const slotsError = ref<string | null>(null)
+  let slotsRequestId = 0
+
+  // --- Provider config state ---
   const schedule = ref<WeeklyScheduleResponseDto | null>(null)
   const slots = ref<DaySlotDto[]>([])
   const appointmentGap = ref<number>(0)
@@ -31,6 +39,43 @@ export const useAvailabilityStore = defineStore('availability', () => {
 
   const hasSchedule = computed(() => schedule.value !== null)
 
+  // --- Client Actions ---
+  async function fetchAvailableSlots(providerId: string, serviceId: string, date: string) {
+    const requestId = ++slotsRequestId
+    isLoadingSlots.value = true
+    slotsError.value = null
+    availableSlots.value = []
+
+    try {
+      const { data } = await availabilityService.getAvailableSlots(
+        providerId,
+        serviceId,
+        date,
+      )
+
+      if (requestId === slotsRequestId) {
+        availableSlots.value = data
+      }
+    } catch (err: any) {
+      if (requestId === slotsRequestId) {
+        slotsError.value = parseApiError(err, 'No pudimos cargar los horarios disponibles')
+      }
+      console.error('[useAvailabilityStore] fetchAvailableSlots response data:', err.response?.data)
+      console.error('[useAvailabilityStore] fetchAvailableSlots', err)
+      throw err // Re-throw to handle it in views if needed
+    } finally {
+      if (requestId === slotsRequestId) {
+        isLoadingSlots.value = false
+      }
+    }
+  }
+
+  function clearSlots() {
+    availableSlots.value = []
+    slotsError.value = null
+  }
+
+  // --- Provider Actions ---
   async function fetchSchedule() {
     isLoading.value = true
     error.value = null
@@ -116,6 +161,13 @@ export const useAvailabilityStore = defineStore('availability', () => {
   }
 
   return {
+    // Client
+    availableSlots,
+    isLoadingSlots,
+    slotsError,
+    fetchAvailableSlots,
+    clearSlots,
+    // Provider
     schedule,
     slots,
     appointmentGap,

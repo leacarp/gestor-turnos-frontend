@@ -47,3 +47,8 @@ export interface AvailabilityExceptionResponseDto {
   createdAt: string
   updatedAt: string
 }
+
+export interface AvailableSlot {
+  startTime: string
+  endTime: string
+}

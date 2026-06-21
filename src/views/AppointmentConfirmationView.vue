@@ -1,14 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { useUserStore } from '@/stores/useUserStore'
+import { bookingService } from '@/services/bookingService'
 
 const router = useRouter()
 const bookingStore = useAppointmentBookingStore()
+const authStore = useAuthStore()
+const userStore = useUserStore()
+
+// ── State ────────────────────────────────────────────────
+const isSubmitting = ref(false)
+const submitError = ref<string | null>(null)
 
 // ── Computed ─────────────────────────────────────────────
 const service = computed(() => bookingStore.selectedService)
 const guest   = computed(() => bookingStore.guestDetails)
+const provider = computed(() => bookingStore.providerProfile)
 
 const requiresDeposit = computed(() => !!service.value?.requiresDeposit)
 const depositAmount   = computed(() => service.value?.depositAmount ?? 0)
@@ -41,10 +51,67 @@ function handleBack() {
   router.back()
 }
 
-function handleConfirm() {
-  // TODO: llamar al endpoint cuando esté disponible
-  bookingStore.reset()
-  router.push({ name: 'booking-success' })
+async function handleConfirm() {
+  if (!service.value || !guest.value) return
+
+  submitError.value = null
+  isSubmitting.value = true
+
+  try {
+    if (authStore.isAuthenticated && userStore.user?.id) {
+      // Autenticado
+      const payload = {
+        fecha: bookingStore.selectedDate,
+        horaInicio: bookingStore.selectedTime,
+        proveedorId: service.value.providerId,
+        servicioId: String(service.value.id),
+        cliente: {
+          tipo: 'REGISTRADO' as const,
+          id: userStore.user.id
+        },
+        notas: guest.value.notes || undefined
+      }
+      await bookingService.createAppointment(payload)
+    } else {
+      // Invitado
+      const payloadGuest = {
+        fecha: bookingStore.selectedDate,
+        horaInicio: bookingStore.selectedTime,
+        proveedorId: service.value.providerId,
+        servicioId: String(service.value.id),
+        clienteDetails: {
+          tipo: 'INVITADO',
+          nombre: `${guest.value.firstName} ${guest.value.lastName}`.trim(),
+          email: guest.value.email,
+          celular: guest.value.phone
+        },
+        notas: guest.value.notes || undefined
+      }
+      console.log('Payload enviado desde frontend (Invitado):', payloadGuest)
+      await bookingService.createGuestAppointment(payloadGuest)
+    }
+
+    bookingStore.reset()
+    router.push({ name: 'booking-success' })
+  } catch (error: any) {
+    console.error('Error al confirmar la reserva:', error)
+    
+    // Intenta extraer el mensaje de error del backend
+    let backendMessage = ''
+    if (error.response?.data?.message) {
+      backendMessage = Array.isArray(error.response.data.message) 
+        ? error.response.data.message.join('. ') 
+        : error.response.data.message
+    }
+
+    if (backendMessage) {
+      submitError.value = `Error del servidor: ${backendMessage}`
+    } else {
+      submitError.value = 'No se pudo conectar con el servidor para confirmar el turno.'
+    }
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 function handlePayDeposit() {
@@ -105,7 +172,9 @@ function handlePayDeposit() {
             </div>
             <div class="confirmation-view__meta-item">
               <span class="material-symbols-outlined confirmation-view__meta-icon" aria-hidden="true">location_on</span>
-              <span class="confirmation-view__meta-text">{{ service?.location ?? '—' }}</span>
+              <span class="confirmation-view__meta-text">
+                {{ provider?.providerData?.address || service?.location || 'Dirección a confirmar' }}
+              </span>
             </div>
           </div>
         </div>
@@ -176,22 +245,6 @@ function handlePayDeposit() {
           </div>
         </div>
 
-        <!-- Location banner (full width) -->
-        <div class="confirmation-view__card confirmation-view__card--location">
-          <div class="confirmation-view__location-overlay" aria-hidden="true"></div>
-          <div class="confirmation-view__location-inner">
-            <div class="confirmation-view__location-icon-wrap" aria-hidden="true">
-              <span class="material-symbols-outlined">map</span>
-            </div>
-            <div>
-              <p class="confirmation-view__location-eyebrow">Ubicación</p>
-              <p class="confirmation-view__location-address">
-                {{ service?.location ?? '—' }}
-              </p>
-            </div>
-          </div>
-        </div>
-
       </div><!-- /grid -->
 
       <!-- ── Action buttons ──────────────────────────────── -->
@@ -202,6 +255,7 @@ function handlePayDeposit() {
           id="btn-back"
           class="confirmation-view__btn confirmation-view__btn--secondary"
           type="button"
+          :disabled="isSubmitting"
           @click="handleBack"
         >
           <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
@@ -214,10 +268,12 @@ function handlePayDeposit() {
           id="btn-confirm"
           class="confirmation-view__btn confirmation-view__btn--primary"
           type="button"
+          :disabled="isSubmitting"
           @click="handleConfirm"
         >
-          <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
-          Confirmar turno
+          <span v-if="!isSubmitting" class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+          <span v-else class="material-symbols-outlined spin" aria-hidden="true">sync</span>
+          {{ isSubmitting ? 'Confirmando...' : 'Confirmar turno' }}
         </button>
 
         <button
@@ -225,12 +281,18 @@ function handlePayDeposit() {
           id="btn-pay-deposit"
           class="confirmation-view__btn confirmation-view__btn--primary"
           type="button"
+          :disabled="isSubmitting"
           @click="handlePayDeposit"
         >
           <span class="material-symbols-outlined" aria-hidden="true">payments</span>
           Pagar seña · ${{ depositAmount.toLocaleString('es-AR') }}
         </button>
 
+      </div>
+      
+      <!-- Error Message -->
+      <div v-if="submitError" class="confirmation-view__error">
+        {{ submitError }}
       </div>
 
       <!-- ── Footer ──────────────────────────────────────── -->
@@ -363,7 +425,7 @@ function handlePayDeposit() {
 /* ── Service card (2 cols) ────────────────────────────────── */
 .confirmation-view__card--service {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -441,7 +503,7 @@ function handlePayDeposit() {
 /* ── DateTime card (1 col) ────────────────────────────────── */
 .confirmation-view__card--datetime {
   background-color: var(--color-surface-container-low);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -486,7 +548,7 @@ function handlePayDeposit() {
 /* ── Guest card (full width) ──────────────────────────────── */
 .confirmation-view__card--guest {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8);
   box-shadow: var(--shadow-sm);
 }
 
@@ -505,7 +567,7 @@ function handlePayDeposit() {
 /* ── Deposit card (full width) ────────────────────────────── */
 .confirmation-view__card--deposit {
   background-color: var(--color-primary-fixed);
-  padding: var(--space-6) var(--space-7);
+  padding: var(--space-8);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -567,74 +629,6 @@ function handlePayDeposit() {
   font-weight: 800;
   color: var(--color-primary);
   line-height: 1;
-}
-
-/* ── Location banner (full width) ─────────────────────────── */
-.confirmation-view__card--location {
-  position: relative;
-  height: 10rem;
-  background-color: var(--color-surface-container-high);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (min-width: 640px) {
-  .confirmation-view__card--location {
-    grid-column: span 3;
-  }
-}
-
-.confirmation-view__location-overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--gradient-primary);
-  opacity: 0.08;
-}
-
-.confirmation-view__location-inner {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: var(--space-5) var(--space-6);
-  border-radius: 0.75rem;
-  max-width: 28rem;
-  width: 90%;
-  box-shadow: var(--shadow-sm);
-}
-
-.confirmation-view__location-icon-wrap {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-md);
-  background: var(--gradient-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: #ffffff;
-}
-
-.confirmation-view__location-eyebrow {
-  font-family: var(--font-family-label);
-  font-size: 0.65rem;
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-1);
-}
-
-.confirmation-view__location-address {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-primary);
-  margin: 0;
 }
 
 /* ── Actions ──────────────────────────────────────────────── */
@@ -755,5 +749,24 @@ function handlePayDeposit() {
   color: var(--color-text-secondary);
   opacity: 0.5;
   margin: 0;
+}
+
+/* ── Error & Loading ────────────────────────────────────────── */
+@keyframes spin-anim {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin-anim 1s linear infinite;
+}
+
+.confirmation-view__error {
+  text-align: center;
+  color: var(--color-error);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-4);
+  font-weight: var(--font-weight-semibold);
 }
 </style>

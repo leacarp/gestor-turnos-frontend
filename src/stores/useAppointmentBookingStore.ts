@@ -1,20 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type { BookingService } from '@/types/services'
 
-export interface BookingService {
-  id: string
-  name: string
-  description: string
-  price: number
-  duration: number
-  location: string
-  /** Si el servicio requiere pagar una seña para confirmar el turno */
-  requiresDeposit?: boolean
-  /** Monto de la seña en la misma moneda que `price` */
-  depositAmount?: number
-  /** Indica si es un servicio destacado */
-  isPopular?: boolean
-}
+export type { BookingService } from '@/types/services'
 
 export interface BookingGuestDetails {
   firstName: string
@@ -25,15 +13,20 @@ export interface BookingGuestDetails {
 }
 
 export const useAppointmentBookingStore = defineStore('appointmentBooking', () => {
-  // ── State ────────────────────────────────────────────────
-  const selectedService  = ref<BookingService | null>(null)
-  const selectedDate     = ref<string>('')   // ISO 8601 date string, e.g. '2024-10-12'
-  const selectedTime     = ref<string>('')   // HH:MM format, e.g. '10:00'
-  const guestDetails     = ref<BookingGuestDetails | null>(null)
+  const selectedService = ref<BookingService | null>(null)
+  const selectedDate = ref('')
+  const selectedTime = ref('')
+  const guestDetails = ref<BookingGuestDetails | null>(null)
+  const providerProfile = ref<any | null>(null)
 
-  // ── Actions ──────────────────────────────────────────────
+  function setProviderProfile(profile: any) {
+    providerProfile.value = profile
+  }
+
   function setService(service: BookingService) {
     selectedService.value = service
+    selectedDate.value = ''
+    selectedTime.value = ''
   }
 
   function setDateTime(date: string, time: string) {
@@ -47,9 +40,10 @@ export const useAppointmentBookingStore = defineStore('appointmentBooking', () =
 
   function reset() {
     selectedService.value = null
-    selectedDate.value    = ''
-    selectedTime.value    = ''
-    guestDetails.value    = null
+    selectedDate.value = ''
+    selectedTime.value = ''
+    guestDetails.value = null
+    providerProfile.value = null
   }
 
   return {
@@ -57,9 +51,11 @@ export const useAppointmentBookingStore = defineStore('appointmentBooking', () =
     selectedDate,
     selectedTime,
     guestDetails,
+    providerProfile,
     setService,
     setDateTime,
     setGuestDetails,
+    setProviderProfile,
     reset,
   }
 })
