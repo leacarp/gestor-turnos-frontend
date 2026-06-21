@@ -1,5 +1,13 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import AppSidebar from '@/components/AppSidebar.vue'
+import { useAuthStore } from '@/stores/useAuthStore'
+
+const authStore = useAuthStore()
+
+onMounted(async () => {
+  await authStore.restoreSession()
+})
 </script>
 
 <template>

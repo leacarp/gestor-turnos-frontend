@@ -22,8 +22,8 @@ onMounted(async () => {
   try {
     const { data } = await userService.getPublicProfile(providerId)
     bookingStore.setProviderProfile(data)
-  } catch (err) {
-    console.error('No se pudo cargar el perfil del profesional', err)
+  } catch {
+    // profile is non-critical, silently ignore
   }
 })
 
@@ -55,6 +55,11 @@ function handleRetry() {
       <span class="material-symbols-outlined">error</span>
       <p>{{ error }}</p>
       <button @click="handleRetry" class="select-service-view__retry-btn">Reintentar</button>
+    </div>
+
+    <div v-else-if="services.length === 0" class="select-service-view__empty">
+      <span class="material-symbols-outlined">search_off</span>
+      <p>Este proveedor no tiene servicios disponibles por el momento.</p>
     </div>
 
     <div v-else class="select-service-view__grid">
@@ -149,6 +154,23 @@ function handleRetry() {
 .select-service-view__error .material-symbols-outlined {
   font-size: 3rem;
   color: var(--color-error);
+}
+
+/* ── Empty state ───────────────────────────────────────── */
+.select-service-view__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) 0;
+  color: var(--color-text-secondary);
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.select-service-view__empty .material-symbols-outlined {
+  font-size: 3rem;
+  color: var(--color-text-secondary);
 }
 
 /* ── Grid ──────────────────────────────────────────────── */

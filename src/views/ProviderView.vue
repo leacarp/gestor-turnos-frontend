@@ -1,8 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import AppInput from '@/components/AppInput.vue'
 import AppSelect from '@/components/AppSelect.vue'
 import AppButton from '@/components/AppButton.vue'
+import { useAuthStore } from '@/stores/useAuthStore'
+
+const authStore = useAuthStore()
+
+const bookingLink = computed(() => {
+  const id = authStore.user?.id
+  if (!id) return ''
+  return `${window.location.origin}/booking/${id}`
+})
+
+const linkCopied = ref(false)
+
+async function copyBookingLink() {
+  if (!bookingLink.value) return
+  await navigator.clipboard.writeText(bookingLink.value)
+  linkCopied.value = true
+  setTimeout(() => { linkCopied.value = false }, 2000)
+}
 
 const businessName = ref('Studio Hair')
 const category = ref('estetica')
@@ -86,6 +104,20 @@ function handleSubmit() {
         <div class="provider-view__title-group">
           <h1 class="provider-view__title">Perfil del Negocio</h1>
           <p class="provider-view__subtitle">Actualiza la información pública y de contacto de tu establecimiento.</p>
+        </div>
+
+        <div class="provider-view__booking-link-block">
+          <p class="provider-view__booking-link-label">Tu link de reservas</p>
+          <div class="provider-view__booking-link-row">
+            <span class="provider-view__booking-link-url">{{ bookingLink || 'Cargando…' }}</span>
+            <AppButton
+              type="button"
+              variant="outline"
+              :iconLeft="linkCopied ? 'check' : 'content_copy'"
+              :disabled="!bookingLink"
+              @click="copyBookingLink"
+            >{{ linkCopied ? 'Copiado' : 'Copiar' }}</AppButton>
+          </div>
         </div>
       </div>
     </header>
@@ -523,6 +555,41 @@ function handleSubmit() {
   height: 100%;
   width: 85%;
   border-radius: var(--radius-full);
+}
+
+/* ── Booking link block ────────────────────────────────── */
+.provider-view__booking-link-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.provider-view__booking-link-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.provider-view__booking-link-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background-color: var(--color-surface-container-low);
+  border: 1px solid var(--color-surface-container);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-3);
+}
+
+.provider-view__booking-link-url {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  font-family: var(--font-family-mono, monospace);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
 /* Modals */

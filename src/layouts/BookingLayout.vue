@@ -96,15 +96,7 @@ const currentStepIndex = computed(() => {
       <!-- Sticky header -->
       <header class="booking-layout__header">
         <span class="booking-layout__header-title">Finalización de Reserva</span>
-        <div class="booking-layout__header-actions">
-          <button class="booking-layout__header-icon-btn" aria-label="Notificaciones">
-            <span class="material-symbols-outlined">notifications</span>
-          </button>
-          <button class="booking-layout__header-icon-btn" aria-label="Ayuda">
-            <span class="material-symbols-outlined">help_outline</span>
-          </button>
-          <div class="booking-layout__header-avatar" aria-label="Perfil de usuario"></div>
-        </div>
+        
       </header>
 
       <!-- Page content -->
