@@ -300,7 +300,7 @@ async function handleSubmit() {
         <div class="provider-view__card">
           <div class="provider-view__card-header">
             <div class="provider-view__card-icon">
-              <span class="material-symbols-outlined">storefront</span>
+              <span class="provider-view__card-initial">{{ name.charAt(0).toUpperCase() || '?' }}</span>
             </div>
             <div class="provider-view__card-title-group">
               <h3 class="provider-view__card-title">Datos del negocio</h3>
@@ -308,7 +308,6 @@ async function handleSubmit() {
             </div>
             <div style="margin-left: auto;">
               <input type="file" ref="logoInput" style="display: none;" accept="image/*" @change="handleLogoUpload" />
-              <AppButton type="button" variant="outline" iconLeft="upload" @click="triggerLogoUpload">Subir logo</AppButton>
             </div>
           </div>
 
@@ -607,8 +606,11 @@ async function handleSubmit() {
   flex-shrink: 0;
 }
 
-.provider-view__card-icon .material-symbols-outlined {
-  font-size: 30px;
+.provider-view__card-initial {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  line-height: 1;
 }
 
 .provider-view__card-title {
