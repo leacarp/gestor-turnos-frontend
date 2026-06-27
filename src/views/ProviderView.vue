@@ -436,13 +436,10 @@ async function handleSubmit() {
           <div class="provider-view__bento-card provider-view__bento-card--primary">
             <div class="provider-view__bento-content">
               <h4 class="provider-view__bento-title">Mejora tu visibilidad</h4>
-              <p class="provider-view__bento-desc">Completa la galería de fotos para que tus clientes puedan ver tus mejores trabajos.</p>
-              <button class="provider-view__bento-btn" type="button">
-                Subir fotos <span class="material-symbols-outlined">arrow_forward</span>
-              </button>
+              <p class="provider-view__bento-desc">Completa tu perfil para que tus clientes puedan conocerte mejor.</p>
             </div>
             <div class="provider-view__bento-image">
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoVuP5G1-8OJ3AMdAp4e3KCeeyB9oKLMVKrKvcAMovUjN80m6ZDS7Uey8jYur9ljWLS03q3wfqKfya2ulrJS6MOKH_cp3N3SiJv7sqKPMi-L2X65sFiUC7zSD3GDIKOk-5cz3WAKTgHDaqiEMgOdKtvPb8e-CNLDNoPL3gWA5hIXJHtQKTMDAaRbuko5JattPTnPe0r8asZYth3gBlhWUipy1aq88SbcgDkzQTzH4ughrhu0VmMqMcAQcpOOI7bR5zPArAOEPzQ_4" alt="Decoration" />
+              <img src="https://cdn-icons-png.flaticon.com/512/17232/17232629.png" alt="Decoration" />
             </div>
           </div>
 

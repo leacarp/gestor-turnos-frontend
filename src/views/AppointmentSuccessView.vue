@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 function handleGoHome() {
-  router.push({ name: 'home' })
+  router.push({ name: 'booking-service' })
 }
 </script>
 

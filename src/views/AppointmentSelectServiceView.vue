@@ -42,7 +42,7 @@ function handleRetry() {
     <header class="select-service-view__header">
       <h2 class="select-service-view__title">Servicios Disponibles</h2>
       <p class="select-service-view__subtitle">
-        Experimentá un servicio premium adaptado a tu estilo. Seleccioná entre nuestros servicios exclusivos para comenzar tu reserva.
+        Seleccioná entre nuestros servicios exclusivos para comenzar tu reserva.
       </p>
     </header>
 
