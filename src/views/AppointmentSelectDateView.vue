@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import { useAvailabilityStore } from '@/stores/useAvailabilityStore'
@@ -51,7 +51,8 @@ const formattedSelectedDate = computed(() => {
 function handleContinue() {
   if (localSelectedDate.value && localSelectedTime.value) {
     store.setDateTime(localSelectedDate.value, localSelectedTime.value)
-    if (authStore.isAuthenticated) {
+    const isAuthenticatedClient = authStore.isAuthenticated && authStore.user?.role === 'client'
+    if (isAuthenticatedClient) {
       router.push({ name: 'booking-details' })
     } else {
       router.push({ name: 'booking-guest-details' })
@@ -142,6 +143,16 @@ function retryFetchAvailableSlots() {
     void fetchAvailableSlots(localSelectedDate.value)
   }
 }
+
+onMounted(() => {
+  // If returning to this view after booking, slots were cleared — nothing to restore.
+  // If a date was previously selected (e.g. navigating back mid-flow), re-fetch to
+  // get up-to-date availability (newly booked slots must not appear).
+  if (store.selectedDate) {
+    localSelectedDate.value = store.selectedDate
+    void fetchAvailableSlots(store.selectedDate)
+  }
+})
 </script>
 
 <template>

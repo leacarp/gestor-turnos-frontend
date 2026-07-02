@@ -3,16 +3,24 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 const router = useRouter()
 const store = useAppointmentBookingStore()
 const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const notes = ref('')
 
 onMounted(async () => {
+  // Only clients should access this view; providers and guests go to booking-guest-details
+  if (!authStore.isAuthenticated || authStore.user?.role !== 'client') {
+    router.replace({ name: 'booking-guest-details' })
+    return
+  }
+
   await userStore.fetchMe()
-  
+
   if (store.guestDetails?.notes) {
     notes.value = store.guestDetails.notes
   }
@@ -77,10 +85,6 @@ function handleConfirm() {
               <h3 class="profile-card__title">Perfil Activo</h3>
               <p class="profile-card__subtitle">Información vinculada automáticamente desde tu cuenta de TurnoPro</p>
             </div>
-            <button type="button" class="profile-card__edit-btn" @click="handleEditProfile">
-              <span class="material-symbols-outlined profile-card__edit-icon">edit</span>
-              Editar Perfil
-            </button>
           </div>
 
           <div class="profile-card__grid">

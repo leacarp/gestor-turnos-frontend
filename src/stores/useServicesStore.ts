@@ -25,13 +25,13 @@ export const useServicesStore = defineStore('services', () => {
   async function fetchServices(providerId: string) {
     isLoading.value = true
     error.value = null
+    services.value = []
 
     try {
       const { data } = await servicesService.getServicesByProvider(providerId)
       services.value = data.map(mapServiceToBooking)
     } catch (err) {
       error.value = 'No pudimos cargar los servicios'
-      throw err
     } finally {
       isLoading.value = false
     }

@@ -298,7 +298,7 @@ onMounted(async () => {
             </div>
             <div class="config-horarios__tag config-horarios__tag--input">
               <span class="material-symbols-outlined">update</span>
-              Margen entre turnos:
+              Descanso entre turnos:
               <select v-model="turnMargin" @change="onMarginChange" class="config-horarios__margin-select">
                 <option :value="0">0 min</option>
                 <option :value="5">5 min</option>

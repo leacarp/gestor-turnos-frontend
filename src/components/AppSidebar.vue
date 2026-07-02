@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 
 const navItems = [
   { name: 'Perfil', icon: 'person', path: '/perfil' },
@@ -59,11 +61,11 @@ function handleLogout() {
     <div class="app-sidebar__footer">
       <div class="app-sidebar__user">
         <div class="app-sidebar__user-avatar">
-          <img src="https://i.pravatar.cc/150?u=aero" alt="User Avatar" />
+          <span class="app-sidebar__user-initials">{{ authStore.user?.name?.charAt(0).toUpperCase() ?? '?' }}</span>
         </div>
         <div class="app-sidebar__user-info">
-          <span class="app-sidebar__user-name">Marcus V. Aero</span>
-          <span class="app-sidebar__user-role">Enterprise Admin</span>
+          <span class="app-sidebar__user-name">{{ authStore.user?.name ?? '—' }}</span>
+          <span class="app-sidebar__user-role">Proveedor</span>
         </div>
       </div>
 
@@ -214,14 +216,18 @@ function handleLogout() {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  overflow: hidden;
+  background-color: var(--color-primary-fixed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-.app-sidebar__user-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.app-sidebar__user-initials {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  line-height: 1;
 }
 
 .app-sidebar__user-info {

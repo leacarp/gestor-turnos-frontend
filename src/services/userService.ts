@@ -26,8 +26,25 @@ export interface UserProfile {
   phone: string
 }
 
+export interface UpdateUserPayload {
+  name?: string
+  email?: string
+  phone?: string
+  providerData?: {
+    publicInfo?: string
+    address?: string
+    minimumAdvance?: number
+    serviceType?: string
+    socialMedia?: { platform: string; url: string }[]
+  }
+  reminderSettings?: ReminderSettings
+}
+
 export const userService = {
   getMe: () => apiClient.get<CurrentUser>('/users/me'),
+
+  updateMe: (payload: UpdateUserPayload) =>
+    apiClient.put<CurrentUser>('/users/me', payload),
 
   getPublicProfile: (id: string) =>
     apiClient.get<any>(`/users/profile/${id}`),

@@ -172,9 +172,6 @@ function clearAdvance() {
     <div v-if="showAdvanceModal" class="step-business__modal-overlay" @click.self="showAdvanceModal = false">
       <div class="step-business__modal">
         <h3 class="step-business__modal-title">Configurar seña</h3>
-        <p class="step-business__modal-desc">
-          Precio de referencia: ${{ Number(store.business.servicePrice).toLocaleString('es-AR') }}
-        </p>
 
         <AppInput
           v-model="modalAdvanceValue"
@@ -184,12 +181,7 @@ function clearAdvance() {
           :error="advanceModalError ?? undefined"
         />
 
-        <p v-if="modalAdvanceMax" class="step-business__modal-hint">
-          Máximo: ${{ modalAdvanceMax.toLocaleString('es-AR') }}
-        </p>
-
         <div class="step-business__modal-actions">
-          <AppButton type="button" variant="ghost" @click="clearAdvance">Quitar seña</AppButton>
           <AppButton type="button" variant="outline" @click="showAdvanceModal = false">Cancelar</AppButton>
           <AppButton type="button" variant="gradient" @click="saveAdvance">Guardar</AppButton>
         </div>

@@ -5,11 +5,13 @@ import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useUserStore } from '@/stores/useUserStore'
 import { bookingService } from '@/services/bookingService'
+import { useAvailabilityStore } from '@/stores/useAvailabilityStore'
 
 const router = useRouter()
 const bookingStore = useAppointmentBookingStore()
 const authStore = useAuthStore()
 const userStore = useUserStore()
+const availabilityStore = useAvailabilityStore()
 
 // ── State ────────────────────────────────────────────────
 const isSubmitting = ref(false)
@@ -58,7 +60,7 @@ async function handleConfirm() {
   isSubmitting.value = true
 
   try {
-    if (authStore.isAuthenticated && userStore.user?.id) {
+    if (authStore.isAuthenticated && authStore.user?.role === 'client' && userStore.user?.id) {
       // Autenticado
       const payload = {
         fecha: bookingStore.selectedDate,
@@ -91,6 +93,7 @@ async function handleConfirm() {
       await bookingService.createGuestAppointment(payloadGuest)
     }
 
+    availabilityStore.clearSlots()
     bookingStore.reset()
     router.push({ name: 'booking-success' })
   } catch (error: any) {
