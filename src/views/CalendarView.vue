@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppSelect from '@/components/AppSelect.vue'
+import { turnoService } from '@/services/turnoService'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 export type EstadoTurnoAgenda = 'confirmado' | 'pendiente' | 'cancelado' | 'finalizado'
 
@@ -52,74 +54,50 @@ const visibleMonth = ref<Date>(new Date(todayStart))
 const searchQuery = ref('')
 const cancelAllModalOpen = ref(false)
 
-function initialTurnos(): TurnoAgendaItem[] {
-  return [
-    {
-      id: '1',
-      date: todayYmd,
-      hour: 9,
-      minute: 0,
-      clientName: 'Ricardo Mendoza',
-      service: 'Consulta Médica General',
-      estado: 'confirmado',
-      bar: 'primary',
-    },
-    {
-      id: '2',
-      date: todayYmd,
-      hour: 10,
-      minute: 30,
-      clientName: 'Valeria Torres',
-      service: 'Control de Resultados',
-      estado: 'pendiente',
-      bar: 'tertiary',
-    },
-    {
-      id: '3',
-      date: todayYmd,
-      hour: 11,
-      minute: 45,
-      clientName: 'Santiago López',
-      service: 'Ecografía Abdominal',
-      estado: 'confirmado',
-      bar: 'primary',
-    },
-    {
-      id: '4',
-      date: todayYmd,
-      hour: 13,
-      minute: 15,
-      clientName: 'Mónica Giraldo',
-      service: 'Chequeo Preventivo',
-      estado: 'confirmado',
-      bar: 'primary',
-    },
-    {
-      id: '5',
-      date: todayYmd,
-      hour: 15,
-      minute: 0,
-      clientName: 'Carlos Arturo Peña',
-      service: 'Traumatología',
-      estado: 'pendiente',
-      bar: 'tertiary',
-    },
-    {
-      id: '6',
-      date: todayYmd,
-      hour: 16,
-      minute: 30,
-      clientName: 'Laura Fernández',
-      service: 'Consulta de seguimiento',
-      estado: 'cancelado',
-      bar: 'tertiary',
-    },
-  ]
-}
-
-const turnos = ref<TurnoAgendaItem[]>(initialTurnos())
+const authStore = useAuthStore()
+const turnos = ref<TurnoAgendaItem[]>([])
+const isLoading = ref(false)
 
 const selectedYmd = computed(() => toYmd(selectedDate.value))
+
+function mapEstado(estado: string): EstadoTurnoAgenda {
+  return (['confirmado', 'pendiente', 'cancelado', 'finalizado'] as const).includes(estado as any)
+    ? (estado as EstadoTurnoAgenda)
+    : estado === 'completado'
+      ? 'finalizado'
+      : 'pendiente'
+}
+
+async function loadTurnosDelDia() {
+  const proveedorId = authStore.user?.id
+  if (!proveedorId) return
+
+  isLoading.value = true
+  try {
+    const agenda = await turnoService.getAgendaDia(proveedorId, selectedYmd.value)
+    turnos.value = agenda.map((t) => {
+      const [hourStr, minuteStr] = t.horaInicio.split(':')
+      const estado = mapEstado(t.estado)
+      return {
+        id: t.turnoId,
+        date: selectedYmd.value,
+        hour: Number(hourStr),
+        minute: Number(minuteStr),
+        clientName: t.clienteNombre,
+        service: t.servicioNombre,
+        estado,
+        bar: estado === 'confirmado' ? 'primary' : 'tertiary',
+      }
+    })
+  } catch {
+    toast.error('No se pudieron cargar los turnos del día.')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(loadTurnosDelDia)
+watch(selectedYmd, loadTurnosDelDia)
 
 const dayTitle = computed(() => {
   const raw = new Intl.DateTimeFormat('es-AR', {
@@ -249,9 +227,18 @@ function formatHour12(h: number, min: number): { time: string; meridiem: string 
   return { time, meridiem }
 }
 
-function handleEstadoChange(id: string, ev: Event) {
+async function handleEstadoChange(id: string, ev: Event) {
   const v = (ev.target as HTMLSelectElement).value as EstadoTurnoAgenda
+  const previo = turnos.value
   turnos.value = turnos.value.map((t) => (t.id === id ? { ...t, estado: v } : t))
+
+  const estadoBackend = v === 'finalizado' ? 'completado' : v
+  try {
+    await turnoService.actualizarEstado(id, estadoBackend)
+  } catch {
+    turnos.value = previo
+    toast.error('No se pudo actualizar el estado del turno.')
+  }
 }
 
 function handleRowActivate(ev: MouseEvent | KeyboardEvent) {
@@ -260,9 +247,16 @@ function handleRowActivate(ev: MouseEvent | KeyboardEvent) {
   router.push({ name: 'clientes' })
 }
 
-function deleteTurno(id: string) {
+async function deleteTurno(id: string) {
+  const previo = turnos.value
   turnos.value = turnos.value.filter(t => t.id !== id)
-  toast.success('Turno eliminado')
+  try {
+    await turnoService.eliminar(id)
+    toast.success('Turno eliminado')
+  } catch {
+    turnos.value = previo
+    toast.error('No se pudo eliminar el turno.')
+  }
 }
 
 function openCancelAllModal() {
@@ -273,13 +267,19 @@ function closeCancelAllModal() {
   cancelAllModalOpen.value = false
 }
 
-function confirmCancelAllTurnos() {
-  const ymd = selectedYmd.value
-  turnos.value = turnos.value.map((t) =>
-    t.date === ymd ? { ...t, estado: 'cancelado' as const } : t,
-  )
-  toast.success('Turnos del día cancelados. Se notificará a los clientes.')
-  closeCancelAllModal()
+async function confirmCancelAllTurnos() {
+  const proveedorId = authStore.user?.id
+  if (!proveedorId) return
+
+  try {
+    await turnoService.cancelarDia(proveedorId, selectedYmd.value)
+    turnos.value = turnos.value.map((t) => ({ ...t, estado: 'cancelado' as const }))
+    toast.success('Turnos del día cancelados. Se notificará a los clientes.')
+  } catch {
+    toast.error('No se pudieron cancelar los turnos del día.')
+  } finally {
+    closeCancelAllModal()
+  }
 }
 
 </script>

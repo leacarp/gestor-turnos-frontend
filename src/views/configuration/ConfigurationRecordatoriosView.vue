@@ -1,31 +1,55 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { Icon } from '@iconify/vue'
 import { userService } from '@/services/userService'
 
-const whatsappActive = ref(true)
+const telegramActive = ref(true)
 const emailActive = ref(false)
+const telegramChatId = ref('')
 
-const wpReminders = ref({
-  t24h: true,
-  t2h: true
+const tgReminders = ref({
+  t12h: true,
+  t3h: true
 })
 
 const emailReminders = ref({
-  t24h: false
+  t12h: false
 })
 
 const messageTemplate = ref('Hola {nombre}, te recordamos tu turno para mañana a las {hora}. En caso de no poder asistir, por favor avísanos con tiempo. ¡Te esperamos!')
 
+const loading = ref(true)
 const saving = ref(false)
 const saveError = ref<string | null>(null)
 const saveSuccess = ref(false)
 const isDirty = ref(false)
 
+onMounted(async () => {
+  try {
+    const { data } = await userService.getMe()
+    const settings = data.reminderSettings
+    if (settings) {
+      telegramActive.value = settings.telegram?.enabled ?? true
+      tgReminders.value = {
+        t12h: settings.telegram?.t12h ?? true,
+        t3h: settings.telegram?.t3h ?? true,
+      }
+      telegramChatId.value = settings.telegram?.chatId ?? ''
+      emailActive.value = settings.email?.enabled ?? false
+      emailReminders.value = { t12h: settings.email?.t12h ?? false }
+      messageTemplate.value = settings.messageTemplate ?? messageTemplate.value
+    }
+  } catch {
+    saveError.value = 'No se pudo cargar la configuración actual.'
+  } finally {
+    loading.value = false
+  }
+})
+
 watch(
-  [whatsappActive, emailActive, wpReminders, emailReminders, messageTemplate],
-  () => { isDirty.value = true },
+  [telegramActive, emailActive, telegramChatId, tgReminders, emailReminders, messageTemplate],
+  () => { if (!loading.value) isDirty.value = true },
   { deep: true }
 )
 
@@ -56,8 +80,13 @@ async function saveConfig() {
   saveSuccess.value = false
   try {
     await userService.updateReminderSettings({
-      whatsapp: { enabled: whatsappActive.value, t24h: wpReminders.value.t24h, t2h: wpReminders.value.t2h },
-      email: { enabled: emailActive.value, t24h: emailReminders.value.t24h },
+      telegram: {
+        enabled: telegramActive.value,
+        t12h: tgReminders.value.t12h,
+        t3h: tgReminders.value.t3h,
+        chatId: telegramChatId.value || undefined,
+      },
+      email: { enabled: emailActive.value, t12h: emailReminders.value.t12h },
       messageTemplate: messageTemplate.value,
     })
     saveSuccess.value = true
@@ -84,33 +113,46 @@ async function saveConfig() {
         <!-- Left Column -->
         <div class="config-recs__left">
           
-          <!-- WhatsApp Channel -->
+          <!-- Telegram Channel -->
           <section class="config-recs__card">
             <div class="config-recs__card-header">
               <div class="config-recs__card-info">
-                <div class="config-recs__icon-whatsapp">
-                  <Icon icon="mdi:whatsapp" class="config-recs__brand-icon" />
+                <div class="config-recs__icon-telegram">
+                  <Icon icon="mdi:telegram" class="config-recs__brand-icon" />
                 </div>
                 <div>
-                  <h3 class="config-recs__card-title">Canal WhatsApp</h3>
-                  <p class="config-recs__card-subtitle">Alta tasa de apertura</p>
+                  <h3 class="config-recs__card-title">Canal Telegram</h3>
+                  <p class="config-recs__card-subtitle">Te llega a vos como proveedor</p>
                 </div>
               </div>
               <label class="config-recs__switch">
-                <input type="checkbox" v-model="whatsappActive" class="config-recs__switch-input" />
+                <input type="checkbox" v-model="telegramActive" class="config-recs__switch-input" />
                 <div class="config-recs__switch-bg"></div>
               </label>
             </div>
-            
-            <div class="config-recs__card-options" :class="{ 'config-recs__card-options--disabled': !whatsappActive }">
+
+            <div class="config-recs__card-options" :class="{ 'config-recs__card-options--disabled': !telegramActive }">
               <label class="config-recs__option">
-                <span class="config-recs__option-label">Recordatorio 24h antes</span>
-                <input type="checkbox" v-model="wpReminders.t24h" class="config-recs__checkbox" />
+                <span class="config-recs__option-label">Recordatorio 12h antes</span>
+                <input type="checkbox" v-model="tgReminders.t12h" class="config-recs__checkbox" />
               </label>
               <label class="config-recs__option">
-                <span class="config-recs__option-label">Recordatorio 2h antes</span>
-                <input type="checkbox" v-model="wpReminders.t2h" class="config-recs__checkbox" />
+                <span class="config-recs__option-label">Recordatorio 3h antes</span>
+                <input type="checkbox" v-model="tgReminders.t3h" class="config-recs__checkbox" />
               </label>
+              <div class="config-recs__field" style="margin-top: var(--space-2); margin-bottom: 0;">
+                <label class="config-recs__label">Chat ID de Telegram</label>
+                <input
+                  type="text"
+                  v-model="telegramChatId"
+                  class="config-recs__textarea"
+                  style="padding: var(--space-3);"
+                  placeholder="Ej: 123456789"
+                />
+                <p class="config-recs__card-subtitle" style="margin-top: var(--space-2);">
+                  Hablá con nuestro bot de Telegram y escribile <strong>/start</strong> para que te devuelva tu Chat ID.
+                </p>
+              </div>
             </div>
           </section>
 
@@ -134,8 +176,8 @@ async function saveConfig() {
             
             <div class="config-recs__card-options" :class="{ 'config-recs__card-options--disabled': !emailActive }">
               <label class="config-recs__option">
-                <span class="config-recs__option-label">Recordatorio 24h antes</span>
-                <input type="checkbox" v-model="emailReminders.t24h" class="config-recs__checkbox" />
+                <span class="config-recs__option-label">Recordatorio 12h antes</span>
+                <input type="checkbox" v-model="emailReminders.t12h" class="config-recs__checkbox" />
               </label>
             </div>
           </section>
@@ -144,7 +186,7 @@ async function saveConfig() {
           <div class="config-recs__tip">
             <span class="material-symbols-outlined config-recs__tip-icon">info</span>
             <p class="config-recs__tip-text">
-              <strong>Tip:</strong> Activar WhatsApp reduce el ausentismo en un 35% en promedio frente a notificaciones por email.
+              <strong>Tip:</strong> Activar Telegram reduce el ausentismo en un 35% en promedio frente a notificaciones por email.
             </p>
           </div>
         </div>
@@ -282,7 +324,7 @@ async function saveConfig() {
   gap: var(--space-4);
 }
 
-.config-recs__icon-whatsapp {
+.config-recs__icon-telegram {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-xl);
