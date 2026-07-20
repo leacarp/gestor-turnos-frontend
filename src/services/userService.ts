@@ -2,8 +2,8 @@ import { apiClient } from '@/lib/axios'
 import type { ProviderDataDto } from '@/types/auth'
 
 export interface ReminderSettings {
-  whatsapp: { enabled: boolean; t24h: boolean; t2h: boolean }
-  email: { enabled: boolean; t24h: boolean }
+  telegram: { enabled: boolean; t12h: boolean; t3h: boolean; chatId?: string }
+  email: { enabled: boolean; t12h: boolean }
   messageTemplate: string
 }
 

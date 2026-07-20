@@ -113,7 +113,8 @@ const donutChartOptions = {
 }
 
 // ─── Tabla ────────────────────────────────────────────────────────────────────
-function iniciales(nombre: string) {
+function iniciales(nombre?: string) {
+  if (!nombre) return '?'
   return nombre
     .split(' ')
     .slice(0, 2)
