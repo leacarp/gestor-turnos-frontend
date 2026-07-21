@@ -141,6 +141,26 @@ const router = createRouter({
       ]
     },
     {
+      path: '/pagos',
+      children: [
+        {
+          path: 'exito',
+          name: 'pago-exito',
+          component: () => import('@/views/pagos/PagoExitoView.vue')
+        },
+        {
+          path: 'error',
+          name: 'pago-error',
+          component: () => import('@/views/pagos/PagoErrorView.vue')
+        },
+        {
+          path: 'pendiente',
+          name: 'pago-pendiente',
+          component: () => import('@/views/pagos/PagoPendienteView.vue')
+        }
+      ]
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/NotFoundView.vue')

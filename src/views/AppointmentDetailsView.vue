@@ -13,6 +13,12 @@ const authStore = useAuthStore()
 const notes = ref('')
 
 onMounted(async () => {
+  // Asegurar que la sesión esté restaurada antes de chequear el rol.
+  // Esto cubre el caso de navegación directa al flujo de booking
+  // (ej: desde el dashboard de proveedor) donde el BookingLayout
+  // y esta vista se montan casi en simultáneo.
+  await authStore.restoreSession()
+
   // Only clients should access this view; providers and guests go to booking-guest-details
   if (!authStore.isAuthenticated || authStore.user?.role !== 'client') {
     router.replace({ name: 'booking-guest-details' })
