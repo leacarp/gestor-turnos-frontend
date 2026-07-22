@@ -62,6 +62,16 @@ const router = createRouter({
               path: 'pagos',
               name: 'config-pagos',
               component: () => import('@/views/configuration/ConfigurationPagosView.vue')
+            },
+            {
+              path: 'mp-conectado',
+              name: 'config-mp-conectado',
+              component: () => import('@/views/configuration/MpConectadoView.vue')
+            },
+            {
+              path: 'mp-error',
+              name: 'config-mp-error',
+              component: () => import('@/views/configuration/MpErrorView.vue')
             }
           ]
         }

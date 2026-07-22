@@ -27,5 +27,10 @@ export const pagosService = {
   /** Crea una preferencia de pago para invitados */
   createGuestPreference: (dto: CreateGuestPreferenceDto) => {
     return apiClient.post<PreferenceResponse>('/mercadopago/guest-preference', dto)
+  },
+
+  /** Obtiene la URL de OAuth para conectar la cuenta del proveedor con Mercado Pago */
+  getOAuthConnectUrl: () => {
+    return apiClient.get<{ url: string }>('/mercadopago/oauth/connect')
   }
 }

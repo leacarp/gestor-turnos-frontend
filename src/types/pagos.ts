@@ -17,6 +17,7 @@ export interface CreatePreferenceDto {
   servicioId: string
   fecha: string
   horaInicio: string
+  notas?: string
 }
 
 export interface CreateGuestPreferenceDto extends CreatePreferenceDto {

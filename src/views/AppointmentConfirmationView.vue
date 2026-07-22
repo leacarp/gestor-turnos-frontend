@@ -133,7 +133,8 @@ async function handlePayDeposit() {
         proveedorId: service.value.providerId,
         servicioId: String(service.value.id),
         fecha: bookingStore.selectedDate,
-        horaInicio: bookingStore.selectedTime
+        horaInicio: bookingStore.selectedTime,
+        notas: guest.value.notes || undefined
       }
       const response = await pagosService.createPreference(payload)
       if (response.data?.initPoint) {
@@ -148,6 +149,7 @@ async function handlePayDeposit() {
         servicioId: String(service.value.id),
         fecha: bookingStore.selectedDate,
         horaInicio: bookingStore.selectedTime,
+        notas: guest.value.notes || undefined,
         guestDetails: {
           nombre: `${guest.value.firstName} ${guest.value.lastName}`.trim(),
           email: guest.value.email,

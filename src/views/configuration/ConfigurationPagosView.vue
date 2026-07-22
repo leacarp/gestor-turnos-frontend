@@ -5,14 +5,38 @@ import { Icon } from '@iconify/vue'
 import AppButton from '@/components/AppButton.vue'
 import { usePagosStore } from '@/stores/usePagosStore'
 import { useServiciosStore } from '@/stores/useServiciosStore'
+import { useUserStore } from '@/stores/useUserStore'
+import { pagosService } from '@/services/pagosService'
 
 const pagosStore = usePagosStore()
 const serviciosStore = useServiciosStore()
+const userStore = useUserStore()
+
+const isMpConnected = computed(() => !!userStore.user?.providerData?.mpConnected)
+const isConnectingMp = ref(false)
+
+async function handleConnectMp() {
+  isConnectingMp.value = true
+  try {
+    const { data } = await pagosService.getOAuthConnectUrl()
+    if (data?.url) {
+      window.location.href = data.url
+    } else {
+      toast.error('No se pudo obtener la URL de conexión.')
+    }
+  } catch (err: any) {
+    console.error('[ConfigurationPagosView] Error OAuth MP:', err)
+    toast.error('Error al iniciar la conexión con Mercado Pago.')
+  } finally {
+    isConnectingMp.value = false
+  }
+}
 
 onMounted(async () => {
   await Promise.all([
     pagosStore.fetchMontoSeña(),
-    serviciosStore.fetchAll()
+    serviciosStore.fetchAll(),
+    userStore.fetchMe()
   ])
 })
 
@@ -78,15 +102,33 @@ async function handleSaveMontoSeña() {
               <div>
                 <h3 class="config-pagos__integration-title">MercadoPago</h3>
                 <div class="config-pagos__integration-status">
-                  <span class="config-pagos__status-dot"></span>
-                  <span class="config-pagos__status-text">Conectado</span>
+                  <span class="config-pagos__status-dot" :class="{ 'config-pagos__status-dot--disconnected': !isMpConnected }"></span>
+                  <span class="config-pagos__status-text" :class="{ 'config-pagos__status-text--disconnected': !isMpConnected }">
+                    {{ isMpConnected ? '✅ Mercado Pago Conectado' : 'Sin vincular' }}
+                  </span>
                 </div>
               </div>
             </div>
-            <p class="config-pagos__integration-desc">Tu cuenta está vinculada correctamente. Recibes los cobros de forma instantánea en tu billetera digital.</p>
+            <p v-if="isMpConnected" class="config-pagos__integration-desc">
+              Tu cuenta está vinculada correctamente. Recibes los cobros de forma instantánea en tu billetera digital.
+            </p>
+            <p v-else class="config-pagos__integration-desc">
+              Vincular tu cuenta de Mercado Pago te permite cobrar señas y turnos directamente a tus clientes.
+            </p>
           </div>
           <div class="config-pagos__integration-bottom">
-            <AppButton variant="outline">Configurar cuenta</AppButton>
+            <AppButton 
+              v-if="!isMpConnected" 
+              variant="gradient" 
+              :is-loading="isConnectingMp"
+              @click="handleConnectMp"
+            >
+              Conectar con Mercado Pago
+            </AppButton>
+            <div v-else class="config-pagos__connected-badge">
+              <span class="material-symbols-outlined">check_circle</span>
+              <span>Cuenta vinculada</span>
+            </div>
           </div>
         </div>
 
@@ -265,12 +307,32 @@ async function handleSaveMontoSeña() {
   background-color: #10b981; /* emerald-500 */
 }
 
+.config-pagos__status-dot--disconnected {
+  background-color: #f59e0b; /* amber-500 */
+}
+
 .config-pagos__status-text {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: #059669; /* emerald-600 */
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.config-pagos__status-text--disconnected {
+  color: #d97706; /* amber-600 */
+}
+
+.config-pagos__connected-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: #059669;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  background-color: #ecfdf5;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
 }
 
 .config-pagos__integration-desc {
