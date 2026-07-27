@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { userService } from '@/services/userService'
-import type { User } from '@/types/user'
+import type { CurrentUser } from '@/services/userService'
 
 export const useUserStore = defineStore('user', () => {
-  const user = ref<User | null>(null)
+  const user = ref<CurrentUser | null>(null)
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 

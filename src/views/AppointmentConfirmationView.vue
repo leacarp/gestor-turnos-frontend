@@ -5,6 +5,7 @@ import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useUserStore } from '@/stores/useUserStore'
 import { bookingService } from '@/services/bookingService'
+import { pagosService } from '@/services/pagosService'
 import { useAvailabilityStore } from '@/stores/useAvailabilityStore'
 
 const router = useRouter()
@@ -15,6 +16,7 @@ const availabilityStore = useAvailabilityStore()
 
 // ── State ────────────────────────────────────────────────
 const isSubmitting = ref(false)
+const isSubmittingPayment = ref(false)
 const submitError = ref<string | null>(null)
 
 // ── Computed ─────────────────────────────────────────────
@@ -117,8 +119,69 @@ async function handleConfirm() {
   }
 }
 
-function handlePayDeposit() {
-  router.push({ name: 'booking-payment' })
+async function handlePayDeposit() {
+  if (!service.value || !guest.value) return
+
+  submitError.value = null
+  isSubmittingPayment.value = true
+
+  try {
+    const isClientAuth = authStore.isAuthenticated && authStore.user?.role === 'client' && userStore.user?.id
+
+    if (isClientAuth) {
+      const payload = {
+        proveedorId: service.value.providerId,
+        servicioId: String(service.value.id),
+        fecha: bookingStore.selectedDate,
+        horaInicio: bookingStore.selectedTime,
+        notas: guest.value.notes || undefined
+      }
+      const response = await pagosService.createPreference(payload)
+      if (response.data?.initPoint) {
+        localStorage.setItem('lastProviderId', service.value.providerId)
+        window.location.href = response.data.initPoint
+      } else {
+        throw new Error('No se recibió el initPoint de Mercado Pago')
+      }
+    } else {
+      const payload = {
+        proveedorId: service.value.providerId,
+        servicioId: String(service.value.id),
+        fecha: bookingStore.selectedDate,
+        horaInicio: bookingStore.selectedTime,
+        notas: guest.value.notes || undefined,
+        guestDetails: {
+          nombre: `${guest.value.firstName} ${guest.value.lastName}`.trim(),
+          email: guest.value.email,
+          celular: guest.value.phone
+        }
+      }
+      const response = await pagosService.createGuestPreference(payload)
+      if (response.data?.initPoint) {
+        localStorage.setItem('lastProviderId', service.value.providerId)
+        window.location.href = response.data.initPoint
+      } else {
+        throw new Error('No se recibió el initPoint de Mercado Pago')
+      }
+    }
+  } catch (error: any) {
+    console.error('Error al generar link de pago:', error)
+    
+    let backendMessage = ''
+    if (error.response?.data?.message) {
+      backendMessage = Array.isArray(error.response.data.message) 
+        ? error.response.data.message.join('. ') 
+        : error.response.data.message
+    }
+
+    if (backendMessage) {
+      submitError.value = `Error de pago: ${backendMessage}`
+    } else {
+      submitError.value = 'No se pudo conectar con Mercado Pago para procesar el pago.'
+    }
+  } finally {
+    isSubmittingPayment.value = false
+  }
 }
 </script>
 
@@ -284,11 +347,12 @@ function handlePayDeposit() {
           id="btn-pay-deposit"
           class="confirmation-view__btn confirmation-view__btn--primary"
           type="button"
-          :disabled="isSubmitting"
+          :disabled="isSubmittingPayment"
           @click="handlePayDeposit"
         >
-          <span class="material-symbols-outlined" aria-hidden="true">payments</span>
-          Pagar seña · ${{ depositAmount.toLocaleString('es-AR') }}
+          <span v-if="!isSubmittingPayment" class="material-symbols-outlined" aria-hidden="true">payments</span>
+          <span v-else class="material-symbols-outlined spin" aria-hidden="true">sync</span>
+          {{ isSubmittingPayment ? 'Redirigiendo a Mercado Pago...' : `Pagar seña · $${depositAmount.toLocaleString('es-AR')}` }}
         </button>
 
       </div>

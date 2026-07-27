@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 interface BookingStep {
   id: number
@@ -11,6 +12,11 @@ interface BookingStep {
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
+
+onMounted(async () => {
+  await authStore.restoreSession()
+})
 
 const steps: BookingStep[] = [
   { id: 1, label: 'Selección de Servicio', icon: 'content_cut', routeNames: ['booking-service'] },

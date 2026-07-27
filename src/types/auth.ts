@@ -19,6 +19,7 @@ export interface ProviderDataDto {
   minimumAdvance?: number
   publicInfo?: string
   socialMedia?: SocialMediaDto[]
+  mpConnected?: boolean
 }
 
 export interface RegisterDto {

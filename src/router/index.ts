@@ -62,6 +62,16 @@ const router = createRouter({
               path: 'pagos',
               name: 'config-pagos',
               component: () => import('@/views/configuration/ConfigurationPagosView.vue')
+            },
+            {
+              path: 'mp-conectado',
+              name: 'config-mp-conectado',
+              component: () => import('@/views/configuration/MpConectadoView.vue')
+            },
+            {
+              path: 'mp-error',
+              name: 'config-mp-error',
+              component: () => import('@/views/configuration/MpErrorView.vue')
             }
           ]
         }
@@ -137,6 +147,26 @@ const router = createRouter({
           path: 'success', 
           name: 'booking-success', 
           component: () => import('@/views/AppointmentSuccessView.vue')
+        }
+      ]
+    },
+    {
+      path: '/pagos',
+      children: [
+        {
+          path: 'exito',
+          name: 'pago-exito',
+          component: () => import('@/views/pagos/PagoExitoView.vue')
+        },
+        {
+          path: 'error',
+          name: 'pago-error',
+          component: () => import('@/views/pagos/PagoErrorView.vue')
+        },
+        {
+          path: 'pendiente',
+          name: 'pago-pendiente',
+          component: () => import('@/views/pagos/PagoPendienteView.vue')
         }
       ]
     },
