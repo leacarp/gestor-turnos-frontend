@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAppointmentBookingStore } from '@/stores/useAppointmentBookingStore'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useUserStore } from '@/stores/useUserStore'
-import { bookingService } from '@/services/bookingService'
+import { bookingService, type CreateGuestTurnoRequestDto } from '@/services/bookingService'
 import { pagosService } from '@/services/pagosService'
 import { useAvailabilityStore } from '@/stores/useAvailabilityStore'
 
@@ -78,7 +78,7 @@ async function handleConfirm() {
       await bookingService.createAppointment(payload)
     } else {
       // Invitado
-      const payloadGuest = {
+      const payloadGuest: CreateGuestTurnoRequestDto = {
         fecha: bookingStore.selectedDate,
         horaInicio: bookingStore.selectedTime,
         proveedorId: service.value.providerId,

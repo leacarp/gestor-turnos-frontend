@@ -16,7 +16,7 @@ const form = reactive({
 async function handleLogin() {
   try {
     await authStore.login(form)
-    await router.push({ name: 'home' })
+    await router.push({ name: authStore.user?.role === 'client' ? 'landing' : 'home' })
   } catch {
     // error en authStore.error
   }
