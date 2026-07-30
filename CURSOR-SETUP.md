@@ -73,5 +73,5 @@ Usar useTurnosStore. Mostrar estado de loading y error.
 
 ```bash
 # .env.development
-VITE_API_BASE_URL=http://localhost:3000/api
+VITE_API_BASE_URL=https://gestor-turnos-backend.onrender.com/api
 ```

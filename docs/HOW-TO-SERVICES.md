@@ -50,7 +50,7 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'https://gestor-turnos-backend.onrender.com/api',
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -167,7 +167,7 @@ export const useTurnosStore = defineStore('turnos', () => {
 
 ```bash
 # .env.development
-VITE_API_BASE_URL=http://localhost:3000
+VITE_API_BASE_URL=https://gestor-turnos-backend.onrender.com/api
 ```
 
 Acceder siempre con `import.meta.env.VITE_*` — nunca `process.env`.

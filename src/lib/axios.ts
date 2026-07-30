@@ -3,7 +3,7 @@ import axios from 'axios'
 const AUTH_TOKEN_KEY = 'auth_token'
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'https://gestor-turnos-backend.onrender.com/api',
   headers: { 'Content-Type': 'application/json' },
 })
 
