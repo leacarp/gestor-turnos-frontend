@@ -1,0 +1,41 @@
+---
+description: Sistema de diseño y replicación de estilos Stitch
+globs: ["src/components/**/*.vue", "src/views/**/*.vue", "src/assets/**/*.css"]
+alwaysApply: false
+---
+
+# Sistema de Diseño
+
+Leer @docs/HOW-TO-STYLES.md antes de crear o modificar cualquier UI.
+
+## Fuente de verdad visual
+Los archivos HTML en `docs/design-references/` son la referencia EXACTA.
+
+### Proceso obligatorio al crear UI
+1. Identificar qué componente de referencia aplica en `docs/design-references/`
+2. Leer el HTML de referencia completo
+3. Extraer TODOS los tokens: colores, tipografía, espaciado, border-radius, sombras, transiciones
+4. Replicar fielmente — sin interpretación propia, sin librerías externas de UI
+
+## Reglas de estilos
+- Siempre `<style scoped>` dentro del SFC
+- Usar variables CSS de `src/assets/styles/tokens.css` — nunca hardcodear valores
+- No usar Tailwind, Vuetify, PrimeVue ni ninguna librería de componentes salvo indicación
+- Los estados interactivos (hover, focus, disabled, active) son obligatorios
+
+## Variables CSS — siempre consumir desde tokens.css
+```css
+/* BIEN */
+color: var(--color-primary);
+border-radius: var(--radius-md);
+
+/* MAL */
+color: #3b82f6;
+border-radius: 8px;
+```
+
+## Accesibilidad mínima obligatoria
+- Inputs siempre con `<label>` asociado
+- Botones con texto descriptivo o `aria-label`
+- Imágenes con `alt`
+- Foco visible en todos los elementos interactivos

@@ -1,0 +1,44 @@
+---
+description: Contexto global del proyecto - siempre activa
+alwaysApply: true
+---
+
+# Gestor de Turnos — Frontend
+
+## Stack
+- Vue 3 + TypeScript (siempre Composition API con `<script setup lang="ts">`)
+- Vite como bundler
+- Pinia para state management
+- Vue Router 4 para navegación
+- Axios para llamadas HTTP
+
+## Estructura de carpetas en `src/`
+```
+src/
+├── assets/
+│   └── styles/
+│       ├── tokens.css        ← variables CSS del design system
+│       └── global.css
+├── components/               ← componentes reutilizables
+├── composables/              ← lógica reutilizable (useXxx.ts)
+├── layouts/                  ← layouts de página (AuthLayout, DashboardLayout)
+├── router/
+│   └── index.ts
+├── services/                 ← llamadas HTTP agrupadas por dominio
+├── stores/                   ← stores de Pinia (useXxxStore.ts)
+├── types/                    ← interfaces y tipos TypeScript
+└── views/                    ← páginas completas, una por ruta
+```
+
+## Documentación obligatoria por tipo de tarea
+- Crear/modificar **componentes** o **views** → leer @docs/HOW-TO-COMPONENTS.md
+- Crear/modificar **services** o **stores** → leer @docs/HOW-TO-SERVICES.md
+- Aplicar **estilos** o construir **UI** → leer @docs/HOW-TO-STYLES.md
+- Crear/modificar **rutas** o **guards** → leer @docs/HOW-TO-ROUTER.md
+
+## Reglas absolutas
+1. Nunca usar `any` en TypeScript. Si el tipo es desconocido, usar `unknown`.
+2. Nunca inventar endpoints. Siempre leer el backend antes de implementar llamadas HTTP.
+3. El backend está en `../gestor-turnos-backend/src/`. Leer controllers y DTOs.
+4. Todos los componentes deben tener props tipadas con `defineProps<{}>()`.
+5. Preferir `const` sobre `let`. Nunca usar `var`.

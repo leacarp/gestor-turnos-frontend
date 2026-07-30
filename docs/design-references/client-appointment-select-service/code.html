@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Azure Meridian - Select Service</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#c0c8cc",
+                        "surface-tint": "#12629d",
+                        "tertiary-container": "#673c11",
+                        "surface-container-high": "#e7e8e9",
+                        "on-tertiary-container": "#e5a874",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-fixed": "#021f29",
+                        "on-surface": "#191c1d",
+                        "primary-fixed": "#d0e4ff",
+                        "surface-container-low": "#f3f4f5",
+                        "tertiary": "#4c2700",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#7bb9fa",
+                        "on-tertiary-fixed": "#2e1500",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#001d35",
+                        "surface-container": "#edeeef",
+                        "on-background": "#191c1d",
+                        "tertiary-fixed": "#ffdcc1",
+                        "secondary-fixed": "#cbe7f5",
+                        "on-tertiary-fixed-variant": "#683c11",
+                        "on-surface-variant": "#40484c",
+                        "on-primary-fixed-variant": "#00497a",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "outline": "#70787c",
+                        "primary": "#003256",
+                        "tertiary-fixed-dim": "#f9b984",
+                        "primary-container": "#00497a",
+                        "inverse-surface": "#2e3132",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#afcbd8",
+                        "surface": "#ffffff",
+                        "background": "#ffffff",
+                        "secondary": "#48626e",
+                        "on-secondary-container": "#4e6874",
+                        "inverse-primary": "#9ccaff",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e1e3e4",
+                        "primary-fixed-dim": "#9ccaff",
+                        "on-secondary-fixed-variant": "#304a55",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-dim": "#d9dadb",
+                        "surface-bright": "#f8f9fa",
+                        "secondary-container": "#cbe7f5",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+        }
+        h1, h2, h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar (The Blueprint Anchor) -->
+<aside class="bg-[#003256] text-white font-inter text-sm uppercase tracking-[0.1em] h-screen w-80 fixed left-0 top-0 flex flex-col h-full py-12 px-6 space-y-8 shadow-xl shadow-blue-900/20 z-50">
+<div class="mb-8">
+<h1 class="text-white font-manrope font-bold text-xl">Booking Concierge</h1>
+<p class="text-blue-200/60 text-[10px] tracking-widest mt-1">Professional Services</p>
+</div>
+<nav class="flex-1 space-y-4">
+<!-- Select Service (Active) -->
+<div class="bg-gradient-to-br from-[#003256] to-[#00497a] text-white font-bold ring-1 ring-white/10 flex items-center p-4 rounded-xl translate-x-1 duration-200">
+<span class="material-symbols-outlined mr-4 active-icon" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span>Select Service</span>
+</div>
+<!-- Choose Date (Inactive) -->
+<div class="text-blue-200/60 hover:text-white flex items-center p-4 rounded-xl hover:bg-white/5 transition-all cursor-pointer">
+<span class="material-symbols-outlined mr-4">calendar_today</span>
+<span>Choose Date</span>
+</div>
+<!-- Guest Details (Inactive) -->
+<div class="text-blue-200/60 hover:text-white flex items-center p-4 rounded-xl hover:bg-white/5 transition-all cursor-pointer">
+<span class="material-symbols-outlined mr-4">group</span>
+<span>Guest Details</span>
+</div>
+<!-- Confirmation (Inactive) -->
+<div class="text-blue-200/60 hover:text-white flex items-center p-4 rounded-xl hover:bg-white/5 transition-all cursor-pointer">
+<span class="material-symbols-outlined mr-4">check_circle</span>
+<span>Confirmation</span>
+</div>
+</nav>
+<div class="pt-8 mt-auto">
+<button class="w-full text-center text-blue-200/80 text-xs font-semibold hover:text-white transition-colors">
+                Need help?
+            </button>
+</div>
+</aside>
+<!-- Main Workspace Area -->
+<main class="ml-80 flex-1 bg-white min-h-screen">
+<div class="max-w-6xl mx-auto p-12">
+<header class="mb-12">
+<h2 class="font-manrope font-extrabold text-[2.25rem] text-primary tracking-tighter leading-none mb-2">Available Services</h2>
+<p class="text-on-surface-variant font-body text-lg max-w-xl">Experience premium grooming tailored to your style. Select from our signature services to begin your booking.</p>
+</header>
+<!-- Service Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Service Card 1 -->
+<div class="group relative bg-surface-container-low rounded-2xl p-8 transition-all hover:shadow-xl hover:shadow-primary/10 border border-transparent hover:border-primary/10 flex flex-col h-full cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-manrope font-bold text-xl text-primary">Corte Regular</h3>
+<span class="bg-primary/5 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Popular</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-8 leading-relaxed flex-grow">Our signature haircut including consulting, precise styling, and premium finishing products.</p>
+<div class="flex items-center justify-between mt-auto pt-6 border-t border-surface-container-high">
+<div class="space-y-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant/70 text-xs font-medium">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                30 min
+                            </div>
+<div class="text-2xl font-manrope font-extrabold text-primary">
+                                $2000
+                            </div>
+</div>
+<button class="bg-primary text-white p-3 rounded-full shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="group relative bg-surface-container-low rounded-2xl p-8 transition-all hover:shadow-xl hover:shadow-primary/10 border border-transparent hover:border-primary/10 flex flex-col h-full cursor-pointer">
+<div class="mb-4">
+<h3 class="font-manrope font-bold text-xl text-primary">Corte y Barba</h3>
+</div>
+<p class="text-on-surface-variant text-sm mb-8 leading-relaxed flex-grow">The complete grooming experience. Full haircut and professional beard sculpting with hot towel treatment.</p>
+<div class="flex items-center justify-between mt-auto pt-6 border-t border-surface-container-high">
+<div class="space-y-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant/70 text-xs font-medium">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                45 min
+                            </div>
+<div class="text-2xl font-manrope font-extrabold text-primary">
+                                $3500
+                            </div>
+</div>
+<button class="bg-surface-container-high text-primary p-3 rounded-full group-hover:bg-primary group-hover:text-white transition-all flex items-center justify-center">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Service Card 3 -->
+<div class="group relative bg-surface-container-low rounded-2xl p-8 transition-all hover:shadow-xl hover:shadow-primary/10 border border-transparent hover:border-primary/10 flex flex-col h-full cursor-pointer">
+<div class="mb-4">
+<h3 class="font-manrope font-bold text-xl text-primary">Tratamiento Capilar</h3>
+</div>
+<p class="text-on-surface-variant text-sm mb-8 leading-relaxed flex-grow">Deep scalp therapy using essential oils and premium conditioners to revitalize hair health and promote growth.</p>
+<div class="flex items-center justify-between mt-auto pt-6 border-t border-surface-container-high">
+<div class="space-y-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant/70 text-xs font-medium">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                20 min
+                            </div>
+<div class="text-2xl font-manrope font-extrabold text-primary">
+                                $1500
+                            </div>
+</div>
+<button class="bg-surface-container-high text-primary p-3 rounded-full group-hover:bg-primary group-hover:text-white transition-all flex items-center justify-center">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Service Card 4 (Placeholder to show grid growth) -->
+<div class="group relative bg-surface-container-low rounded-2xl p-8 transition-all hover:shadow-xl hover:shadow-primary/10 border border-transparent hover:border-primary/10 flex flex-col h-full cursor-pointer">
+<div class="mb-4">
+<h3 class="font-manrope font-bold text-xl text-primary">Afeitado Clásico</h3>
+</div>
+<p class="text-on-surface-variant text-sm mb-8 leading-relaxed flex-grow">Traditional straight-razor shave with warm lather, hot towels, and soothing aftershave treatment.</p>
+<div class="flex items-center justify-between mt-auto pt-6 border-t border-surface-container-high">
+<div class="space-y-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant/70 text-xs font-medium">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                25 min
+                            </div>
+<div class="text-2xl font-manrope font-extrabold text-primary">
+                                $1800
+                            </div>
+</div>
+<button class="bg-surface-container-high text-primary p-3 rounded-full group-hover:bg-primary group-hover:text-white transition-all flex items-center justify-center">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Promotional Banner -->
+<section class="mt-16 overflow-hidden rounded-2xl relative h-64 bg-primary-container">
+<img class="w-full h-full object-cover mix-blend-overlay opacity-60" data-alt="A sophisticated barber shop interior with luxury leather chairs and warm amber lighting." src="https://lh3.googleusercontent.com/aida/ADBb0uhhwngXljBDRlq8VZt86kTyttPU295Jse8AEYkl7ZUWjJtkmAouQvN_pmJE9wPn-Z8hJ5IV__Lm0YsfEbNSJSeADZJUDkjJvZRg3dNJmR7sJqLomVmJpNWavPTmEH_pHMAMiSUncmSk3my3fohHA7mfyMNbK61rMOOIIsQYgwlZfm-a9ErKJcVz8dtvSDdb7ZWaETvbKIoV4lplDx2CBj7Zd7F9y6vcxabWVoj9ezArF56Jmoygo3WIPq9GhY33QcixX4qbTyg7pw"/>
+<div class="absolute inset-0 flex flex-col justify-end p-8 bg-gradient-to-t from-primary/90 to-transparent">
+<h4 class="font-manrope font-extrabold text-2xl text-white tracking-tight">Meridian Signature Pack</h4>
+<p class="text-white/80 text-sm max-w-sm mb-4">Combine any three services for a 20% savings on your total appointment.</p>
+<a class="text-white text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all" href="#">
+                        View Packages
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</section>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Booking Confirmation | Azure Meridian</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-fixed-variant": "#304a55",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-tint": "#12629d",
+                        "primary-fixed": "#d0e4ff",
+                        "background": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#7bb9fa",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#9ccaff",
+                        "on-tertiary-fixed": "#2e1500",
+                        "primary-container": "#00497a",
+                        "surface-container": "#edeeef",
+                        "on-secondary": "#ffffff",
+                        "surface": "#ffffff",
+                        "on-tertiary-container": "#e5a874",
+                        "secondary-fixed": "#cbe7f5",
+                        "inverse-surface": "#2e3132",
+                        "on-surface-variant": "#40484c",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "inverse-primary": "#9ccaff",
+                        "tertiary": "#4c2700",
+                        "on-primary-fixed": "#001d35",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#f9b984",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container-low": "#f3f4f5",
+                        "outline": "#70787c",
+                        "secondary": "#48626e",
+                        "tertiary-fixed": "#ffdcc1",
+                        "surface-container-high": "#e7e8e9",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#673c11",
+                        "on-primary-fixed-variant": "#00497a",
+                        "secondary-container": "#cbe7f5",
+                        "on-tertiary-fixed-variant": "#683c11",
+                        "on-secondary-fixed": "#021f29",
+                        "on-background": "#191c1d",
+                        "on-surface": "#191c1d",
+                        "surface-dim": "#d9dadb",
+                        "outline-variant": "#c0c8cc",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#afcbd8",
+                        "primary": "#003256",
+                        "on-secondary-container": "#4e6874"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+        .bg-booking-gradient {
+            background: linear-gradient(135deg, #003256 0%, #00497a 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- Sidebar Navigation Shell -->
+<aside class="h-screen w-80 fixed left-0 top-0 flex flex-col bg-[#003256] dark:bg-[#001a2c] shadow-2xl z-50">
+<div class="flex flex-col h-full py-8 px-6">
+<!-- Brand Identity -->
+<div class="mb-12">
+<h1 class="text-white text-2xl font-extrabold tracking-[-0.02em] font-headline">Azure Meridian</h1>
+<p class="font-['Manrope'] font-extrabold uppercase tracking-[0.1em] text-[12px] text-white/50 mt-1">Architectural Concierge</p>
+</div>
+<!-- Progress Tracker Navigation -->
+<nav class="flex-1 space-y-4">
+<!-- Completed Step -->
+<div class="flex items-center gap-4 py-3 px-4 rounded-xl text-white/60 font-medium hover:bg-white/10 transition-colors cursor-default">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-['Manrope'] font-extrabold uppercase tracking-[0.1em] text-[14px]">Service Selection</span>
+</div>
+<!-- Completed Step -->
+<div class="flex items-center gap-4 py-3 px-4 rounded-xl text-white/60 font-medium hover:bg-white/10 transition-colors cursor-default">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-['Manrope'] font-extrabold uppercase tracking-[0.1em] text-[14px]">Schedule</span>
+</div>
+<!-- Completed Step -->
+<div class="flex items-center gap-4 py-3 px-4 rounded-xl text-white/60 font-medium hover:bg-white/10 transition-colors cursor-default">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-['Manrope'] font-extrabold uppercase tracking-[0.1em] text-[14px]">Guest Details</span>
+</div>
+<!-- Active Step -->
+<div class="flex items-center gap-4 py-3 px-4 rounded-xl text-white font-bold opacity-100 bg-white/10 transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-['Manrope'] font-extrabold uppercase tracking-[0.1em] text-[14px]">Confirmation</span>
+</div>
+</nav>
+<!-- Bottom Profile / Context -->
+<div class="mt-auto flex items-center gap-4 pt-8 border-t border-white/10">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Professional portrait of a male architect in a blue suit with natural daylight in a modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB23kCMvXEvBd3A8NyPWrkroWe6FtAPwA92-w_-QGiPtbeoBd73A7UZb3-JfF05L9I0Ybn_aXnztvMFwA7YJGB42jfbGfFQ3AJfiZpOajzn6Nlk_MUec1szcSJCHLhfvxAelf4joVZMCNSUFcxmRnQQcpu7ZkpB6dKcVT5h3NhtW9lAOP5hInd345P3eB_wEPyfgg9v_UT5RzFa3TEQ6FV4pQTXL88KmrmeEJ01rOIs3hnJHdjSQjCrQNZFNfq75yxJ7p2qDT2n69kO"/>
+<div>
+<p class="text-white font-semibold text-sm">Professional Service Profile</p>
+<p class="text-white/40 text-xs">Concierge Verified</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Header Navigation Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-20rem)] z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl transition-all duration-300 shadow-sm">
+<div class="flex justify-between items-center h-20 px-12">
+<div class="text-[#003256] dark:text-white font-black text-xl font-display uppercase tracking-wider">Booking Finalization</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-[#003256] hover:text-[#00497a] transition-all">notifications</button>
+<button class="material-symbols-outlined text-[#003256] hover:text-[#00497a] transition-all">help_outline</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a smiling woman with glasses in soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9bjkO3H9ifqUYloXPv0iyisRVLZe8fWDpB-YwTSOmhFxP0V3-laFM-VWDilPS3Uhs4wfu75RNM5O1uFCsDnbF_2WmT6LQXhFYl7RQKjhAZf8OD5JVc4VQnZu1qnioznKb6e02FeMcjJF52PZXxeBYybXUtXe4TiJ606JI3K1F2RgBBUMwqHWmE1G-XTAw3IBAQW9PFK6Aj4AN_nYRluUsO-V4HzA5NuaJkGX8-Ou2HfbuZjHo4Af4nVezRAamoMXJ_L7l_NkUa-UK"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-80 pt-20 min-h-screen">
+<div class="max-w-5xl mx-auto px-12 py-16">
+<!-- Hero Success Section -->
+<div class="text-center mb-16">
+<div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-booking-gradient shadow-xl shadow-primary/10 mb-8 animate-in fade-in zoom-in duration-700">
+<span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline font-extrabold text-[2.25rem] tracking-[-0.02em] text-primary mb-4">Booking Confirmed!</h2>
+<p class="font-body text-on-surface-variant text-[1.125rem] max-w-lg mx-auto">
+                    Your appointment has been successfully scheduled. A confirmation email with all the details has been sent to your inbox.
+                </p>
+</div>
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+<!-- Service Detail Card -->
+<div class="col-span-1 md:col-span-2 bg-surface p-8 rounded-xl shadow-lg border-0 flex flex-col justify-between">
+<div>
+<span class="font-label font-bold uppercase tracking-[0.1em] text-[14px] text-on-surface-variant block mb-6">Service Overview</span>
+<div class="flex items-start justify-between">
+<div>
+<h3 class="font-headline font-extrabold text-[1.875rem] text-primary leading-tight mb-2">Corte y Barba</h3>
+<p class="font-body text-on-surface-variant">Premium architectural grooming session</p>
+</div>
+<span class="font-headline font-bold text-[1.875rem] text-primary">$2500</span>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-surface-container flex gap-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">schedule</span>
+<span class="font-body font-semibold">60 Minutes</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">location_on</span>
+<span class="font-body font-semibold">Azure Meridian Studio</span>
+</div>
+</div>
+</div>
+<!-- DateTime Card -->
+<div class="col-span-1 bg-surface-container-low p-8 rounded-xl flex flex-col justify-center items-center text-center">
+<span class="font-label font-bold uppercase tracking-[0.1em] text-[14px] text-on-surface-variant block mb-6">Appointment Time</span>
+<div class="mb-4">
+<span class="material-symbols-outlined text-primary text-4xl mb-2">calendar_today</span>
+<h4 class="font-headline font-extrabold text-xl text-primary">Thursday, Oct 12</h4>
+</div>
+<div class="py-2 px-6 bg-white rounded-full shadow-sm">
+<span class="font-headline font-extrabold text-primary">10:00 AM</span>
+</div>
+</div>
+<!-- Decorative Detail / Map Placeholder -->
+<div class="col-span-1 md:col-span-3 h-48 rounded-xl overflow-hidden relative shadow-lg">
+<img class="w-full h-full object-cover grayscale opacity-40" data-alt="Modern minimalist architectural building with sharp lines and blue glass windows under a clear sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPTwNp8nWX4dRJhTj55Ll2nvTsHhiYr9J4PF6iqngvCVFBC56-9aL1FPsOqOzXQp_UEDMxTU0CLecKDYgG14NPMARgub4Wo3NILJCRDfObUVEeMfBMSzJCzXustnEdYxeijCBLk09PsoniNHeHNRitmbKXPQ_PG4GbiSv0b7K4ylxicMBo4vX9D5fHNj-2T00yr5yisoLcc8R9tbpz5FKV3cPf3DfEAkN36TEPpcvCaVYuqmM08RxmEMI3ZMv6ZMa-kFo5yljO2n6Z"/>
+<div class="absolute inset-0 bg-booking-gradient opacity-10"></div>
+<div class="absolute inset-0 flex items-center justify-center p-8">
+<div class="bg-white/90 backdrop-blur-md p-6 rounded-xl flex items-center gap-6 max-w-md w-full">
+<div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white">map</span>
+</div>
+<div>
+<p class="font-label font-bold uppercase tracking-[0.1em] text-[12px] text-on-surface-variant">Location</p>
+<p class="font-body font-semibold text-primary">Meridian Tower, Level 42, Corporate District</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+<button class="px-10 py-5 rounded-full bg-booking-gradient text-white font-headline font-bold text-lg shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all w-full sm:w-auto">
+                    Done
+                </button>
+<button class="px-8 py-5 rounded-full border-2 border-primary text-primary font-headline font-bold text-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-3 w-full sm:w-auto">
+<span class="material-symbols-outlined">event</span>
+                    Add to Calendar
+                </button>
+</div>
+<!-- Footer Compliance -->
+<div class="mt-24 text-center">
+<p class="font-body text-on-surface-variant text-sm">
+                    Questions about your booking? <a class="text-primary font-bold hover:underline" href="#">Contact Support</a>
+</p>
+<p class="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mt-8 opacity-50">
+                    ID Ref: AM-BK-2023-1012-X4
+                </p>
+</div>
+</div>
+</main>
+</body></html>

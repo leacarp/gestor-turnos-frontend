@@ -1,0 +1,245 @@
+<html class="light" lang="es"><head></head><body class="bg-surface text-on-surface min-h-screen flex">```html
+
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sloty - Datos de tu negocio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary": "#ffffff",
+                      "surface-tint": "#12629d",
+                      "surface-container-high": "#e7e8e9",
+                      "surface": "#f8f9fa",
+                      "primary": "#003256",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed-variant": "#683c11",
+                      "on-primary-fixed-variant": "#00497a",
+                      "surface-container-low": "#f3f4f5",
+                      "tertiary-fixed-dim": "#f9b984",
+                      "on-secondary-fixed": "#021f29",
+                      "background": "#f8f9fa",
+                      "primary-fixed": "#d0e4ff",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#d9dadb",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#7bb9fa",
+                      "secondary": "#48626e",
+                      "on-surface": "#191c1d",
+                      "on-tertiary-container": "#e5a874",
+                      "surface-variant": "#e1e3e4",
+                      "on-primary": "#ffffff",
+                      "surface-container": "#edeeef",
+                      "tertiary-fixed": "#ffdcc1",
+                      "tertiary": "#4c2700",
+                      "on-tertiary-fixed": "#2e1500",
+                      "primary-fixed-dim": "#9ccaff",
+                      "on-primary-fixed": "#001d35",
+                      "on-secondary-fixed-variant": "#304a55",
+                      "on-error": "#ffffff",
+                      "primary-container": "#00497a",
+                      "outline-variant": "#c0c8cc",
+                      "inverse-primary": "#9ccaff",
+                      "secondary-container": "#cbe7f5",
+                      "error-container": "#ffdad6",
+                      "inverse-surface": "#2e3132",
+                      "tertiary-container": "#673c11",
+                      "secondary-fixed": "#cbe7f5",
+                      "on-surface-variant": "#40484c",
+                      "outline": "#70787c",
+                      "on-secondary-container": "#4e6874",
+                      "secondary-fixed-dim": "#afcbd8",
+                      "surface-container-highest": "#e1e3e4",
+                      "inverse-on-surface": "#f0f1f2",
+                      "surface-bright": "#f8f9fa",
+                      "on-error-container": "#93000a",
+                      "on-background": "#191c1d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #003256 0%, #00497a 100%);
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+    </style>
+<!-- Shared SideNavBar (Left Column Split Screen) -->
+<aside class="hidden md:flex flex-col h-screen w-80 lg:w-96 fixed left-0 top-0 bg-[#003256] text-on-primary py-12 px-10 z-10 overflow-hidden">
+<!-- Logo & Brand -->
+<div class="mb-12">
+<span class="text-3xl font-extrabold tracking-tight font-headline block">Sloty</span>
+<span class="text-on-primary-container text-sm font-medium opacity-80">Provider Onboarding</span>
+</div>
+<!-- Navigation / Progress Tracker -->
+<nav class="flex-1 space-y-4">
+<!-- Step 1: Identity (Completed) -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-3 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-headline">Identity</span>
+<span class="material-symbols-outlined ml-auto text-on-primary-container text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Step 2: Business (Active) -->
+<div class="flex items-center gap-4 text-white font-bold bg-white/10 rounded-lg p-3 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">domain</span>
+<span class="font-headline">Business</span>
+</div>
+<!-- Step 3: Schedule (Pending) -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-3 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-headline">Schedule</span>
+</div>
+<!-- Step 4: Finalize (Pending) -->
+<div class="flex items-center gap-4 text-white/60 font-medium p-3 hover:bg-white/5 transition-colors rounded-lg">
+<span class="material-symbols-outlined">check_circle</span>
+<span class="font-headline">Finalize</span>
+</div>
+<!-- Progress Meter -->
+<div class="mt-8">
+<div class="p-5 rounded-2xl bg-white/5 backdrop-blur-sm">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-2 h-2 rounded-full bg-on-primary-container"></div>
+<span class="text-xs font-bold text-white uppercase tracking-widest">Paso 2 de 4</span>
+</div>
+<div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-fixed-dim w-1/2 h-full rounded-full"></div>
+</div>
+</div>
+</div>
+</nav>
+<!-- Sidebar Decorative Image -->
+<div class="mt-auto relative rounded-2xl overflow-hidden h-32 w-full">
+<img class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" data-alt="Modern minimalist barber shop interior with sleek chairs and warm wood accents in soft focus lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPCGzvlrJqhMdvrcte_Dy_-kyauOc9InLhWqtF4ru8ocSXwIsBKf3QTcS9e2qkIs22XUQnpav1CpiJQHL2Kib2XogT6m26PrtHlFT2Uoc2TdPESchr7m9hPLk5lCaQRUXifZULL9QHgn2zkPoThRWYfbnRJltvRtvVdnLSAdx3FQ7J1Ykmi0fEhYwx2LYg_MQqPEGaJfz1L9FLbWoU7CJxee8QnWwU5zNSTpuV-V7OlhEackKEspMuS3rVl-amb_oMeVNLaMgW-srz"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#003256] to-transparent"></div>
+</div>
+</aside>
+<!-- Main Content (Right Column Split Screen) -->
+<main class="flex-1 ml-0 md:ml-80 lg:ml-96 min-h-screen flex flex-col bg-white">
+<!-- TopNavBar (Fixed-like Positioning within the Main Area) -->
+<header class="flex justify-end items-center px-8 md:px-12 py-8 bg-transparent">
+<div class="flex items-center gap-6">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a business owner in a casual white studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWvwSgN8F4S5OCCPVeq13PMzZmwDGdrFIcF_1WDkGTSQHCJFVUGWZkVTBavmA7ym8AuYpy2MIB7wD-QpaQGnJaZ3xfk2g-wSR0ECTtXw_DIGwYuO63R_LPRu5v3P-bYwB2SJ_HFnTMYoYD7yEMKVcWVo6QbNTuvZ_j15_awLKBQF_Q7-AL9z3q1-jMgC3POo6BJUWI7ONZhHPaiI23Czs0xdVV7oMaNWoMSlG33CJz4Lm1ZfrrE7xWSxg4XyO-ukjlz4WIKsnTReS9"/>
+</div>
+</div>
+</header>
+<!-- Form Section -->
+<section class="flex-1 flex flex-col items-center justify-center px-8 md:px-16 py-12 max-w-4xl mx-auto w-full">
+<div class="w-full mb-10">
+<h1 class="text-4xl font-extrabold text-primary font-headline tracking-tight mb-3">Datos de tu negocio</h1>
+<p class="text-secondary text-lg">Cuéntanos sobre tu establecimiento para configurar tu agenda.</p>
+</div>
+<!-- Registration Form Area -->
+<form class="w-full space-y-8">
+<!-- Bento-style Form Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Business Name -->
+<div class="md:col-span-2 space-y-2">
+<label class="text-sm font-bold text-primary uppercase tracking-widest px-1">Nombre del negocio</label>
+<div class="relative group">
+<input class="w-full px-6 py-4 rounded-xl bg-surface-container-low border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-on-surface placeholder:text-slate-400" placeholder="e.g., Barbería El Elegante" type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-300 group-focus-within:text-primary transition-colors">domain</span>
+</div>
+</div>
+<!-- Category Selector -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-primary uppercase tracking-widest px-1">Categoría</label>
+<div class="relative group">
+<select class="w-full appearance-none px-6 py-4 rounded-xl bg-surface-container-low border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-on-surface">
+<option disabled="" selected="" value="">Selecciona una opción</option>
+<option value="peluqueria">Peluquería</option>
+<option value="estetica">Centro de Estética</option>
+<option value="clinica">Clínica</option>
+<option value="spa">Spa</option>
+<option value="otros">Otros</option>
+</select>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-300 pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Social / Website -->
+<div class="space-y-2">
+<label class="text-sm font-bold text-primary uppercase tracking-widest px-1">Red Social o Sitio Web <span class="text-slate-400 font-normal lowercase">(Opcional)</span></label>
+<div class="relative group">
+<input class="w-full px-6 py-4 rounded-xl bg-surface-container-low border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-on-surface placeholder:text-slate-400" placeholder="instagram.com/tu-negocio" type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-300 group-focus-within:text-primary transition-colors">link</span>
+</div>
+</div>
+<!-- Location / Address -->
+<div class="md:col-span-2 space-y-2">
+<label class="text-sm font-bold text-primary uppercase tracking-widest px-1">Ubicación / Dirección</label>
+<div class="relative group">
+<input class="w-full px-6 py-4 rounded-xl bg-surface-container-low border-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all text-on-surface placeholder:text-slate-400" placeholder="Calle Ejemplo 123, Ciudad" type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-300 group-focus-within:text-primary transition-colors">location_on</span>
+</div>
+<!-- Map Preview (Aesthetic Placeholder) -->
+<div class="mt-4 h-48 w-full rounded-2xl overflow-hidden bg-surface-container-high relative">
+<img class="w-full h-full object-cover grayscale opacity-60" data-alt="Abstracted minimal map visualization with soft grayscale tones and a single focused blue location pin" data-location="Madrid" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXFQJF3JamGWXuJ_KatsOFbVbQ9AHlLWP-IfelBp29EW3e9rUVCMr9ppirJ2qpGBlfIc7nfkvqVQLbtInswMjnzsDzNZ1XhxmjPycSS2-I7JdZpOX6LgHoi93rNq0VIl8GFlaGo3xV3YTH3M1vGh8Ktl3edcerCa3OaXNhzNjspYRE4KEtuvVOZoGONbgtfwlRZlIhhff6hhjVkkgGpABCPhJuMHR8LnU5bhIfe5CvZ469XXnP76Yi7FxaA7xSaJMkVFeNv6dCiCT7"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="bg-primary text-white p-3 rounded-full shadow-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</form>
+</section>
+<!-- Footer Actions -->
+<footer class="mt-auto border-t border-slate-100 px-8 md:px-16 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+<a class="flex items-center gap-2 text-secondary hover:text-primary font-semibold transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">arrow_back</span>
+                Volver
+            </a>
+<div class="flex items-center gap-4 w-full md:w-auto">
+<button class="flex-1 md:flex-initial px-10 py-4 btn-gradient text-white rounded-full font-headline font-bold text-lg shadow-xl shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-[0.98]">
+                    Continuar
+                </button>
+</div>
+</footer>
+</main>
+<!-- Mobile Navigation Overlay (Simplified for mobile context) -->
+<div class="fixed bottom-0 left-0 right-0 md:hidden bg-white/80 backdrop-blur-xl border-t border-slate-100 px-8 py-4 flex justify-between items-center z-50">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-primary tracking-widest opacity-60">Paso 2 de 4</span>
+<span class="text-sm font-bold text-primary">Tu negocio</span>
+</div>
+<button class="bg-primary text-white p-3 rounded-full">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+```</body></html>

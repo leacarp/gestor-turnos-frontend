@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#edeeef",
+                        "tertiary": "#4c2700",
+                        "outline-variant": "#c0c8cc",
+                        "secondary": "#48626e",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#673c11",
+                        "surface": "#ffffff",
+                        "on-surface-variant": "#40484c",
+                        "outline": "#70787c",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#021f29",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#7bb9fa",
+                        "surface-tint": "#12629d",
+                        "on-tertiary-container": "#e5a874",
+                        "secondary-fixed": "#cbe7f5",
+                        "secondary-container": "#cbe7f5",
+                        "surface-dim": "#d9dadb",
+                        "on-surface": "#191c1d",
+                        "on-secondary-container": "#4e6874",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container-low": "#f3f4f5",
+                        "primary-fixed-dim": "#9ccaff",
+                        "tertiary-fixed": "#ffdcc1",
+                        "on-secondary-fixed-variant": "#304a55",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#afcbd8",
+                        "on-tertiary-fixed-variant": "#683c11",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#9ccaff",
+                        "background": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "primary-fixed": "#d0e4ff",
+                        "primary": "#003256",
+                        "inverse-surface": "#2e3132",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed": "#001d35",
+                        "on-background": "#191c1d",
+                        "tertiary-fixed-dim": "#f9b984",
+                        "surface-container-high": "#e7e8e9",
+                        "on-tertiary-fixed": "#2e1500",
+                        "on-primary-fixed-variant": "#00497a",
+                        "primary-container": "#00497a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+<div class="flex min-h-screen">
+<!-- SideNavBar Anchor -->
+<aside class="bg-[#003256] dark:bg-slate-950 text-white font-inter text-sm uppercase tracking-[0.1em] h-screen w-80 fixed left-0 top-0 shadow-xl shadow-blue-900/20 flex flex-col py-12 px-6 space-y-8 z-50">
+<div class="mb-8">
+<h1 class="text-white font-manrope font-bold text-xl mb-1">Booking Concierge</h1>
+<p class="text-blue-200/60 lowercase tracking-normal text-xs">Professional Services</p>
+</div>
+<nav class="flex-1 space-y-4">
+<!-- Select Service (Inactive) -->
+<div class="flex items-center gap-4 px-4 py-3 text-blue-200/60 hover:text-white hover:bg-white/5 transition-all cursor-pointer rounded-xl group">
+<span class="material-symbols-outlined text-xl">assignment</span>
+<span class="font-inter">Select Service</span>
+</div>
+<!-- Choose Date (Inactive) -->
+<div class="flex items-center gap-4 px-4 py-3 text-blue-200/60 hover:text-white hover:bg-white/5 transition-all cursor-pointer rounded-xl group">
+<span class="material-symbols-outlined text-xl">calendar_today</span>
+<span class="font-inter">Choose Date</span>
+</div>
+<!-- Guest Details (Active) -->
+<div class="flex items-center gap-4 px-4 py-3 bg-gradient-to-br from-[#003256] to-[#00497a] text-white font-bold ring-1 ring-white/10 translate-x-1 duration-200 rounded-xl">
+<span class="material-symbols-outlined text-xl active-icon" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-inter">Guest Details</span>
+</div>
+<!-- Confirmation (Inactive) -->
+<div class="flex items-center gap-4 px-4 py-3 text-blue-200/60 hover:text-white hover:bg-white/5 transition-all cursor-pointer rounded-xl group">
+<span class="material-symbols-outlined text-xl">check_circle</span>
+<span class="font-inter">Confirmation</span>
+</div>
+</nav>
+<div class="pt-8 mt-auto border-t border-white/10">
+<button class="flex items-center justify-center w-full gap-2 px-4 py-3 border border-white/20 rounded-full hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-sm">help</span>
+<span class="font-inter text-xs">Need help?</span>
+</button>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 ml-80 bg-white">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-slate-900 flex justify-between items-center px-12 h-16 w-full fixed top-0 right-0 left-80 z-40 shadow-lg shadow-blue-900/5">
+<div class="flex items-center gap-2">
+<span class="text-[#003256] dark:text-blue-400 font-extrabold tracking-tight font-headline text-2xl">Azure Meridian</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-slate-500 hover:text-[#003256] cursor-pointer transition-colors">help</span>
+<span class="material-symbols-outlined text-slate-500 hover:text-[#003256] cursor-pointer transition-colors">notifications</span>
+</div>
+<div class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden">
+<img alt="User profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQVppr45olBnvZX2o6mB9cUIp6gLIRS2EHZJBTEuOpxfSS1_ETY_cOkQYGyDRuelvbakA46cVr_Bkh0WdrK1jeTxB5cVsJ6MKugOF-GbgjiWZebUa976kSPo-Gx9AVo12W1XX3wf-kkQOwQyI1efKqiKoSh8eeibt9fV4ghlvf8GqsVCHgoffm4hc6bu1l6b39ADjqo6Vuaeqm82CWY3A50Mj7Pbe2dCEJsEvgF-_ae8JLtyfcc7Ly1Q7h4SYJAextoQtVOyNS_5sF"/>
+</div>
+</div>
+</header>
+<div class="pt-32 pb-16 px-12">
+<!-- Centered Content Wrapper -->
+<div class="max-w-3xl mx-auto">
+<!-- Title Section -->
+<div class="mb-12 text-center">
+<h2 class="text-primary font-headline font-extrabold text-[2.5rem] tracking-tighter leading-tight mb-3">Guest Details</h2>
+<p class="text-on-surface-variant font-body text-[1.125rem]">Please provide your contact information to secure your reservation.</p>
+</div>
+<!-- Form Section -->
+<form class="grid grid-cols-2 gap-x-8 gap-y-6 bg-surface-container-lowest p-10 rounded-3xl border border-outline-variant/30 shadow-sm">
+<!-- Name -->
+<div class="col-span-1 flex flex-col gap-2">
+<label class="text-[0.75rem] font-bold tracking-[0.1em] uppercase text-primary">Name</label>
+<input class="bg-surface-container-low border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary/20 transition-all font-body text-on-surface" placeholder="e.g. Julian" type="text"/>
+</div>
+<!-- Last Name -->
+<div class="col-span-1 flex flex-col gap-2">
+<label class="text-[0.75rem] font-bold tracking-[0.1em] uppercase text-primary">Last Name</label>
+<input class="bg-surface-container-low border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary/20 transition-all font-body text-on-surface" placeholder="e.g. Sterling" type="text"/>
+</div>
+<!-- Email -->
+<div class="col-span-2 flex flex-col gap-2">
+<label class="text-[0.75rem] font-bold tracking-[0.1em] uppercase text-primary">Email Address</label>
+<input class="bg-surface-container-low border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary/20 transition-all font-body text-on-surface" placeholder="julian@meridian.com" type="email"/>
+</div>
+<!-- Phone -->
+<div class="col-span-2 flex flex-col gap-2">
+<label class="text-[0.75rem] font-bold tracking-[0.1em] uppercase text-primary">Phone Number</label>
+<input class="bg-surface-container-low border-none rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary/20 transition-all font-body text-on-surface" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+<div class="col-span-2 pt-4">
+<p class="text-[0.8125rem] text-on-surface-variant leading-relaxed text-center mb-8 italic">
+                            By continuing, you agree to our terms of service. A confirmation email will be sent once the booking is finalized.
+                        </p>
+<div class="flex justify-center">
+<button class="w-full md:w-64 px-10 py-5 bg-gradient-to-br from-[#003256] to-[#00497a] text-white font-headline font-bold rounded-full shadow-xl shadow-primary/10 hover:shadow-2xl hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest text-sm" type="submit">
+                                Continue
+                            </button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</main>
+</div>
+</body></html>

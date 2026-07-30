@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Select Date - TurnoPro</title>
+<!-- Google Fonts: Manrope & Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-container-highest": "#e1e3e4",
+                        "inverse-primary": "#9ccaff",
+                        "tertiary": "#4c2700",
+                        "on-tertiary-fixed": "#2e1500",
+                        "on-primary-fixed-variant": "#00497a",
+                        "secondary-container": "#cbe7f5",
+                        "tertiary-fixed": "#ffdcc1",
+                        "inverse-surface": "#2e3132",
+                        "primary-fixed-dim": "#9ccaff",
+                        "primary-fixed": "#d0e4ff",
+                        "surface-container-low": "#f3f4f5",
+                        "surface-container-high": "#e7e8e9",
+                        "secondary": "#48626e",
+                        "on-primary-container": "#7bb9fa",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#00497a",
+                        "outline": "#70787c",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#f9b984",
+                        "on-surface": "#191c1d",
+                        "on-secondary-container": "#4e6874",
+                        "tertiary-container": "#673c11",
+                        "on-secondary-fixed-variant": "#304a55",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#cbe7f5",
+                        "surface": "#ffffff",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary-fixed": "#021f29",
+                        "on-primary": "#ffffff",
+                        "background": "#ffffff",
+                        "secondary-fixed-dim": "#afcbd8",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#683c11",
+                        "on-tertiary-container": "#e5a874",
+                        "outline-variant": "#c0c8cc",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed": "#001d35",
+                        "surface-container": "#edeeef",
+                        "surface-tint": "#12629d",
+                        "primary": "#003256",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#40484c",
+                        "on-background": "#191c1d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        .bg-primary-gradient {
+            background: linear-gradient(135deg, #003256 0%, #00497a 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col md:flex-row">
+<!-- SideNavBar (The Narrative Sidebar) -->
+<aside class="hidden md:flex flex-col h-screen fixed left-0 top-0 py-8 gap-8 bg-blue-950 dark:bg-slate-950 text-white dark:text-blue-100 docked left-0 h-full w-80 color-block no-border flat no shadows">
+<div class="px-8">
+<h1 class="text-white font-bold tracking-tight text-2xl">Azure Meridian</h1>
+<p class="text-white/60 font-['Inter'] uppercase tracking-widest text-[12px] mt-1">Premium Booking Portal</p>
+</div>
+<nav class="flex-grow flex flex-col gap-2 px-4">
+<!-- Select Service (Completed) -->
+<div class="flex items-center gap-4 py-4 px-6 text-white/60 font-medium hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-['Inter'] uppercase tracking-widest text-[14px]">Select Service</span>
+</div>
+<!-- Choose Date (Active) -->
+<div class="flex items-center gap-4 py-4 px-6 bg-white/10 text-white font-bold rounded-lg translate-x-1 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-['Inter'] uppercase tracking-widest text-[14px]">Choose Date</span>
+</div>
+<!-- Guest Details (Inactive) -->
+<div class="flex items-center gap-4 py-4 px-6 text-white/60 font-medium hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">person_add</span>
+<span class="font-['Inter'] uppercase tracking-widest text-[14px]">Guest Details</span>
+</div>
+<!-- Confirmation (Inactive) -->
+<div class="flex items-center gap-4 py-4 px-6 text-white/60 font-medium hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">verified</span>
+<span class="font-['Inter'] uppercase tracking-widest text-[14px]">Confirmation</span>
+</div>
+</nav>
+<div class="px-8 pt-8 border-t border-white/10">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high ring-2 ring-white/20">
+<img alt="Service Provider" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional male stylist in a high-end salon with soft warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBebDChJ3xAFNd5lDT2ImoqbohyMvHAZ2MdKCM65VBbqM9mkO3IBGqKgYL4UaQrim7pPuWIltu5iPxs1OIstNw2JGpwHCPfQOXAUrf-EoudsA9WnTjxBNzj_IReKgwgw5CH3YOL3XKGmtoIHAd-08nGwnbipY9mzWlOv_h-lN5P8hgW5tKHryBVbGEZQQYlsp6XGilRHX9Ag-13i3OXZPSkBi52W4ZGQTiWQFEEoFesPUCsb-kcDUfV5bZZrEvTdbLszRJfrEhpHXRN"/>
+</div>
+<div>
+<p class="text-sm font-bold text-white">Azure Meridian</p>
+<p class="text-xs text-white/40">Premium Concierge</p>
+</div>
+</div>
+<button class="w-full py-4 px-6 bg-white text-primary font-bold rounded-full hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 shadow-xl shadow-primary/10">
+<span class="material-symbols-outlined text-[20px]">help</span>
+                Support
+            </button>
+</div>
+</aside>
+<!-- TopAppBar (Mobile Only & Brand Anchor) -->
+<header class="md:hidden flex justify-between items-center w-full px-6 py-4 max-w-full bg-white dark:bg-slate-900 text-blue-950 dark:text-blue-400 docked full-width top-0 no-border tonal-shift bg-surface shadow-lg dark:shadow-none z-50">
+<span class="text-xl font-black tracking-tighter text-blue-950 dark:text-blue-200">TurnoPro</span>
+<div class="flex gap-4">
+<span class="material-symbols-outlined">notifications</span>
+<span class="material-symbols-outlined">help</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow md:ml-80 bg-surface min-h-screen px-6 py-12 md:px-20 md:py-20 flex flex-col gap-12">
+<!-- Header Section -->
+<div class="flex flex-col gap-4 max-w-4xl">
+<span class="text-primary font-bold tracking-[0.2em] uppercase text-[12px]">Step 2 of 4</span>
+<h2 class="text-4xl md:text-5xl font-['Manrope'] font-extrabold tracking-tight text-primary leading-tight">
+                Select your <br/>preferred date.
+            </h2>
+<p class="text-secondary text-lg max-w-xl">Choose a day that suits your schedule. Our specialists are ready to provide the Azure experience.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 max-w-6xl">
+<!-- Main Calendar Section (Lg-8) -->
+<div class="lg:col-span-8 flex flex-col gap-8">
+<!-- Month Picker Mockup -->
+<div class="bg-surface-container-low rounded-3xl p-8 shadow-sm">
+<div class="flex justify-between items-center mb-10">
+<h3 class="text-2xl font-headline font-bold text-primary">October 2023</h3>
+<div class="flex gap-2">
+<button class="p-3 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-3 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Calendar Grid -->
+<div class="grid grid-cols-7 gap-y-4 text-center">
+<!-- Days of week -->
+<div class="text-[10px] font-label font-bold uppercase tracking-widest text-secondary/60 pb-6">Sun</div>
+<div class="text-[10px] font-label font-bold uppercase tracking-widest text-secondary/60 pb-6">Mon</div>
+<div class="text-[10px] font-label font-bold uppercase tracking-widest text-secondary/60 pb-6">Tue</div>
+<div class="text-[10px] font-label font-bold uppercase tracking-widest text-secondary/60 pb-6">Wed</div>
+<div class="text-[10px] font-label font-bold uppercase tracking-widest text-secondary/60 pb-6">Thu</div>
+<div class="text-[10px] font-label font-bold uppercase tracking-widest text-secondary/60 pb-6">Fri</div>
+<div class="text-[10px] font-label font-bold uppercase tracking-widest text-secondary/60 pb-6">Sat</div>
+<!-- Days (Mock) -->
+<div class="py-4 text-secondary/30">27</div>
+<div class="py-4 text-secondary/30">28</div>
+<div class="py-4 text-secondary/30">29</div>
+<div class="py-4 text-secondary/30">30</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">1</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">2</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">3</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">4</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">5</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">6</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">7</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">8</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">9</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">10</div>
+<!-- Selected State -->
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">11</div>
+<div class="py-4 relative flex items-center justify-center">
+<div class="absolute inset-2 bg-primary-gradient rounded-xl shadow-lg shadow-primary/20"></div>
+<span class="relative text-white font-bold">12</span>
+</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">13</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">14</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">15</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">16</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">17</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">18</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">19</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">20</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">21</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">22</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">23</div>
+<div class="py-4 text-secondary font-medium hover:bg-surface transition-all rounded-xl cursor-pointer">24</div>
+</div>
+</div>
+<!-- Available Slots Mockup -->
+<div class="flex flex-col gap-6">
+<h4 class="text-[14px] font-label font-bold uppercase tracking-widest text-primary">Available Times for Thursday, Oct 12</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<button class="py-4 px-6 rounded-xl bg-surface-container-low text-primary font-bold hover:bg-primary hover:text-white transition-all text-center">09:00 AM</button>
+<button class="py-4 px-6 rounded-xl bg-primary-gradient text-white font-bold shadow-lg shadow-primary/20 text-center">10:30 AM</button>
+<button class="py-4 px-6 rounded-xl bg-surface-container-low text-primary font-bold hover:bg-primary hover:text-white transition-all text-center">12:00 PM</button>
+<button class="py-4 px-6 rounded-xl bg-surface-container-low text-primary font-bold hover:bg-primary hover:text-white transition-all text-center">02:30 PM</button>
+</div>
+</div>
+</div>
+<!-- Booking Summary Sidecard (Lg-4) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<div class="bg-primary text-white rounded-3xl p-8 flex flex-col gap-8 shadow-2xl">
+<div>
+<h4 class="text-[12px] font-label font-bold uppercase tracking-[0.2em] text-white/50 mb-2">Selected Service</h4>
+<p class="text-xl font-headline font-bold">Corte y Barba</p>
+<div class="flex items-center gap-2 mt-4 text-white/70">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span class="text-sm font-medium">45 min</span>
+</div>
+</div>
+<div class="bg-white/5 p-6 rounded-2xl">
+<div class="flex justify-between items-center mb-2">
+<span class="text-white/60 text-sm">Service cost</span>
+<span class="font-bold text-lg">$2500</span>
+</div>
+<div class="flex justify-between items-center text-xs text-white/40">
+<span>Taxes included</span>
+<span>ARS</span>
+</div>
+</div>
+<button class="w-full py-5 rounded-full bg-white text-primary font-extrabold text-lg hover:scale-[1.02] transition-all shadow-xl shadow-primary-container/40 mt-4">
+                        Continue
+                    </button>
+</div>
+<!-- Informational Note -->
+<div class="bg-surface-container-high/40 rounded-3xl p-8">
+<div class="flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary">info</span>
+<div>
+<p class="text-sm font-bold text-primary mb-1">Cancellation Policy</p>
+<p class="text-xs text-secondary leading-relaxed">Cancel up to 24 hours in advance for a full refund. No-shows may be charged a fee.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl flex justify-around items-center py-4 px-6 border-t border-surface-container-high z-50">
+<div class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Date</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-secondary/60">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Details</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-secondary/60">
+<span class="material-symbols-outlined">verified</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Done</span>
+</div>
+</nav>
+</body></html>
