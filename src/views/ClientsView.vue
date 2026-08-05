@@ -5,7 +5,9 @@ import ClientDetailModal from '@/components/ClientDetailModal.vue'
 import type { Client } from '@/components/ClientCard.vue'
 import { dashboardService } from '@/services/dashboardService'
 
-const PAGE_SIZE = 10
+// 12 divide exacto por 1, 2 y 3, que son las columnas del grid en cada
+// breakpoint: así la última fila nunca queda con huecos.
+const PAGE_SIZE = 12
 
 const allClients  = ref<Client[]>([])
 const isLoading   = ref(true)
