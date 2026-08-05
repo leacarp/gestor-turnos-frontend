@@ -1,34 +1,56 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { fechaCorta, oGuion } from '@/utils/clientDisplay'
+import type { TipoCliente } from '@/services/dashboardService'
+
 export interface Client {
   id: string
   name: string
   email: string
   phone: string
+  tipo: TipoCliente
   turnosCount: number
   ultimoTurno: string | null
 }
 
-defineProps<{ client: Client }>()
+const props = defineProps<{ client: Client }>()
 
-function fechaCorta(iso: string | null): string {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' })
-}
+defineEmits<{ select: [client: Client] }>()
+
+// Backend y frontend deployan por separado: si el backend todavía no manda `tipo`,
+// degradamos a INVITADO en lugar de romper el render.
+const esRegistrado = computed(() => props.client.tipo === 'REGISTRADO')
 </script>
 
 <template>
-  <article class="client-card">
+  <article
+    class="client-card"
+    role="button"
+    tabindex="0"
+    :aria-label="`Ver información de ${oGuion(client.name)}`"
+    @click="$emit('select', client)"
+    @keydown.enter.prevent="$emit('select', client)"
+    @keydown.space.prevent="$emit('select', client)"
+  >
     <div class="client-card__content">
-      <h3 class="client-card__name">{{ client.name }}</h3>
+      <div class="client-card__head">
+        <h3 class="client-card__name">{{ oGuion(client.name) }}</h3>
+        <span
+          class="client-card__badge"
+          :class="esRegistrado ? 'client-card__badge--registrado' : 'client-card__badge--invitado'"
+        >
+          {{ esRegistrado ? 'Registrado' : 'Invitado' }}
+        </span>
+      </div>
 
       <div class="client-card__contact">
         <div class="client-card__contact-item">
           <span class="material-symbols-outlined client-card__icon" aria-hidden="true">mail</span>
-          <span class="client-card__text">{{ client.email }}</span>
+          <span class="client-card__text">{{ oGuion(client.email) }}</span>
         </div>
         <div class="client-card__contact-item">
           <span class="material-symbols-outlined client-card__icon" aria-hidden="true">call</span>
-          <span class="client-card__text">{{ client.phone }}</span>
+          <span class="client-card__text">{{ oGuion(client.phone) }}</span>
         </div>
       </div>
 
@@ -72,13 +94,46 @@ function fechaCorta(iso: string | null): string {
   height: 100%;
 }
 
+.client-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.client-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
 .client-card__name {
   font-family: var(--font-family-headline);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
-  margin: 0 0 var(--space-4) 0;
+  margin: 0;
   transition: color var(--transition-fast);
+}
+
+.client-card__badge {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.client-card__badge--registrado {
+  background-color: var(--color-primary-fixed);
+  color: var(--color-primary);
+}
+
+.client-card__badge--invitado {
+  background-color: var(--color-surface-container-high);
+  color: var(--color-on-surface-variant);
 }
 
 .client-card:hover .client-card__name {

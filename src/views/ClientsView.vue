@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import ClientCard from '@/components/ClientCard.vue'
+import ClientDetailModal from '@/components/ClientDetailModal.vue'
 import type { Client } from '@/components/ClientCard.vue'
 import { dashboardService } from '@/services/dashboardService'
 
@@ -11,17 +12,21 @@ const isLoading   = ref(true)
 const error       = ref<string | null>(null)
 const searchQuery = ref('')
 const currentPage = ref(1)
+const selectedClient = ref<Client | null>(null)
 
 onMounted(async () => {
   try {
     const data = await dashboardService.getClientes()
+    // Los turnos de invitado pueden llegar sin teléfono o sin nombre: normalizamos
+    // a string acá para que el filtro y las cards nunca vean undefined.
     allClients.value = data.map(c => ({
       id:          c.id,
-      name:        c.name,
-      email:       c.email,
-      phone:       c.phone,
-      turnosCount: c.turnosCount,
-      ultimoTurno: c.ultimoTurno,
+      name:        c.name  ?? '',
+      email:       c.email ?? '',
+      phone:       c.phone ?? '',
+      tipo:        c.tipo === 'REGISTRADO' ? 'REGISTRADO' : 'INVITADO',
+      turnosCount: c.turnosCount ?? 0,
+      ultimoTurno: c.ultimoTurno ?? null,
     }))
   } catch {
     error.value = 'No se pudieron cargar los clientes.'
@@ -39,9 +44,9 @@ const filteredClients = computed(() => {
   const q = searchQuery.value.toLowerCase().trim()
   if (!q) return allClients.value
   return allClients.value.filter(c =>
-    c.name.toLowerCase().includes(q) ||
-    c.email.toLowerCase().includes(q) ||
-    c.phone.includes(q),
+    (c.name  ?? '').toLowerCase().includes(q) ||
+    (c.email ?? '').toLowerCase().includes(q) ||
+    (c.phone ?? '').includes(q),
   )
 })
 
@@ -130,6 +135,7 @@ const visiblePages = computed(() => {
             v-for="client in pagedClients"
             :key="client.id"
             :client="client"
+            @select="selectedClient = client"
           />
         </div>
 
@@ -178,6 +184,12 @@ const visiblePages = computed(() => {
         de {{ filteredClients.length }} clientes
       </p>
     </template>
+
+    <ClientDetailModal
+      v-if="selectedClient"
+      :client="selectedClient"
+      @close="selectedClient = null"
+    />
   </div>
 </template>
 

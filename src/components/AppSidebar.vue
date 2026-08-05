@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { getInitials } from '@/utils/initials'
 
 const route = useRoute()
 const router = useRouter()
@@ -61,7 +62,7 @@ function handleLogout() {
     <div class="app-sidebar__footer">
       <div class="app-sidebar__user">
         <div class="app-sidebar__user-avatar">
-          <span class="app-sidebar__user-initials">{{ authStore.user?.name?.charAt(0).toUpperCase() ?? '?' }}</span>
+          <span class="app-sidebar__user-initials">{{ getInitials(authStore.user?.name) }}</span>
         </div>
         <div class="app-sidebar__user-info">
           <span class="app-sidebar__user-name">{{ authStore.user?.name ?? '—' }}</span>
