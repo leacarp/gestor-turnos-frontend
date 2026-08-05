@@ -10,7 +10,6 @@ export interface Service {
   category: string
   createdAt: string
   requiereSeña?: boolean
-  porcentajeSeña?: number
   montoSeña?: number
 }
 
@@ -20,6 +19,8 @@ export interface CreateServiceDto {
   duration: number
   price: number
   category: string
+  requiereSeña?: boolean
+  montoSeña?: number
 }
 
 export interface UpdateServiceDto {
@@ -32,14 +33,3 @@ export interface UpdateServiceDto {
   montoSeña?: number
 }
 
-/**
- * Global deposit from providerData.minimumAdvance.
- * It is always treated as a fixed amount.
- */
-export function computeDepositAmount(
-  _price: number,
-  minimumAdvance?: number,
-): number | undefined {
-  if (minimumAdvance == null || minimumAdvance <= 0) return undefined
-  return minimumAdvance
-}

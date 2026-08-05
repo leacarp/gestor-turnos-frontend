@@ -7,10 +7,9 @@ import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import type { ServiceItem } from '@/components/ServiceCard.vue'
 import { useServiciosStore } from '@/stores/useServiciosStore'
-import { computeDepositAmount } from '@/types/servicios'
 import { validateServiceForm, isServiceFormValid } from '@/utils/serviceFormValidation'
 
-type ServiceDraft = Pick<ServiceItem, 'title' | 'category' | 'description' | 'duration' | 'price'>
+type ServiceDraft = Pick<ServiceItem, 'title' | 'category' | 'description' | 'duration' | 'price'> & { requiereSeña: boolean; montoSeña: number }
 
 const route = useRoute()
 const router = useRouter()
@@ -28,8 +27,6 @@ const categories = computed(() => {
 
 const services = computed((): ServiceItem[] => {
   let list = store.items.map((s, index) => {
-    const depositAmount = computeDepositAmount(s.price, store.depositPercent)
-
     return {
       id: s.id,
       title: s.name,
@@ -38,7 +35,7 @@ const services = computed((): ServiceItem[] => {
       duration: s.duration,
       price: s.price,
       colorTheme: COLOR_THEMES[index % COLOR_THEMES.length],
-      depositAmount,
+      depositAmount: s.requiereSeña ? s.montoSeña : undefined,
     }
   })
 
@@ -71,15 +68,17 @@ const editingService = ref<ServiceDraft>({
   description: '',
   duration: 60,
   price: 0,
+  requiereSeña: false,
+  montoSeña: 0,
 })
 
 const formError = ref<string | null>(null)
 
-const isFormValid = computed(() => isServiceFormValid(editingService.value, store.depositPercent))
+const isFormValid = computed(() => isServiceFormValid(editingService.value))
 
 watch(editingService, () => {
   if (formError.value) {
-    formError.value = validateServiceForm(editingService.value, store.depositPercent)
+    formError.value = validateServiceForm(editingService.value)
   }
 }, { deep: true })
 
@@ -91,6 +90,8 @@ function handleNewService() {
     description: '',
     duration: 60,
     price: 0,
+    requiereSeña: false,
+    montoSeña: 0,
   }
   formError.value = null
   showEditModal.value = true
@@ -107,13 +108,15 @@ function handleEdit(id: string | number) {
     description: srv.description,
     duration: srv.duration,
     price: srv.price,
+    requiereSeña: srv.requiereSeña ?? false,
+    montoSeña: srv.montoSeña ?? 0,
   }
   formError.value = null
   showEditModal.value = true
 }
 
 async function saveEdit() {
-  const validationError = validateServiceForm(editingService.value, store.depositPercent)
+  const validationError = validateServiceForm(editingService.value)
   if (validationError) {
     formError.value = validationError
     return
@@ -125,6 +128,8 @@ async function saveEdit() {
     duration: Number(editingService.value.duration),
     price: Number(editingService.value.price),
     category: editingService.value.category.trim(),
+    requiereSeña: editingService.value.requiereSeña,
+    montoSeña: editingService.value.requiereSeña ? Number(editingService.value.montoSeña) : 0,
   }
 
   try {
@@ -191,9 +196,6 @@ onMounted(async () => {
         <div class="services-view__title-group">
           <h1 class="services-view__title">Catálogo de Servicios</h1>
           <p class="services-view__subtitle">Gestiona los servicios que ofreces a tus clientes</p>
-          <p v-if="store.depositPercent" class="services-view__subtitle">
-            Seña fija activa: ${{ store.depositPercent?.toLocaleString('es-AR') }} por reserva
-          </p>
         </div>
         <AppButton variant="gradient" iconLeft="add" @click="handleNewService">
           Nuevo servicio
@@ -277,16 +279,18 @@ onMounted(async () => {
             <AppInput v-model="editingService.duration" type="number" label="Duración (min)" />
             <AppInput v-model="editingService.price" type="number" label="Precio ($)" />
           </div>
+          <div class="services-view__modal-row services-view__modal-checkbox">
+            <input type="checkbox" id="requiereSena" v-model="editingService.requiereSeña" />
+            <label for="requiereSena">Requiere seña para reservar</label>
+          </div>
+          <AppInput 
+            v-if="editingService.requiereSeña" 
+            v-model="editingService.montoSeña" 
+            type="number" 
+            label="Monto de la seña ($)" 
+          />
           <p v-if="formError" class="services-view__modal-desc" style="color: #ba1a1a; margin-bottom: 0;">
             {{ formError }}
-          </p>
-          <p
-            v-if="store.depositPercent && Number(editingService.price) > 0"
-            class="services-view__modal-desc"
-          >
-            Con tu seña fija de ${{ store.depositPercent?.toLocaleString('es-AR') }}:
-            precio ${{ Number(editingService.price).toLocaleString('es-AR') }} —
-            seña ${{ computeDepositAmount(Number(editingService.price), store.depositPercent)?.toLocaleString('es-AR') }}
           </p>
         </div>
 
@@ -606,6 +610,22 @@ onMounted(async () => {
 }
 .services-view__modal-row > * {
   flex: 1;
+}
+
+.services-view__modal-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+}
+
+.services-view__modal-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .services-view__modal-actions {

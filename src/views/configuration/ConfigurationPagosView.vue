@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { toast } from 'vue3-toastify'
 import { Icon } from '@iconify/vue'
 import AppButton from '@/components/AppButton.vue'
-import { usePagosStore } from '@/stores/usePagosStore'
-import { useServiciosStore } from '@/stores/useServiciosStore'
 import { useUserStore } from '@/stores/useUserStore'
 import { pagosService } from '@/services/pagosService'
 
-const pagosStore = usePagosStore()
-const serviciosStore = useServiciosStore()
 const userStore = useUserStore()
 
 const isMpConnected = computed(() => !!userStore.user?.providerData?.mpConnected)
@@ -33,47 +29,8 @@ async function handleConnectMp() {
 }
 
 onMounted(async () => {
-  await Promise.all([
-    pagosStore.fetchMontoSeña(),
-    serviciosStore.fetchAll(),
-    userStore.fetchMe()
-  ])
+  await userStore.fetchMe()
 })
-
-/** Input local — se inicializa desde el store cuando carga */
-const inputMonto = ref<number | null>(null)
-
-watch(
-  () => pagosStore.montoSeña,
-  (val) => {
-    if (val !== null && inputMonto.value === null) {
-      inputMonto.value = val
-    }
-  },
-  { immediate: true }
-)
-
-const isDirty = computed(() => pagosStore.isDirty)
-
-function onMontoInput() {
-  pagosStore.markDirty()
-}
-
-async function handleSaveMontoSeña() {
-  if (inputMonto.value == null || inputMonto.value < 0) {
-    toast.error('Ingresa un monto válido.')
-    return
-  }
-  
-  try {
-    // 1. Guardar la configuración global (monto de seña)
-    await pagosStore.saveMontoSeña(inputMonto.value)
-    
-    toast.success('Configuración de pagos guardada correctamente.')
-  } catch {
-    toast.error(pagosStore.error ?? serviciosStore.error ?? 'Error al guardar.')
-  }
-}
 </script>
 
 <template>
@@ -132,50 +89,6 @@ async function handleSaveMontoSeña() {
           </div>
         </div>
 
-        <!-- Financial Controls Card -->
-        <div class="config-pagos__controls config-pagos__card config-pagos__card--shadow">
-          <div class="config-pagos__controls-inner">
-            <div class="config-pagos__controls-left">
-              <div>
-                <h3 class="config-pagos__controls-title">Valores de Reserva</h3>
-                <p class="config-pagos__controls-desc">Define los montos o porcentajes fijos que los clientes deben abonar para asegurar su lugar.</p>
-              </div>
-              
-              <div class="config-pagos__inputs-grid" style="grid-template-columns: 1fr;">
-                <div class="config-pagos__input-group">
-                  <label class="config-pagos__label">Monto de seña ($)</label>
-                  <div class="config-pagos__input-wrapper">
-                    <span class="config-pagos__input-prefix">$</span>
-                    <input 
-                      type="number" 
-                      min="0"
-                      placeholder="0.00" 
-                      class="config-pagos__input config-pagos__input--prefix"
-                      v-model.number="inputMonto"
-                      @input="onMontoInput"
-                      :disabled="pagosStore.isLoading"
-                    />
-                  </div>
-                  <p v-if="pagosStore.isLoading" class="config-pagos__input-hint">Cargando...</p>
-                  <p v-else-if="pagosStore.error" class="config-pagos__input-hint" style="color: var(--color-error);">{{ pagosStore.error }}</p>
-                  <p v-else class="config-pagos__input-hint">Monto fijo que el cliente paga al reservar. Al guardarse afectará a todos los servicios. Dejar en 0 para no requerir seña.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="config-pagos__actions">
-            <AppButton 
-              variant="gradient" 
-              iconLeft="save"
-              :disabled="!isDirty || pagosStore.isSaving || serviciosStore.isSaving"
-              :is-loading="pagosStore.isSaving || serviciosStore.isSaving"
-              @click="handleSaveMontoSeña"
-            >
-              Guardar configuración de pagos
-            </AppButton>
-          </div>
-        </div>
 
         <!-- Promotional -->
         <div class="config-pagos__promo">

@@ -23,7 +23,6 @@ export interface ScheduleDay {
   timeRanges: TimeRange[]
 }
 
-export type AdvanceType = 'amount'
 
 export const useOnboardingStore = defineStore('onboarding', () => {
   const role = ref<UserRole>('provider')
@@ -47,11 +46,6 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     servicePrice: '' as string | number,
   })
 
-  const advance = ref({
-    enabled: false,
-    type: 'amount' as AdvanceType,
-    value: 0,
-  })
 
   const schedule = ref<ScheduleDay[]>([
     { id: 1, dayName: 'Lunes', isActive: true, timeRanges: [{ start: '09:00', end: '18:00' }] },
@@ -80,32 +74,6 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     return Number(business.servicePrice) || 0
   }
 
-  /** Monto calculado para vista previa en onboarding */
-  function getAdvanceAmount(): number | undefined {
-    if (!advance.value.enabled || advance.value.value <= 0) return undefined
-    return advance.value.value
-  }
-
-  /** Valor persistido en minimumAdvance: monto fijo */
-  function getMinimumAdvanceForStorage(): number | undefined {
-    if (!advance.value.enabled || advance.value.value <= 0) return undefined
-    return advance.value.value
-  }
-
-  function validateAdvance(): string | null {
-    if (!advance.value.enabled || advance.value.value <= 0) return null
-
-    const basePrice = getServicePrice()
-    if (basePrice <= 0) {
-      return 'Ingresá un precio de referencia para configurar la seña.'
-    }
-
-    if (advance.value.value > basePrice) {
-      return 'La seña no puede ser mayor al precio del servicio.'
-    }
-
-    return null
-  }
 
   function buildRegisterDto(): RegisterDto {
     const id = getIdentityData()
@@ -136,10 +104,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         socialMedia: socialMedia.length > 0 ? socialMedia : undefined,
       }
 
-      const minimumAdvance = getMinimumAdvanceForStorage()
-      if (minimumAdvance !== undefined) {
-        providerData.minimumAdvance = minimumAdvance
-      }
+
 
       dto.providerData = providerData
     }
@@ -179,11 +144,9 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     identity,
     savedIdentity,
     business,
-    advance,
     schedule,
     saveIdentitySnapshot,
     getIdentityData,
-    validateAdvance,
     getServicePrice,
     buildRegisterDto,
     buildWeeklyScheduleSlots,

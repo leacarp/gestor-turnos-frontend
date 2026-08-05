@@ -16,65 +16,7 @@ const categoryOptions = [
   { value: 'otros', label: 'Otros' },
 ]
 
-const showAdvanceModal = ref(false)
-const modalAdvanceType = ref<'amount'>('amount')
-const modalAdvanceValue = ref<number>(0)
-const advanceModalError = ref<string | null>(null)
 
-const hasServicePrice = computed(() => store.getServicePrice() > 0)
-
-const advanceSummary = computed(() => {
-  if (!store.advance.enabled) return ''
-  return `Seña: $${store.advance.value.toLocaleString('es-AR')}`
-})
-
-const modalAdvanceMax = computed(() => {
-  const base = store.getServicePrice()
-  return base > 0 ? base : undefined
-})
-
-function openAdvanceModal() {
-  modalAdvanceType.value = store.advance.type
-  modalAdvanceValue.value = store.advance.value || 0
-  advanceModalError.value = null
-  showAdvanceModal.value = true
-}
-
-function validateModalAdvance(): string | null {
-  const base = store.getServicePrice()
-  const value = Number(modalAdvanceValue.value)
-
-  if (!value || value <= 0) {
-    return 'Ingresá un valor mayor a 0.'
-  }
-
-  if (base > 0 && value > base) {
-    return 'La seña no puede ser mayor al precio del servicio.'
-  }
-
-  return null
-}
-
-function saveAdvance() {
-  const error = validateModalAdvance()
-  if (error) {
-    advanceModalError.value = error
-    return
-  }
-
-  store.advance.enabled = true
-  store.advance.type = modalAdvanceType.value
-  store.advance.value = Number(modalAdvanceValue.value)
-  advanceModalError.value = null
-  showAdvanceModal.value = false
-}
-
-function clearAdvance() {
-  store.advance.enabled = false
-  store.advance.value = 0
-  advanceModalError.value = null
-  showAdvanceModal.value = false
-}
 </script>
 
 <template>
@@ -151,42 +93,9 @@ function clearAdvance() {
               </div>
             </div>
           </div>
-        </div>
-
-        <div v-if="hasServicePrice" class="step-business__full-width step-business__advance">
-          <div class="step-business__advance-info">
-            <span class="material-symbols-outlined">payments</span>
-            <div>
-              <p class="step-business__advance-title">Seña / anticipo (opcional)</p>
-              <p v-if="advanceSummary" class="step-business__advance-summary">{{ advanceSummary }}</p>
-              <p v-else class="step-business__advance-summary">Configurá el monto fijo que se usará como seña en todos tus servicios.</p>
-            </div>
-          </div>
-          <AppButton type="button" variant="outline" size="sm" @click="openAdvanceModal">
-            {{ store.advance.enabled ? 'Editar seña' : 'Agregar seña' }}
-          </AppButton>
-        </div>
+      </div>
       </div>
     </form>
-
-    <div v-if="showAdvanceModal" class="step-business__modal-overlay" @click.self="showAdvanceModal = false">
-      <div class="step-business__modal">
-        <h3 class="step-business__modal-title">Configurar seña</h3>
-
-        <AppInput
-          v-model="modalAdvanceValue"
-          type="number"
-          label="Monto de la seña ($)"
-          placeholder="Ej: 3000"
-          :error="advanceModalError ?? undefined"
-        />
-
-        <div class="step-business__modal-actions">
-          <AppButton type="button" variant="outline" @click="showAdvanceModal = false">Cancelar</AppButton>
-          <AppButton type="button" variant="gradient" @click="saveAdvance">Guardar</AppButton>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 

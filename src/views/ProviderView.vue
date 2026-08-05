@@ -38,14 +38,14 @@ const phone = ref('')
 const serviceType = ref('')
 const address = ref('')
 const publicInfo = ref('')
-const minimumAdvance = ref<number | ''>('')
+
 const socialMedia = ref<{ platform: string; url: string }[]>([])
 
 // Estado original para detectar cambios
 const original = ref({
   name: '', email: '', phone: '',
   serviceType: '', address: '', publicInfo: '',
-  minimumAdvance: '' as number | '',
+
   socialMedia: [] as { platform: string; url: string }[],
 })
 
@@ -137,7 +137,7 @@ const profileFields = computed(() => [
   { label: 'Rubro', filled: !!serviceType.value },
   { label: 'Dirección', filled: !!address.value.trim() },
   { label: 'Descripción pública', filled: !!publicInfo.value.trim() },
-  { label: 'Anticipación mínima', filled: minimumAdvance.value !== '' && minimumAdvance.value !== null },
+
   { label: 'Redes sociales', filled: socialMedia.value.some(s => s.url.trim()) },
 ])
 
@@ -156,7 +156,7 @@ const isDirty = computed(() => {
   if (serviceType.value !== original.value.serviceType) return true
   if (address.value !== original.value.address) return true
   if (publicInfo.value !== original.value.publicInfo) return true
-  if (minimumAdvance.value !== original.value.minimumAdvance) return true
+
   if (JSON.stringify(socialMedia.value) !== JSON.stringify(original.value.socialMedia)) return true
   return false
 })
@@ -169,7 +169,7 @@ function populateForm(user: Awaited<ReturnType<typeof userService.getMe>>['data'
   serviceType.value = user.providerData?.serviceType ?? ''
   address.value = user.providerData?.address ?? ''
   publicInfo.value = user.providerData?.publicInfo ?? ''
-  minimumAdvance.value = user.providerData?.minimumAdvance ?? ''
+
   socialMedia.value = user.providerData?.socialMedia
     ? user.providerData.socialMedia.map(s => ({ ...s }))
     : []
@@ -192,7 +192,7 @@ function populateForm(user: Awaited<ReturnType<typeof userService.getMe>>['data'
     serviceType: serviceType.value,
     address: address.value,
     publicInfo: publicInfo.value,
-    minimumAdvance: minimumAdvance.value,
+
     socialMedia: socialMedia.value.map(s => ({ ...s })),
   }
 }
@@ -216,7 +216,7 @@ function discardChanges() {
   serviceType.value = original.value.serviceType
   address.value = original.value.address
   publicInfo.value = original.value.publicInfo
-  minimumAdvance.value = original.value.minimumAdvance
+
   socialMedia.value = original.value.socialMedia.map(s => ({ ...s }))
 }
 
@@ -235,7 +235,7 @@ async function handleSubmit() {
       serviceType.value !== original.value.serviceType ||
       address.value !== original.value.address ||
       publicInfo.value !== original.value.publicInfo ||
-      minimumAdvance.value !== original.value.minimumAdvance ||
+
       JSON.stringify(socialMedia.value) !== JSON.stringify(original.value.socialMedia)
 
     if (providerChanged) {
@@ -243,8 +243,7 @@ async function handleSubmit() {
       if (serviceType.value !== original.value.serviceType) payload.providerData.serviceType = serviceType.value
       if (address.value !== original.value.address) payload.providerData.address = address.value
       if (publicInfo.value !== original.value.publicInfo) payload.providerData.publicInfo = publicInfo.value
-      if (minimumAdvance.value !== original.value.minimumAdvance)
-        payload.providerData.minimumAdvance = minimumAdvance.value === '' ? undefined : Number(minimumAdvance.value)
+
       if (JSON.stringify(socialMedia.value) !== JSON.stringify(original.value.socialMedia))
         payload.providerData.socialMedia = socialMedia.value.filter(s => s.url.trim())
     }
@@ -342,13 +341,6 @@ async function handleSubmit() {
                 <div class="provider-view__form-grid--full">
                   <AppInput v-model="address" label="Dirección" placeholder="Ej: Av. Santa Fe 1234, CABA" iconLeft="location_on" />
                 </div>
-                <AppInput
-                  v-model="minimumAdvance"
-                  label="Anticipación mínima para reservas"
-                  type="number"
-                  placeholder="Ej: 60"
-                  iconLeft="monetization_on"
-                />
               </div>
             </div>
 

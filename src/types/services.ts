@@ -5,7 +5,6 @@ export interface ServiceResponse {
   precio: number
   proveedorId: string
   requiereSeña: boolean
-  porcentajeSeña: number
   montoSeña: number
   createdAt: string
   categoria: string

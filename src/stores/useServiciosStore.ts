@@ -12,17 +12,6 @@ export const useServiciosStore = defineStore('servicios', () => {
   const isLoading = ref(false)
   const isSaving = ref(false)
   const error = ref<string | null>(null)
-  /** Global fixed deposit from providerData.minimumAdvance */
-  const depositPercent = ref<number | undefined>(undefined)
-
-  async function fetchDepositPercent() {
-    try {
-      const { data } = await userService.getMe()
-      depositPercent.value = data.providerData?.minimumAdvance
-    } catch (err) {
-      console.error('[useServiciosStore] fetchDepositPercent', err)
-    }
-  }
 
   async function fetchAll() {
     const authStore = useAuthStore()
@@ -37,7 +26,7 @@ export const useServiciosStore = defineStore('servicios', () => {
     isLoading.value = true
     error.value = null
     try {
-      await fetchDepositPercent()
+
       items.value = await serviciosService.getByProvider(providerId)
     } catch (err) {
       error.value = parseApiError(err, 'Error al cargar los servicios')
@@ -101,7 +90,7 @@ export const useServiciosStore = defineStore('servicios', () => {
     isLoading,
     isSaving,
     error,
-    depositPercent,
+
     fetchAll,
     create,
     update,

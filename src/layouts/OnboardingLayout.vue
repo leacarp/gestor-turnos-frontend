@@ -86,11 +86,6 @@ function validateProviderBusiness(): boolean {
     return false
   }
 
-  const advanceError = store.validateAdvance()
-  if (advanceError) {
-    submitError.value = advanceError
-    return false
-  }
   return true
 }
 

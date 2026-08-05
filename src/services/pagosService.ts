@@ -3,7 +3,6 @@
 // Endpoint: PUT /users/me  { providerData: { minimumAdvance: number } }
 import { apiClient } from '@/lib/axios'
 import type { 
-  UpdateMinimumAdvanceDto, 
   CreatePreferenceDto, 
   CreateGuestPreferenceDto, 
   PreferenceResponse 
@@ -11,14 +10,6 @@ import type {
 import type { CurrentUser } from '@/services/userService'
 
 export const pagosService = {
-  /** Actualiza el monto de seña global del proveedor */
-  updateMinimumAdvance: (monto: number) => {
-    const dto: UpdateMinimumAdvanceDto = {
-      providerData: { minimumAdvance: monto },
-    }
-    return apiClient.put<CurrentUser>('/users/me', dto)
-  },
-
   /** Crea una preferencia de pago para usuarios logueados */
   createPreference: (dto: CreatePreferenceDto) => {
     return apiClient.post<PreferenceResponse>('/mercadopago/preference', dto)

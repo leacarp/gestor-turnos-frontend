@@ -16,7 +16,6 @@ export interface SocialMediaDto {
 export interface ProviderDataDto {
   address: string
   serviceType: string
-  minimumAdvance?: number
   publicInfo?: string
   socialMedia?: SocialMediaDto[]
   mpConnected?: boolean
