@@ -1,4 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { clearToken, getValidToken, hasExpiredToken } from '@/lib/token'
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    /** La ruta exige sesión activa. Se hereda a las rutas hijas. */
+    requiresAuth?: boolean
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,6 +15,7 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/layouts/DashboardLayout.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -181,6 +190,30 @@ const router = createRouter({
       component: () => import('@/views/NotFoundView.vue')
     }
   ],
+})
+
+/**
+ * Corta el acceso a las rutas privadas antes de montar la vista. Chequear el
+ * `exp` del JWT acá (y no solo si el token existe) evita el parpadeo de entrar
+ * al dashboard, disparar los requests y recién entonces ser expulsado por los
+ * 401. No es un control de seguridad: el backend valida en cada request.
+ */
+router.beforeEach((to) => {
+  if (!to.matched.some((r) => r.meta.requiresAuth)) return true
+  if (getValidToken()) return true
+
+  const vencido = hasExpiredToken()
+  clearToken()
+
+  return {
+    name: 'login',
+    query: {
+      redirect: to.fullPath,
+      // Solo avisamos "se venció" si de verdad había una sesión: quien entra
+      // de cero a una URL privada no tenía ninguna.
+      ...(vencido ? { expired: '1' } : {}),
+    },
+  }
 })
 
 export default router
