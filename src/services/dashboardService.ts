@@ -30,11 +30,15 @@ export interface DashboardMetrics {
   ultimosTurnos: UltimoTurno[]
 }
 
+export type TipoCliente = 'REGISTRADO' | 'INVITADO'
+
 export interface ClienteProveedor {
   id: string
   name: string
   email: string
   phone: string
+  /** REGISTRADO si reservó con cuenta, INVITADO si reservó sin loguearse. */
+  tipo: TipoCliente
   turnosCount: number
   ultimoTurno: string | null
 }

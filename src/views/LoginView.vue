@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, reactive } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
 
+const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -13,9 +14,32 @@ const form = reactive({
   password: '',
 })
 
+/** El guard del router o el interceptor de 401 nos manda acá con ?expired=1 */
+const sesionVencida = computed(() => route.query.expired === '1')
+
+/**
+ * Ruta a la que volver después de loguearse. Solo aceptamos paths internos:
+ * un `redirect` con host propio sería un open redirect.
+ */
+function destinoDeVuelta(): string | null {
+  const redirect = route.query.redirect
+  if (typeof redirect !== 'string') return null
+  if (!redirect.startsWith('/') || redirect.startsWith('//')) return null
+  return redirect
+}
+
 async function handleLogin() {
   try {
     await authStore.login(form)
+
+    // Un cliente no tiene nada que hacer en el dashboard del proveedor, así que
+    // el redirect solo aplica al resto de los roles.
+    const vuelta = authStore.user?.role === 'client' ? null : destinoDeVuelta()
+    if (vuelta) {
+      await router.push(vuelta)
+      return
+    }
+
     await router.push({ name: authStore.user?.role === 'client' ? 'landing' : 'home' })
   } catch {
     // error en authStore.error
@@ -30,6 +54,11 @@ async function handleLogin() {
         <h1 class="login-view__title">Iniciar sesión</h1>
         <p class="login-view__subtitle">Ingresá a tu cuenta para gestionar tus turnos.</p>
       </div>
+
+      <p v-if="sesionVencida" class="login-view__notice" role="status">
+        <span class="material-symbols-outlined" aria-hidden="true">schedule</span>
+        Tu sesión expiró. Iniciá sesión de nuevo para continuar.
+      </p>
 
       <form class="login-view__form" @submit.prevent="handleLogin">
         <AppInput
@@ -120,6 +149,25 @@ async function handleLogin() {
   font-size: var(--font-size-sm);
   color: var(--color-error);
   margin: 0;
+}
+
+.login-view__notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-container-low);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.login-view__notice .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--color-primary);
+  flex-shrink: 0;
 }
 
 .login-view__register-link {

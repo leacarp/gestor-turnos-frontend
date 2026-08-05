@@ -7,6 +7,7 @@ import AppInput from '@/components/AppInput.vue'
 import AppSelect from '@/components/AppSelect.vue'
 import { turnoService } from '@/services/turnoService'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { getInitials } from '@/utils/initials'
 
 export type EstadoTurnoAgenda = 'confirmado' | 'pendiente' | 'cancelado' | 'finalizado'
 
@@ -300,13 +301,9 @@ async function confirmCancelAllTurnos() {
           />
         </div>
         <div class="calendar-view__topbar-icons">
-          <button type="button" class="calendar-view__icon-btn" aria-label="Notificaciones">
-            <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
-          </button>
-          <button type="button" class="calendar-view__icon-btn" aria-label="Historial">
-            <span class="material-symbols-outlined" aria-hidden="true">history</span>
-          </button>
-          <div class="calendar-view__avatar" aria-hidden="true">JD</div>
+          <div class="calendar-view__avatar" :title="authStore.user?.name ?? ''">
+            {{ getInitials(authStore.user?.name) }}
+          </div>
         </div>
       </div>
     </header>
@@ -556,20 +553,6 @@ async function confirmCancelAllTurnos() {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-}
-
-.calendar-view__icon-btn {
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-full);
-  padding: var(--space-2);
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: background-color var(--transition-base);
-}
-
-.calendar-view__icon-btn:hover {
-  background-color: var(--color-surface-container-low);
 }
 
 .calendar-view__avatar {
