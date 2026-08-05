@@ -2,11 +2,13 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authService } from '@/services/authService'
 import { userService } from '@/services/userService'
-import { AUTH_TOKEN_KEY } from '@/lib/axios'
+import { AUTH_TOKEN_KEY, clearToken, getValidToken } from '@/lib/token'
 import type { LoginDto, RegisterDto, AuthResponse, AuthUser } from '@/types/auth'
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref<string | null>(localStorage.getItem(AUTH_TOKEN_KEY))
+  // getValidToken y no localStorage directo: un token vencido tiene que dejar
+  // isAuthenticated en false, si no el store contradice al guard del router.
+  const token = ref<string | null>(getValidToken())
   const user = ref<AuthUser | null>(null)
   const isLoading = ref(false)
   const error = ref<string | null>(null)
@@ -44,7 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     token.value = null
     user.value = null
-    localStorage.removeItem(AUTH_TOKEN_KEY)
+    clearToken()
   }
 
   /** Restaura user desde API si hay token pero se perdió el estado (ej. F5) */
