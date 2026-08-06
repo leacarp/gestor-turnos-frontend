@@ -12,7 +12,6 @@ interface ServicioApi {
   createdAt: string
   description?: string
   requiereSeña?: boolean
-  porcentajeSeña?: number
   montoSeña?: number
 }
 
@@ -30,7 +29,6 @@ function toService(raw: ServicioApi): Service {
         ? raw.createdAt
         : new Date(raw.createdAt).toISOString(),
     requiereSeña: raw.requiereSeña,
-    porcentajeSeña: raw.porcentajeSeña,
     montoSeña: raw.montoSeña,
   }
 }
@@ -42,6 +40,8 @@ function toCreatePayload(dto: CreateServiceDto) {
     duracion: dto.duration,
     precio: dto.price,
     categoria: dto.category,
+    requiereSeña: dto.requiereSeña,
+    montoSeña: dto.montoSeña,
   }
 }
 
