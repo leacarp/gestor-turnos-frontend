@@ -206,7 +206,7 @@ const visiblePages = computed(() => {
 
 /* ── Header ───────────────────────────────────────────── */
 .clients-view__header {
-  padding: var(--space-12) var(--space-12) var(--space-8);
+  padding: var(--page-padding-top) var(--page-padding-x) var(--space-6);
 }
 
 .clients-view__header-content {
@@ -232,7 +232,7 @@ const visiblePages = computed(() => {
 }
 
 .clients-view__title {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 800;
   color: var(--color-text-primary);
   letter-spacing: -0.025em;
@@ -240,9 +240,19 @@ const visiblePages = computed(() => {
 }
 
 .clients-view__subtitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   color: var(--color-text-secondary);
   margin: 0;
+}
+
+@media (min-width: 768px) {
+  .clients-view__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .clients-view__subtitle {
+    font-size: var(--font-size-lg);
+  }
 }
 
 .clients-view__count {
@@ -257,7 +267,7 @@ const visiblePages = computed(() => {
 
 /* ── Search ───────────────────────────────────────────── */
 .clients-view__filters {
-  padding: 0 var(--space-12) var(--space-6);
+  padding: 0 var(--page-padding-x) var(--space-6);
 }
 
 .clients-view__filters-content {
@@ -342,7 +352,7 @@ const visiblePages = computed(() => {
 
 /* ── Grid ─────────────────────────────────────────────── */
 .clients-view__grid-section {
-  padding: 0 var(--space-12) var(--space-8);
+  padding: 0 var(--page-padding-x) var(--space-8);
 }
 
 .clients-view__grid {
@@ -368,13 +378,19 @@ const visiblePages = computed(() => {
   justify-content: center;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-16);
+  padding: var(--space-10) var(--space-4);
   border: 2px dashed var(--color-border);
   border-radius: var(--radius-2xl);
   color: var(--color-text-secondary);
   text-align: center;
   max-width: var(--container-max-width);
-  margin: 0 var(--space-12);
+  margin: 0 var(--page-padding-x);
+}
+
+@media (min-width: 768px) {
+  .clients-view__empty {
+    padding: var(--space-16);
+  }
 }
 
 .clients-view__empty-icon {
@@ -387,13 +403,15 @@ const visiblePages = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Con muchas páginas los botones no entran en una fila de 375px */
+  flex-wrap: wrap;
   gap: var(--space-2);
-  padding: var(--space-4) var(--space-12) 0;
+  padding: var(--space-4) var(--page-padding-x) 0;
 }
 
 .pagination__btn {
-  min-width: 36px;
-  height: 36px;
+  min-width: 40px;
+  height: 40px;
   padding: 0 var(--space-2);
   border: 1px solid var(--color-surface-container);
   border-radius: var(--radius-lg);

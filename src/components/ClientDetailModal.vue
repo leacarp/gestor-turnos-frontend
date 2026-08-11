@@ -135,11 +135,15 @@ const fechaLarga = (iso: string | null): string => {
   position: relative;
   width: 100%;
   max-width: 28rem;
+  /* 100vh en Safari iOS mide la ventana con la barra de direcciones
+   * retraída, así que el modal quedaba más alto que lo visible. dvh sigue
+   * el viewport real; el vh queda de fallback para navegadores viejos. */
   max-height: calc(100vh - var(--space-8));
+  max-height: calc(100dvh - var(--space-8));
   overflow-y: auto;
   background: var(--color-surface-container-lowest);
   border-radius: var(--radius-xl);
-  padding: var(--space-8);
+  padding: var(--space-6);
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--color-surface-container);
   font-family: var(--font-family-base);
@@ -147,8 +151,8 @@ const fechaLarga = (iso: string | null): string => {
 
 .client-detail__close {
   position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
+  top: var(--space-2);
+  right: var(--space-2);
   border: none;
   background: transparent;
   border-radius: var(--radius-full);
@@ -156,6 +160,10 @@ const fechaLarga = (iso: string | null): string => {
   cursor: pointer;
   color: var(--color-on-surface-variant);
   display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap-target-min);
+  min-height: var(--tap-target-min);
   transition: background-color var(--transition-fast);
 }
 
@@ -317,7 +325,30 @@ const fechaLarga = (iso: string | null): string => {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-  justify-content: flex-end;
+  /* En celular los botones ocupan el ancho completo, apilados; desde 480px
+   * vuelven a alinearse a la derecha. */
+  flex-direction: column;
+}
+
+.client-detail__actions > * {
+  width: 100%;
+}
+
+@media (min-width: 480px) {
+  .client-detail__actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .client-detail__actions > * {
+    width: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .client-detail {
+    padding: var(--space-8);
+  }
 }
 
 .client-detail__actions:empty {

@@ -488,16 +488,18 @@ async function confirmCancelAllTurnos() {
 
 .calendar-view__topbar {
   width: 100%;
-  padding: var(--space-12) var(--space-12) var(--space-8);
+  padding: var(--page-padding-top) var(--page-padding-x) var(--space-6);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  /* En celular el buscador no entra al lado del título: apilamos. */
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
   background: transparent;
 }
 
 .calendar-view__topbar-title {
   margin: 0;
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 800;
   letter-spacing: -0.025em;
   color: var(--color-text-primary);
@@ -506,13 +508,33 @@ async function confirmCancelAllTurnos() {
 .calendar-view__topbar-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .calendar-view__topbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-8);
+  }
+
+  .calendar-view__topbar-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .calendar-view__topbar-actions {
+    gap: var(--space-6);
+  }
 }
 
 .calendar-view__search {
   position: relative;
   display: flex;
   align-items: center;
+  /* Ocupa el ancho sobrante para que el avatar quede pegado a la derecha */
+  flex: 1;
+  min-width: 0;
 }
 
 .calendar-view__search-icon {
@@ -528,8 +550,8 @@ async function confirmCancelAllTurnos() {
 }
 
 .calendar-view__search-input {
-  width: 16rem;
-  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-12);
+  width: 100%;
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12);
   background-color: var(--color-surface-container-low);
   border: none;
   border-radius: var(--radius-2xl);
@@ -547,6 +569,18 @@ async function confirmCancelAllTurnos() {
 .calendar-view__search-input:focus {
   background-color: var(--color-surface-container-lowest);
   box-shadow: 0 0 0 2px rgba(0, 50, 86, 0.2);
+}
+
+@media (min-width: 768px) {
+  .calendar-view__search {
+    flex: 0 0 auto;
+  }
+
+  .calendar-view__search-input {
+    width: 16rem;
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+  }
 }
 
 .calendar-view__topbar-icons {
@@ -569,16 +603,26 @@ async function confirmCancelAllTurnos() {
 }
 
 .calendar-view__content {
-  padding: 0 var(--space-12) var(--space-16);
+  padding: 0 var(--page-padding-x) var(--space-12);
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--page-gap);
 }
 
 .calendar-view__page-head {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  /* "Cancelar todos" no entra al lado del título en 375px */
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .calendar-view__page-head {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
 }
 
 .calendar-view__kicker {
@@ -629,7 +673,13 @@ async function confirmCancelAllTurnos() {
 }
 
 .calendar-view__card--calendar {
-  padding: var(--space-8);
+  padding: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .calendar-view__card--calendar {
+    padding: var(--space-8);
+  }
 }
 
 .calendar-view__cal-head {
@@ -651,6 +701,13 @@ async function confirmCancelAllTurnos() {
 }
 
 .calendar-view__cal-nav-btn {
+  /* Sin el tamaño mínimo estas flechas quedan en ~24px: imposible de
+   * acertar con el dedo. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap-target-min);
+  min-height: var(--tap-target-min);
   border: none;
   background: transparent;
   padding: var(--space-1);
@@ -691,15 +748,22 @@ async function confirmCancelAllTurnos() {
 }
 
 .calendar-view__day {
+  /* aspect-ratio mantiene las celdas cuadradas a cualquier ancho, y el
+   * flex centra el número ahora que la celda es más alta que el texto. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
   border: none;
   background: transparent;
-  padding: var(--space-2);
+  padding: var(--space-1);
   font-size: var(--font-size-sm);
   border-radius: var(--radius-lg);
   cursor: pointer;
   font-family: inherit;
   color: var(--color-text-primary);
   transition: background-color var(--transition-base);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .calendar-view__day--outside {
@@ -725,7 +789,7 @@ async function confirmCancelAllTurnos() {
   text-decoration: none;
   color: inherit;
   background-color: var(--color-primary);
-  padding: var(--space-8);
+  padding: var(--space-6);
   border-radius: var(--radius-xl);
   cursor: pointer;
   border: none;
@@ -761,8 +825,18 @@ async function confirmCancelAllTurnos() {
 .calendar-view__summary-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-2);
   align-items: center;
+}
+
+@media (min-width: 768px) {
+  .calendar-view__summary {
+    padding: var(--space-8);
+  }
+
+  .calendar-view__summary-chips {
+    gap: var(--space-4);
+  }
 }
 
 .calendar-view__chip {
@@ -783,7 +857,13 @@ async function confirmCancelAllTurnos() {
 }
 
 .calendar-view__summary-deco-icon {
-  font-size: 120px;
+  font-size: 80px;
+}
+
+@media (min-width: 768px) {
+  .calendar-view__summary-deco-icon {
+    font-size: 120px;
+  }
 }
 
 .calendar-view__col-right {
@@ -833,14 +913,29 @@ async function confirmCancelAllTurnos() {
   background-color: #93000a;
 }
 
+/* Sin hover no hay forma de revelar el botón deslizando la card, así que
+ * dejamos la card corrida de entrada y el botón asomando a la derecha.
+ * 60px alcanzan para el botón (40px) más su respiro (12px). */
+@media (hover: none) {
+  .calendar-view__turn--slidable {
+    margin-right: 60px;
+  }
+
+  .calendar-view__turn-delete-bg {
+    padding-right: var(--space-3);
+  }
+}
+
 .calendar-view__turn {
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-  padding: var(--space-6);
+  /* En celular la hora + el nombre + el pill + el select no entran en una
+   * sola fila: el bloque de datos va arriba y las acciones abajo. */
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
+  padding: var(--space-4);
   background-color: var(--color-surface-container-lowest);
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-surface-container);
@@ -850,8 +945,23 @@ async function confirmCancelAllTurnos() {
     border-color var(--transition-slow);
 }
 
-.calendar-view__turn-wrapper:hover .calendar-view__turn--slidable {
-  transform: translateX(-70px);
+@media (min-width: 768px) {
+  .calendar-view__turn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: var(--space-6);
+  }
+}
+
+/* El deslizamiento para revelar el botón de borrar depende de :hover, que en
+ * pantalla táctil no existe. Solo lo activamos donde hay puntero real; en
+ * mobile el botón se muestra siempre (ver más abajo). */
+@media (hover: hover) {
+  .calendar-view__turn-wrapper:hover .calendar-view__turn--slidable {
+    transform: translateX(-70px);
+  }
 }
 
 .calendar-view__turn:hover {
@@ -871,8 +981,14 @@ async function confirmCancelAllTurnos() {
 .calendar-view__turn-main {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-3);
   min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .calendar-view__turn-main {
+    gap: var(--space-6);
+  }
 }
 
 .calendar-view__turn-time {
@@ -880,7 +996,13 @@ async function confirmCancelAllTurnos() {
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  width: 4rem; /* Fijado para alinear correctamente la barra vertical */
+  width: 3rem;
+}
+
+@media (min-width: 768px) {
+  .calendar-view__turn-time {
+    width: 4rem; /* Fijado para alinear correctamente la barra vertical */
+  }
 }
 
 .calendar-view__turn-clock {
@@ -932,8 +1054,16 @@ async function confirmCancelAllTurnos() {
 
 .calendar-view__turn-name {
   margin: 0;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
+  /* Un nombre largo sin espacios rompía el ancho de la card en 375px */
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 768px) {
+  .calendar-view__turn-name {
+    font-size: var(--font-size-lg);
+  }
 }
 
 .calendar-view__turn-badge {
@@ -955,8 +1085,21 @@ async function confirmCancelAllTurnos() {
 .calendar-view__turn-aside {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  justify-content: space-between;
+  gap: var(--space-3);
   flex-shrink: 0;
+  /* En celular la fila de acciones queda debajo, separada por una línea */
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-surface-container);
+}
+
+@media (min-width: 768px) {
+  .calendar-view__turn-aside {
+    justify-content: flex-end;
+    gap: var(--space-6);
+    padding-top: 0;
+    border-top: none;
+  }
 }
 
 .calendar-view__pill {
@@ -990,7 +1133,19 @@ async function confirmCancelAllTurnos() {
 }
 
 .calendar-view__status-select-wrap {
-  min-width: 8.5rem;
+  /* En celular el select se lleva el ancho sobrante en vez de forzar
+   * 8.5rem fijos que desbordaban la card. */
+  flex: 1;
+  min-width: 0;
+  max-width: 10rem;
+}
+
+@media (min-width: 768px) {
+  .calendar-view__status-select-wrap {
+    flex: 0 0 auto;
+    min-width: 8.5rem;
+    max-width: none;
+  }
 }
 
 .calendar-view__empty {
@@ -1014,11 +1169,21 @@ async function confirmCancelAllTurnos() {
 .calendar-view__modal {
   width: 100%;
   max-width: 26rem;
+  /* Con el teclado abierto o en pantallas bajas el modal se pasaba de alto
+   * y los botones quedaban fuera de alcance. */
+  max-height: 90vh;
+  overflow-y: auto;
   background: var(--color-surface-container-lowest);
   border-radius: var(--radius-xl);
-  padding: var(--space-8);
+  padding: var(--space-6);
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--color-surface-container);
+}
+
+@media (min-width: 768px) {
+  .calendar-view__modal {
+    padding: var(--space-8);
+  }
 }
 
 .calendar-view__modal-title {

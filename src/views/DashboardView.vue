@@ -267,7 +267,7 @@ function fechaCorta(iso: string) {
 }
 
 .dashboard-content {
-  padding: var(--space-6);
+  padding: var(--page-padding-top) var(--page-padding-x) var(--space-12);
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
@@ -475,6 +475,11 @@ function fechaCorta(iso: string) {
 
 .data-table {
   width: 100%;
+  /* El wrapper ya tenía overflow-x, pero con `width: 100%` la tabla se
+   * comprimía hasta el ancho del celular en vez de scrollear: cinco
+   * columnas en 375px dejaban una palabra por renglón. El min-width es lo
+   * que hace que el scroll horizontal entre en juego. */
+  min-width: 640px;
   border-collapse: collapse;
   text-align: left;
 }

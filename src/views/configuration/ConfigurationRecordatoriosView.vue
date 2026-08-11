@@ -481,10 +481,22 @@ async function saveConfig() {
 /* Editor */
 .config-recs__editor-card {
   background-color: var(--color-surface-container-lowest);
-  padding: var(--space-12);
+  padding: var(--space-5);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(192, 200, 204, 0.1);
+}
+
+@media (min-width: 768px) {
+  .config-recs__editor-card {
+    padding: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .config-recs__editor-card {
+    padding: var(--space-12);
+  }
 }
 
 .config-recs__editor-header {

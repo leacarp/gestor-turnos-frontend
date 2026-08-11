@@ -120,6 +120,61 @@
   --sidebar-width-booking: 20rem;
   --header-height: 64px;
 
+  /* ── Responsive ──────────────────────────────────────────
+   * Breakpoints del proyecto (mobile-first, siempre `min-width`).
+   * CSS no permite var() dentro de @media, así que estos valores se
+   * escriben a mano en cada query. Son LA fuente de verdad: si cambia
+   * uno acá, hay que buscarlo en el resto del código.
+   *
+   *   sm  <  768px  celular          1 columna, bottom nav
+   *   md  >= 768px  tablet           2 columnas, bottom nav
+   *   lg  >= 1024px escritorio       sidebar fijo de 260px
+   *
+   * Los tokens de abajo cambian solos según el ancho: consumilos en vez
+   * de hardcodear un --space-N en el padding de página, así una vista
+   * nueva nace responsive sin escribir una sola media query.
+   * ─────────────────────────────────────────────────────── */
+
+  /* Padding horizontal del contenido de página (móvil por defecto) */
+  --page-padding-x: var(--space-4);
+  /* Padding vertical superior del header de página */
+  --page-padding-top: var(--space-6);
+  /* Separación entre bloques grandes de una página */
+  --page-gap: var(--space-6);
+
+  /* Alto de la barra de navegación inferior (solo < 1024px).
+   * En escritorio pasa a 0 para que nadie reserve espacio de más. */
+  --bottom-nav-height: 4rem;
+  /* Colchón que las vistas deben dejar abajo para no quedar tapadas por
+   * la bottom nav. Incluye el safe area del notch en iOS. */
+  --bottom-nav-offset: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+
+  /* Área mínima táctil recomendada (WCAG 2.5.5 / Apple HIG) */
+  --tap-target-min: 44px;
+}
+
+/* ── md: tablet (>= 768px) ─────────────────────────────── */
+@media (min-width: 768px) {
+  :root {
+    --page-padding-x: var(--space-8);
+    --page-padding-top: var(--space-8);
+    --page-gap: var(--space-8);
+  }
+}
+
+/* ── lg: escritorio (>= 1024px) ────────────────────────── */
+@media (min-width: 1024px) {
+  :root {
+    --page-padding-x: var(--space-12);
+    --page-padding-top: var(--space-12);
+    /* Sin bottom nav: el sidebar toma la navegación */
+    --bottom-nav-height: 0px;
+    --bottom-nav-offset: 0px;
+  }
+}
+
+:root {
+
   /* ── Agenda / calendar-view (design-reference code.html) ── */
   --calendar-color-background: #f9f9ff;
   --calendar-color-on-surface: #191b23;

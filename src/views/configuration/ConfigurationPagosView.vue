@@ -140,7 +140,13 @@ onMounted(async () => {
 
 .config-pagos__card {
   border-radius: var(--radius-xl);
-  padding: var(--space-8);
+  padding: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .config-pagos__card {
+    padding: var(--space-8);
+  }
 }
 
 .config-pagos__integration {

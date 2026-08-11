@@ -483,7 +483,7 @@ async function handleSubmit() {
 
 /* ── Header ────────────────────────────────────────────────── */
 .provider-view__header {
-  padding: var(--space-12) var(--space-12) var(--space-8);
+  padding: var(--page-padding-top) var(--page-padding-x) var(--space-6);
 }
 
 .provider-view__header-content {
@@ -509,7 +509,7 @@ async function handleSubmit() {
 }
 
 .provider-view__title {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 800;
   color: var(--color-text-primary);
   letter-spacing: -0.025em;
@@ -517,14 +517,24 @@ async function handleSubmit() {
 }
 
 .provider-view__subtitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   color: var(--color-text-secondary);
   margin: 0;
 }
 
+@media (min-width: 768px) {
+  .provider-view__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .provider-view__subtitle {
+    font-size: var(--font-size-lg);
+  }
+}
+
 /* ── Content ────────────────────────────────────────────────── */
 .provider-view__content-section {
-  padding: 0 var(--space-12) var(--space-16);
+  padding: 0 var(--page-padding-x) var(--space-12);
 }
 
 .provider-view__content {
