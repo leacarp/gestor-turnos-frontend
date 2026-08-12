@@ -59,7 +59,8 @@ function handleSelect() {
   position: relative;
   background-color: var(--color-surface-container-low);
   border-radius: var(--radius-2xl);
-  padding: var(--space-8);
+  /* En una card de ~336px, 32px de padding se comían el 20% del ancho */
+  padding: var(--space-5);
   transition: all var(--transition-base);
   border: 1px solid transparent;
   display: flex;
@@ -111,7 +112,7 @@ function handleSelect() {
 .service-card__description {
   color: var(--color-text-secondary); /* text-on-surface-variant */
   font-size: var(--font-size-sm);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-5);
   line-height: var(--line-height-loose); /* leading-relaxed */
   flex-grow: 1;
 }
@@ -120,9 +121,25 @@ function handleSelect() {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
   margin-top: auto;
-  padding-top: var(--space-6);
+  padding-top: var(--space-4);
   border-top: 1px solid var(--color-surface-container-high);
+}
+
+@media (min-width: 768px) {
+  .service-card {
+    padding: var(--space-8);
+  }
+
+  .service-card__description {
+    margin-bottom: var(--space-8);
+  }
+
+  .service-card__footer {
+    padding-top: var(--space-6);
+  }
 }
 
 .service-card__details {

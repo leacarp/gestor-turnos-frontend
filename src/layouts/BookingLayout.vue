@@ -88,9 +88,10 @@ const currentStepIndex = computed(() => {
         <div class="booking-layout__decor">
           <img 
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPCGzvlrJqhMdvrcte_Dy_-kyauOc9InLhWqtF4ru8ocSXwIsBKf3QTcS9e2qkIs22XUQnpav1CpiJQHL2Kib2XogT6m26PrtHlFT2Uoc2TdPESchr7m9hPLk5lCaQRUXifZULL9QHgn2zkPoThRWYfbnRJltvRtvVdnLSAdx3FQ7J1Ykmi0fEhYwx2LYg_MQqPEGaJfz1L9FLbWoU7CJxee8QnWwU5zNSTpuV-V7OlhEackKEspMuS3rVl-amb_oMeVNLaMgW-srz" 
-            class="booking-layout__decor-img" 
-            alt="" 
+            class="booking-layout__decor-img"
+            alt=""
             aria-hidden="true"
+            loading="lazy"
           />
           <div class="booking-layout__decor-overlay"></div>
         </div>
@@ -118,21 +119,23 @@ const currentStepIndex = computed(() => {
 </template>
 
 <style scoped>
-/* ── Layout shell ──────────────────────────────────────── */
+/* ── Layout shell ──────────────────────────────────────────
+ * Mobile-first. Hasta 1024px el "sidebar" no es una columna sino una
+ * banda superior compacta: marca, paso actual y barra de progreso. El
+ * listado completo de pasos y la imagen decorativa solo tienen sentido
+ * cuando hay una columna de 20rem para mostrarlos.
+ * ───────────────────────────────────────────────────────── */
 .booking-layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-background);
 }
 
 /* ── Sidebar ───────────────────────────────────────────── */
 .booking-layout__sidebar {
-  width: var(--sidebar-width-booking);
+  width: 100%;
   flex-shrink: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
   background-color: var(--color-primary);
   color: #ffffff;
   box-shadow: var(--shadow-lg);
@@ -143,19 +146,22 @@ const currentStepIndex = computed(() => {
 .booking-layout__sidebar-inner {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: var(--space-12) var(--space-6);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--page-padding-x);
   position: relative;
   z-index: 10;
 }
 
 /* Brand */
 .booking-layout__brand {
-  margin-bottom: var(--space-12);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: 0;
 }
 
 .booking-layout__logo {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-xl);
   font-family: var(--font-family-headline);
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -164,31 +170,35 @@ const currentStepIndex = computed(() => {
 
 .booking-layout__subtitle {
   color: var(--color-primary-container);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   opacity: 0.8;
   display: block;
-  margin-top: var(--space-1);
+  margin-top: 0;
 }
 
 /* Steps nav */
 .booking-layout__nav {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
+/* En la banda superior solo se muestra el paso en curso: los cuatro
+ * apilados ocuparían media pantalla y el usuario ya sabe dónde está por
+ * la barra de progreso. */
 .booking-layout__step {
-  display: flex;
+  display: none;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
+  gap: var(--space-3);
   color: rgba(255, 255, 255, 0.6);
   font-weight: var(--font-weight-medium);
   transition: background-color var(--transition-fast), transform var(--transition-fast);
   cursor: default;
+}
+
+.booking-layout__step--active {
+  display: flex;
 }
 
 .booking-layout__step--completed {
@@ -201,7 +211,6 @@ const currentStepIndex = computed(() => {
 }
 
 .booking-layout__step--active {
-  background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   font-weight: var(--font-weight-bold);
 }
@@ -231,22 +240,17 @@ const currentStepIndex = computed(() => {
 }
 
 /* Progress card */
-.booking-layout__progress {
-  margin-top: auto;
-}
-
 .booking-layout__progress-card {
-  padding: var(--space-5);
+  padding: 0;
   border-radius: var(--radius-2xl);
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(4px);
+  background-color: transparent;
 }
 
 .booking-layout__progress-header {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
 }
 
 .booking-layout__progress-dot {
@@ -278,8 +282,9 @@ const currentStepIndex = computed(() => {
   transition: width var(--transition-slow);
 }
 
-/* Decor */
+/* Decor — puramente ornamental, no entra en la banda de celular */
 .booking-layout__decor {
+  display: none;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -306,10 +311,11 @@ const currentStepIndex = computed(() => {
 /* ── Main area ─────────────────────────────────────────── */
 .booking-layout__main {
   flex: 1;
-  margin-left: var(--sidebar-width-booking);
+  /* min-width: 0 evita que una card ancha estire el flex item y genere
+   * scroll horizontal en toda la página. */
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
 
 /* Header */
@@ -320,8 +326,8 @@ const currentStepIndex = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 5rem;
-  padding: 0 var(--space-12);
+  height: 3.5rem;
+  padding: 0 var(--page-padding-x);
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -330,11 +336,15 @@ const currentStepIndex = computed(() => {
 
 .booking-layout__header-title {
   font-family: var(--font-family-headline);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-sm);
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-primary);
+  /* El título completo no entra en 375px; que corte en vez de desbordar. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .booking-layout__header-actions {
@@ -375,6 +385,91 @@ const currentStepIndex = computed(() => {
 /* Content */
 .booking-layout__content {
   flex: 1;
+}
+
+/* ── lg: escritorio (>= 1024px) ─────────────────────────────
+ * Recién acá hay ancho para la columna lateral: la banda superior vuelve
+ * a ser el sidebar fijo de 20rem con los cuatro pasos y el decorado.
+ * ───────────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .booking-layout {
+    flex-direction: row;
+  }
+
+  .booking-layout__sidebar {
+    width: var(--sidebar-width-booking);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+  }
+
+  .booking-layout__sidebar-inner {
+    height: 100%;
+    gap: 0;
+    padding: var(--space-12) var(--space-6);
+  }
+
+  .booking-layout__brand {
+    display: block;
+    margin-bottom: var(--space-12);
+  }
+
+  .booking-layout__logo {
+    font-size: var(--font-size-3xl);
+  }
+
+  .booking-layout__subtitle {
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-1);
+  }
+
+  .booking-layout__nav {
+    flex: 1;
+    gap: var(--space-4);
+  }
+
+  .booking-layout__step {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .booking-layout__step--active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .booking-layout__progress {
+    margin-top: auto;
+  }
+
+  .booking-layout__progress-card {
+    padding: var(--space-5);
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(4px);
+  }
+
+  .booking-layout__progress-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .booking-layout__decor {
+    display: block;
+  }
+
+  .booking-layout__main {
+    margin-left: var(--sidebar-width-booking);
+    min-height: 100vh;
+  }
+
+  .booking-layout__header {
+    height: 5rem;
+  }
+
+  .booking-layout__header-title {
+    font-size: var(--font-size-xl);
+  }
 }
 
 /* ── Transition ────────────────────────────────────────── */
