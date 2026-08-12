@@ -584,17 +584,27 @@ const industries = [
   display: none;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-4) var(--space-4);
+  /* Sin padding vertical mientras está cerrado: con `box-sizing: border-box`
+   * el `max-height: 0` no puede comprimir el padding, así que el menú
+   * cerrado igual dibujaba una franja blanca de ~33px debajo del navbar.
+   * Por lo mismo el borde arranca transparente. */
+  padding: 0 var(--space-4);
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(12px);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid transparent;
   overflow: hidden;
   max-height: 0;
-  transition: max-height var(--transition-slow);
+  transition:
+    max-height var(--transition-slow),
+    padding var(--transition-slow),
+    border-top-color var(--transition-slow);
 }
 
 .landing-nav__mobile-menu--open {
   max-height: 400px;
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-top-color: var(--color-border);
 }
 
 .landing-nav__mobile-link {
