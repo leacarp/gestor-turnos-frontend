@@ -79,17 +79,10 @@ function handleRetry() {
 .select-service-view {
   display: flex;
   flex-direction: column;
-  padding: var(--space-12) var(--space-6);
-  padding-bottom: 6rem;
+  padding: var(--page-padding-top) var(--page-padding-x) 6rem;
   max-width: var(--container-max-width);
   margin: 0 auto;
   width: 100%;
-}
-
-@media (min-width: 768px) {
-  .select-service-view {
-    padding: var(--space-12) var(--space-12);
-  }
 }
 
 /* ── Header ────────────────────────────────────────────── */

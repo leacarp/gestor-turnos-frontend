@@ -55,7 +55,7 @@ const navItems = [
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-8);
+  padding: 0 var(--page-padding-x);
   border-bottom: 1px solid rgba(3, 7, 8, 0.2); /* outline-variant at 20% */
 }
 
@@ -63,18 +63,31 @@ const navItems = [
   display: flex;
   align-items: center;
   height: 100%;
+  /* min-width: 0 habilita que el nav de adentro pueda scrollear en vez de
+   * empujar el header a lo ancho. */
+  min-width: 0;
+  flex: 1;
 }
 
 .config-nav {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-4);
   height: 100%;
+  /* Las cuatro solapas no entran en 375px. En vez de apretarlas o
+   * apilarlas, se scrollean como en las apps nativas. */
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.config-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .config-nav__link {
   color: var(--color-text-disabled);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   text-decoration: none;
   transition: color var(--transition-fast);
@@ -83,6 +96,20 @@ const navItems = [
   height: 100%;
   padding: 0 var(--space-1);
   border-bottom: 2px solid transparent;
+  /* Sin esto los nombres largos ("Recordatorios") se parten en dos líneas
+   * cuando el contenedor scrollea. */
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .config-nav {
+    gap: var(--space-6);
+    overflow-x: visible;
+  }
+
+  .config-nav__link {
+    font-size: var(--font-size-base);
+  }
 }
 
 .config-nav__link:hover {
@@ -172,7 +199,13 @@ const navItems = [
 }
 
 .config-main {
-  padding: var(--space-8) var(--space-8) var(--space-12);
+  padding: var(--space-6) var(--page-padding-x) var(--space-12);
   min-height: calc(100vh - var(--header-height, 64px));
+}
+
+@media (min-width: 768px) {
+  .config-main {
+    padding-top: var(--space-8);
+  }
 }
 </style>

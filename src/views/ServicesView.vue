@@ -343,7 +343,7 @@ onMounted(async () => {
 }
 
 .services-view__header {
-  padding: var(--space-12) var(--space-12) var(--space-8);
+  padding: var(--page-padding-top) var(--page-padding-x) var(--space-6);
 }
 
 .services-view__header-content {
@@ -369,7 +369,7 @@ onMounted(async () => {
 }
 
 .services-view__title {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: 800;
   margin: 0;
   color: var(--color-text-primary);
@@ -377,13 +377,23 @@ onMounted(async () => {
 }
 
 .services-view__subtitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   margin: 0;
   color: var(--color-text-secondary);
 }
 
+@media (min-width: 768px) {
+  .services-view__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .services-view__subtitle {
+    font-size: var(--font-size-lg);
+  }
+}
+
 .services-view__filters {
-  padding: 0 var(--space-12) var(--space-6);
+  padding: 0 var(--page-padding-x) var(--space-6);
 }
 
 .services-view__filters-content {
@@ -484,7 +494,7 @@ onMounted(async () => {
 }
 
 .services-view__grid-section {
-  padding: 0 var(--space-12) var(--space-16);
+  padding: 0 var(--page-padding-x) var(--space-12);
 }
 
 .services-view__grid {

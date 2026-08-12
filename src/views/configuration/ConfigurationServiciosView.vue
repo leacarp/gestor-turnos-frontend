@@ -83,21 +83,23 @@ onMounted(() => {
               class="config-servicios__tr"
               @click="goToServicesView"
             >
-              <td class="config-servicios__td">
+              <!-- data-label alimenta el ::before que hace de encabezado
+                   cuando la tabla se convierte en cards (< 768px) -->
+              <td class="config-servicios__td" data-label="Servicio">
                 <div class="config-servicios__item">
                   <span class="config-servicios__item-name">{{ capitalizeFirst(service.name) }}</span>
                 </div>
               </td>
-              <td class="config-servicios__td">
+              <td class="config-servicios__td" data-label="Categoría">
                 <span class="config-servicios__tag">{{ capitalizeFirst(service.category) }}</span>
               </td>
-              <td class="config-servicios__td">
+              <td class="config-servicios__td" data-label="Duración">
                 <div class="config-servicios__duration">
                   <span class="material-symbols-outlined config-servicios__duration-icon">schedule</span>
                   <span>{{ service.duration }} min</span>
                 </div>
               </td>
-              <td class="config-servicios__td">
+              <td class="config-servicios__td" data-label="Precio">
                 <span class="config-servicios__price">${{ formatPrice(service.price) }}</span>
               </td>
               <td class="config-servicios__td config-servicios__td--right">
@@ -278,6 +280,58 @@ onMounted(() => {
 .config-servicios__td--right {
   text-align: right;
   padding-right: var(--space-8);
+}
+
+/* ── La tabla como cards en celular ──────────────────────────
+ * Excepción deliberada al mobile-first del proyecto: una tabla es, por
+ * naturaleza, un layout de escritorio. Resulta más claro escribir el
+ * comportamiento normal como base y describir acá la transformación a
+ * cards, que reconstruir la tabla entera a partir de bloques.
+ * ─────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .config-servicios__table,
+  .config-servicios__table-body,
+  .config-servicios__tr,
+  .config-servicios__td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Los encabezados ya no encabezan nada: pasan a ser la etiqueta de
+     cada dato, vía el ::before de más abajo. */
+  .config-servicios__table thead {
+    display: none;
+  }
+
+  .config-servicios__tr {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .config-servicios__td,
+  .config-servicios__td:first-child,
+  .config-servicios__td--right {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-2) 0;
+    text-align: left;
+  }
+
+  .config-servicios__td[data-label]::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-disabled);
+  }
+
+  .config-servicios__td--right {
+    justify-content: flex-end;
+    padding-bottom: 0;
+  }
 }
 
 .config-servicios__item {

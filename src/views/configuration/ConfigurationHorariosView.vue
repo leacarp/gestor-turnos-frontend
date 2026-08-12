@@ -538,10 +538,22 @@ onMounted(async () => {
   align-items: center;
   background-color: var(--color-surface-container-low);
   border-radius: var(--radius-xl);
-  padding: var(--space-2) var(--space-5);
+  padding: var(--space-2) var(--space-3);
   border: 1px solid transparent;
   transition: all var(--transition-fast);
-  width: 100px;
+  /* Los inputs pasan a 16px en celular (regla global anti-zoom de iOS), así
+   * que un ancho fijo de 100px cortaba la hora. */
+  min-width: 92px;
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .config-horarios__time-input {
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+    flex: 0 0 auto;
+    width: 100px;
+  }
 }
 
 .config-horarios__time-input:focus-within {
@@ -825,6 +837,11 @@ onMounted(async () => {
   border-radius: var(--radius-xl);
   width: 90%;
   max-width: 400px;
+  /* Sin el tope de alto, en celular apaisado o con el teclado abierto los
+   * botones del modal quedaban abajo de la pantalla, fuera de alcance. */
+  max-height: calc(100vh - var(--space-8));
+  max-height: calc(100dvh - var(--space-8));
+  overflow-y: auto;
   box-shadow: var(--shadow-xl);
   display: flex;
   flex-direction: column;
@@ -856,7 +873,14 @@ onMounted(async () => {
 
 .config-horarios__modal-row {
   display: flex;
+  flex-direction: column;
   gap: var(--space-4);
+}
+
+@media (min-width: 480px) {
+  .config-horarios__modal-row {
+    flex-direction: row;
+  }
 }
 
 .config-horarios__modal-field {

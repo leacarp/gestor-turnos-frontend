@@ -127,7 +127,10 @@ function togglePasswordVisibility() {
 
 .app-input__icon-btn {
   position: absolute;
-  right: var(--space-4);
+  /* El botón se centra sobre el mismo eje que el ícono decorativo: el
+   * right negativo compensa el ensanchado a 44px del área táctil, para que
+   * el ojito quede visualmente donde estaba. */
+  right: calc(var(--space-4) - (var(--tap-target-min) - 24px) / 2);
   background: transparent;
   border: none;
   color: var(--color-outline);
@@ -136,7 +139,11 @@ function togglePasswordVisibility() {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* 24x24 era imposible de acertar con el pulgar */
+  width: var(--tap-target-min);
+  height: var(--tap-target-min);
   transition: color var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .app-input__icon-btn:hover {
