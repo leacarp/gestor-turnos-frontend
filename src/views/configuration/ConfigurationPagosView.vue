@@ -10,6 +10,7 @@ const userStore = useUserStore()
 
 const isMpConnected = computed(() => !!userStore.user?.providerData?.mpConnected)
 const isConnectingMp = ref(false)
+const isDisconnectingMp = ref(false)
 
 async function handleConnectMp() {
   isConnectingMp.value = true
@@ -25,6 +26,20 @@ async function handleConnectMp() {
     toast.error('Error al iniciar la conexión con Mercado Pago.')
   } finally {
     isConnectingMp.value = false
+  }
+}
+
+async function handleDisconnectMp() {
+  isDisconnectingMp.value = true
+  try {
+    await pagosService.disconnectOAuth()
+    await userStore.fetchMe()
+    toast.success('Cuenta de Mercado Pago desvinculada correctamente.')
+  } catch (err: any) {
+    console.error('[ConfigurationPagosView] Error al desvincular:', err)
+    toast.error('No se pudo desvincular la cuenta, por favor intente nuevamente.')
+  } finally {
+    isDisconnectingMp.value = false
   }
 }
 
@@ -82,10 +97,19 @@ onMounted(async () => {
             >
               Conectar con Mercado Pago
             </AppButton>
-            <div v-else class="config-pagos__connected-badge">
-              <span class="material-symbols-outlined">check_circle</span>
-              <span>Cuenta vinculada</span>
-            </div>
+            <template v-else>
+              <div class="config-pagos__connected-badge">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span>Cuenta vinculada</span>
+              </div>
+              <AppButton 
+                class="config-pagos__btn-disconnect"
+                :is-loading="isDisconnectingMp"
+                @click="handleDisconnectMp"
+              >
+                Desvincular cuenta
+              </AppButton>
+            </template>
           </div>
         </div>
 
@@ -252,6 +276,15 @@ onMounted(async () => {
   background-color: #ecfdf5;
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
+}
+
+.config-pagos__btn-disconnect {
+  background: var(--color-error, #ba1a1a) !important;
+  color: #ffffff !important;
+}
+
+.config-pagos__btn-disconnect:hover:not(:disabled) {
+  background: #a01414 !important;
 }
 
 .config-pagos__integration-desc {

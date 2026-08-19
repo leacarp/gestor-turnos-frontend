@@ -23,5 +23,10 @@ export const pagosService = {
   /** Obtiene la URL de OAuth para conectar la cuenta del proveedor con Mercado Pago */
   getOAuthConnectUrl: () => {
     return apiClient.get<{ url: string }>('/mercadopago/oauth/connect')
+  },
+
+  /** Desvincula la cuenta de Mercado Pago del proveedor */
+  disconnectOAuth: () => {
+    return apiClient.delete('/mercadopago/oauth/disconnect')
   }
 }
