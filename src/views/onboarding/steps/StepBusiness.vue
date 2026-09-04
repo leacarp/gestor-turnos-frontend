@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useOnboardingStore } from '@/stores/useOnboardingStore'
 import AppInput from '@/components/AppInput.vue'
 import AppSelect from '@/components/AppSelect.vue'
-import AppButton from '@/components/AppButton.vue'
+
 
 const store = useOnboardingStore()
 
@@ -43,15 +42,7 @@ const categoryOptions = [
           :options="categoryOptions"
           placeholder="Selecciona una opción"
         />
-
-        <AppInput
-          v-model="store.business.servicePrice"
-          type="number"
-          label="Precio de referencia del servicio"
-          iconRight="payments"
-          placeholder="Ej: 15000"
-        />
-
+        
         <div class="step-business__social-field">
           <label class="step-business__social-label">Instagram</label>
           <div class="step-business__social-input">
@@ -78,14 +69,14 @@ const categoryOptions = [
           </div>
         </div>
 
-        <div class="step-business__full-width">
-          <AppInput
-            v-model="store.business.address"
-            label="Ubicación / Dirección"
-            iconRight="location_on"
-            placeholder="Calle Ejemplo 123, Ciudad"
-          />
+        <AppInput
+          v-model="store.business.address"
+          label="Ubicación / Dirección"
+          iconRight="location_on"
+          placeholder="Calle Ejemplo 123, Ciudad"
+        />
 
+        <div class="step-business__full-width">
           <div class="step-business__map">
             <div class="step-business__map-overlay">
               <div class="step-business__map-pin">
@@ -93,7 +84,7 @@ const categoryOptions = [
               </div>
             </div>
           </div>
-      </div>
+        </div>
       </div>
     </form>
   </div>
