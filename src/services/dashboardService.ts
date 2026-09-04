@@ -21,6 +21,8 @@ export interface UltimoTurno {
 }
 
 export interface DashboardMetrics {
+  anio: number
+  mes: number
   turnosEsteMes: number
   variacionMensual: number | null
   tasaAsistencia: number
@@ -44,8 +46,11 @@ export interface ClienteProveedor {
 }
 
 export const dashboardService = {
-  getMetrics: async (): Promise<DashboardMetrics> => {
-    const { data } = await apiClient.get<DashboardMetrics>('/dashboard/metrics')
+  /** `month` en formato "YYYY-MM"; sin ese parámetro, trae el mes en curso. */
+  getMetrics: async (month?: string): Promise<DashboardMetrics> => {
+    const { data } = await apiClient.get<DashboardMetrics>('/dashboard/metrics', {
+      params: month ? { month } : undefined,
+    })
     return data
   },
 

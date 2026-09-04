@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
@@ -24,6 +24,7 @@ export interface TurnoAgendaItem {
 }
 
 const router = useRouter()
+const route = useRoute()
 
 const WEEK_DAYS = ['LU', 'MA', 'MI', 'JU', 'VI', 'SA', 'DO'] as const
 
@@ -50,8 +51,19 @@ function startOfDay(d: Date): Date {
 const todayStart = startOfDay(new Date())
 const todayYmd = toYmd(todayStart)
 
-const selectedDate = ref<Date>(new Date(todayStart))
-const visibleMonth = ref<Date>(new Date(todayStart))
+/** Lee ?month=YYYY-MM (llega desde el gráfico "Turnos por mes" del dashboard). */
+function parseMonthQuery(): Date | null {
+  const raw = route.query.month
+  const value = Array.isArray(raw) ? raw[0] : raw
+  const match = value?.match(/^(\d{4})-(\d{2})$/)
+  if (!match) return null
+  return new Date(Number(match[1]), Number(match[2]) - 1, 1)
+}
+
+const mesInicial = parseMonthQuery()
+
+const selectedDate = ref<Date>(mesInicial ? new Date(mesInicial) : new Date(todayStart))
+const visibleMonth = ref<Date>(mesInicial ? new Date(mesInicial) : new Date(todayStart))
 const searchQuery = ref('')
 const cancelAllModalOpen = ref(false)
 

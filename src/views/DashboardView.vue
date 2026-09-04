@@ -18,19 +18,74 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 
 const router = useRouter()
 
-const metrics   = ref<DashboardMetrics | null>(null)
-const isLoading = ref(true)
-const error     = ref<string | null>(null)
+const MESES_LARGOS = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+]
 
-onMounted(async () => {
+const metrics       = ref<DashboardMetrics | null>(null)
+const isLoading     = ref(true)
+const isMonthLoading = ref(false)
+const error         = ref<string | null>(null)
+
+const ahora = new Date()
+const anioActual = ahora.getFullYear()
+const mesActualNum = ahora.getMonth() + 1 // 1-based, para comparar con metrics.mes
+
+async function cargarMetricas(month?: string) {
   try {
-    metrics.value = await dashboardService.getMetrics()
+    isMonthLoading.value = true
+    metrics.value = await dashboardService.getMetrics(month)
+    error.value = null
   } catch {
     error.value = 'No se pudieron cargar las métricas.'
   } finally {
     isLoading.value = false
+    isMonthLoading.value = false
   }
+}
+
+onMounted(() => cargarMetricas())
+
+// ─── Mes visualizado ────────────────────────────────────────────────────────────
+const esMesActual = computed(() =>
+  !metrics.value || (metrics.value.anio === anioActual && metrics.value.mes === mesActualNum),
+)
+
+const mesVisualizadoLabel = computed(() => {
+  if (!metrics.value) return ''
+  const nombre = MESES_LARGOS[metrics.value.mes - 1]
+  return `${nombre} ${metrics.value.anio}`
 })
+
+const mesVisualizadoLabelCap = computed(() => {
+  const s = mesVisualizadoLabel.value
+  return s.charAt(0).toUpperCase() + s.slice(1)
+})
+
+const tituloTurnos = computed(() =>
+  esMesActual.value ? 'Turnos este mes' : `Turnos en ${mesVisualizadoLabel.value}`,
+)
+
+const tituloIngreso = computed(() =>
+  esMesActual.value ? 'Ingreso este mes' : `Ingreso en ${mesVisualizadoLabel.value}`,
+)
+
+function verMes(dataIndex: number) {
+  if (!metrics.value) return
+  const mes = String(dataIndex + 1).padStart(2, '0')
+  cargarMetricas(`${metrics.value.anio}-${mes}`)
+}
+
+function volverAMesActual() {
+  cargarMetricas()
+}
+
+function verAgendaDelMes() {
+  if (!metrics.value) return
+  const mes = String(metrics.value.mes).padStart(2, '0')
+  router.push({ name: 'agenda', query: { month: `${metrics.value.anio}-${mes}` } })
+}
 
 // ─── KPI helpers ──────────────────────────────────────────────────────────────
 const variacionLabel = computed(() => {
@@ -48,11 +103,11 @@ const ingresoFormateado = computed(() => {
 
 // ─── Bar chart ────────────────────────────────────────────────────────────────
 const barChartData = computed(() => {
-  const mesActual = new Date().getMonth()
-  const data      = metrics.value?.turnosPorMes ?? []
-  const labels    = data.map(d => d.mes)
-  const valores   = data.map(d => d.cantidad)
-  const colors    = data.map((_, i) => (i === mesActual ? '#003256' : '#edeeef'))
+  const mesVisualizado = (metrics.value?.mes ?? mesActualNum) - 1 // a índice 0
+  const data    = metrics.value?.turnosPorMes ?? []
+  const labels  = data.map(d => d.mes)
+  const valores = data.map(d => d.cantidad)
+  const colors  = data.map((_, i) => (i === mesVisualizado ? '#003256' : '#edeeef'))
 
   return {
     labels,
@@ -73,6 +128,14 @@ const barChartOptions = {
   scales: {
     y: { display: false, beginAtZero: true },
     x: { grid: { display: false, drawBorder: false } },
+  },
+  onClick: (_evt: any, elements: any[]) => {
+    if (!elements.length) return
+    verMes(elements[0].index)
+  },
+  onHover: (evt: any, elements: any[]) => {
+    const canvas = evt.native?.target as HTMLCanvasElement | undefined
+    if (canvas) canvas.style.cursor = elements.length ? 'pointer' : 'default'
   },
 }
 
@@ -145,8 +208,18 @@ function fechaCorta(iso: string) {
       </div>
 
       <template v-else>
+        <!-- Banner de mes seleccionado -->
+        <section v-if="!esMesActual" class="month-banner" :class="{ 'month-banner--loading': isMonthLoading }">
+          <span class="material-symbols-outlined" style="font-size:18px">calendar_month</span>
+          <p>Mostrando <strong>{{ mesVisualizadoLabelCap }}</strong></p>
+          <div class="month-banner__actions">
+            <button type="button" class="month-banner__btn" @click="verAgendaDelMes">Ver agenda</button>
+            <button type="button" class="month-banner__btn month-banner__btn--primary" @click="volverAMesActual">Volver al mes actual</button>
+          </div>
+        </section>
+
         <!-- KPI -->
-        <section class="dashboard-kpi">
+        <section class="dashboard-kpi" :class="{ 'dashboard-kpi--loading': isMonthLoading }">
           <article class="kpi-card kpi-card--success">
             <div class="kpi-card__header">
               <div class="kpi-card__icon kpi-card__icon--success">
@@ -156,7 +229,7 @@ function fechaCorta(iso: string) {
                 {{ variacionLabel }}
               </span>
             </div>
-            <p class="kpi-card__label">Turnos este mes</p>
+            <p class="kpi-card__label">{{ tituloTurnos }}</p>
             <h3 class="kpi-card__value">{{ metrics?.turnosEsteMes ?? 0 }}</h3>
           </article>
 
@@ -165,7 +238,7 @@ function fechaCorta(iso: string) {
               <div class="kpi-card__icon kpi-card__icon--secondary">
                 <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;font-size:18px">how_to_reg</span>
               </div>
-              <span class="kpi-card__badge badge--primary">Histórico</span>
+              <span class="kpi-card__badge badge--primary">{{ esMesActual ? 'Este mes' : mesVisualizadoLabelCap }}</span>
             </div>
             <p class="kpi-card__label">Tasa de asistencia</p>
             <h3 class="kpi-card__value">{{ metrics?.tasaAsistencia ?? 0 }}%</h3>
@@ -178,7 +251,7 @@ function fechaCorta(iso: string) {
               </div>
               <span class="kpi-card__badge badge--neutral">Estimado</span>
             </div>
-            <p class="kpi-card__label">Ingreso este mes</p>
+            <p class="kpi-card__label">{{ tituloIngreso }}</p>
             <h3 class="kpi-card__value kpi-card__value--sm">{{ ingresoFormateado }}</h3>
           </article>
         </section>
@@ -198,7 +271,9 @@ function fechaCorta(iso: string) {
           </article>
 
           <article class="chart-card chart-card--span-2 chart-card--flex">
-            <h4 class="chart-card__title" style="margin-bottom:var(--space-4)">Servicios más pedidos</h4>
+            <h4 class="chart-card__title" style="margin-bottom:var(--space-4)">
+              Servicios más pedidos {{ esMesActual ? '' : `· ${mesVisualizadoLabelCap}` }}
+            </h4>
             <div class="donut-wrapper">
               <Doughnut :data="donutChartData" :options="donutChartOptions" />
               <div class="donut-center">
@@ -212,7 +287,9 @@ function fechaCorta(iso: string) {
         <!-- Tabla últimos turnos -->
         <section class="table-section">
           <div class="table-header">
-            <h4 class="chart-card__title">Últimos turnos</h4>
+            <h4 class="chart-card__title">
+              Últimos turnos {{ esMesActual ? '' : `· ${mesVisualizadoLabelCap}` }}
+            </h4>
           </div>
           <div class="table-responsive">
             <table class="data-table">
@@ -292,12 +369,52 @@ function fechaCorta(iso: string) {
 }
 .spin { animation: spin 1s linear infinite; }
 
+/* ── Banner de mes seleccionado ─────────────────────────────────────────────── */
+.month-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--color-primary-fixed);
+  color: var(--color-primary);
+  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+}
+
+.month-banner p { margin: 0; flex: 1; min-width: 160px; }
+
+.month-banner--loading { opacity: 0.7; }
+
+.month-banner__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.month-banner__btn {
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--color-primary);
+}
+
+.month-banner__btn--primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
 /* ── KPI cards ───────────────────────────────────────────────────────────────── */
 .dashboard-kpi {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-4);
+  transition: opacity var(--transition-base);
 }
+
+.dashboard-kpi--loading { opacity: 0.6; pointer-events: none; }
 
 @media (min-width: 768px) {
   .dashboard-kpi { grid-template-columns: repeat(3, 1fr); }
